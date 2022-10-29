@@ -45,9 +45,8 @@ export default function Login() {
             setButtonLoading(true);
             axios.post('/api/auth/login', values).then(res => {
                 if (res.data.auth) {
-                    router.push('/');
+                    router.push('/dashboard');
                 }
-                setButtonLoading(false);
             }).catch(err => {
                 const { data } = err.response;
                 if (!data.status) {

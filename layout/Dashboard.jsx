@@ -103,8 +103,8 @@ export default function Dashboard({ children }) {
     };
 
     const routes = [
-        { name: 'Datos básicos', route: '/datos-basicos' },
-        { name: 'Anamnesis', route: '/anamnesis' },
+        { name: 'Datos básicos', route: '/dashboard/datos-basicos' },
+        { name: 'Anamnesis', route: '/dashboard/anamnesis' },
     ]
 
     useEffect(() => {
@@ -143,7 +143,10 @@ export default function Dashboard({ children }) {
                 <Divider />
                 <List>
                     {['All mail', 'Trash'].map((text, index) => (
-                        <ListItem key={text} disablePadding sx={{ display: 'block' }} onClick={() => setPageTitle(routes[index].name)}>
+                        <ListItem key={text} disablePadding sx={{ display: 'block' }} onClick={() => {
+                            setPageTitle(routes[index].name);
+                            open && setOpen(false);
+                        }}>
                             <Link href={routes[index].route} style={{ textDecoration: 'none', color: 'black' }}>
                                 <ListItemButton
                                     sx={{

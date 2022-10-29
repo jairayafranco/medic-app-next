@@ -1,7 +1,5 @@
-import Dashboard from "../layout/Dashboard"
 import axios from "axios"
 import { useRouter } from "next/router";
-import MyApp from "./_app";
 
 export default function Home() {
   const router = useRouter();
@@ -23,10 +21,10 @@ export default function Home() {
   }
 
   return (
-    <Dashboard>
+    <>
       <h1>Home</h1>
       <button onClick={getProfile}>Get user data</button>
-      <button onClick={logout}>Logout</button> 
-    </Dashboard>
+      <button onClick={logout}>Logout</button>
+    </>
   )
 }
