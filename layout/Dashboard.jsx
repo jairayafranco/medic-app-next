@@ -99,8 +99,10 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 export default function Dashboard({ children, changeTheme, theme }) {
     const [open, setOpen] = useState(false);
-    const [pageTitle, setPageTitle] = useState('');
-    const [pageActive, setPageActive] = useState(null);
+    const [pageParams, setPageParams] = useState({
+        title: '',
+        active: null,
+    });
     const router = useRouter();
 
     const handleDrawerOpen = () => setOpen(true);
@@ -123,9 +125,8 @@ export default function Dashboard({ children, changeTheme, theme }) {
 
     useEffect(() => {
         const { name, active } = routes.find(route => route.route === window.location.pathname) || {};
-        setPageTitle(name || '');
-        setPageActive(active ?? null);
-    }, [])
+        setPageParams({ title: name, active });
+    }, []);
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -145,7 +146,7 @@ export default function Dashboard({ children, changeTheme, theme }) {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-                        {pageTitle}
+                        {pageParams.title}
                     </Typography>
 
                     <Box
@@ -156,7 +157,11 @@ export default function Dashboard({ children, changeTheme, theme }) {
                         }}
                     >
                         <Tooltip title='Menu Principal' placement='bottom'>
-                            <IconButton onClick={() => router.push('/panel')}>
+                            <IconButton onClick={() => {
+                                router.push('/panel')
+                                setPageParams({ title: '', active: null })
+                            }}
+                            >
                                 <HomeIcon />
                             </IconButton>
                         </Tooltip>
@@ -186,12 +191,11 @@ export default function Dashboard({ children, changeTheme, theme }) {
                             disablePadding
                             sx={{ display: 'block' }}
                             onClick={() => {
-                                setPageTitle(routes[index].name);
+                                setPageParams({ title: routes[index].name, active: routes[index].active });
                                 open && setOpen(false);
-                                setPageActive(routes[index].active);
-                                router.push(routes[index].route); // shallow: true -> no hace refresh de la página
+                                router.push(routes[index].route);
                             }}
-                            style={index === pageActive ? { backgroundColor: theme.palette.primary.main, borderRadius: 10 } : { borderRadius: 10 }}
+                            style={index === pageParams.active ? { backgroundColor: theme.palette.primary.main, borderRadius: 10 } : { borderRadius: 10 }}
                         >
                             <ListItemButton
                                 sx={{
@@ -205,7 +209,7 @@ export default function Dashboard({ children, changeTheme, theme }) {
                                         minWidth: 0,
                                         mr: open ? 3 : 'auto',
                                         justifyContent: 'center',
-                                        color: index === pageActive && 'white'
+                                        color: index === pageParams.active && 'white'
                                     }}
                                 >
                                     <Tooltip title={routes[index].name.toUpperCase()} placement='right'>

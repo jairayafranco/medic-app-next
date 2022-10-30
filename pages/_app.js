@@ -4,6 +4,10 @@ import { useRouter } from "next/router";
 import { useEffect, useState, useMemo } from "react";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Spinner from "../components/Spinner";
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
 
 export default function MyApp({ Component, pageProps }) {
     const router = useRouter();
@@ -48,11 +52,6 @@ export default function MyApp({ Component, pageProps }) {
                 <Head>
                     <title>MedicApp</title>
                     <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-                    <link
-                        rel="stylesheet"
-                        href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-                    />
-
                 </Head>
                 <ThemeProvider theme={themeMode}>
                     {
