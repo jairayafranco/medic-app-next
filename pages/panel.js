@@ -1,4 +1,4 @@
-import Home from "./dashboard/home"
+import Home from "./panel/home"
 
 export default function MainDashboard() {
     return <Home />;
