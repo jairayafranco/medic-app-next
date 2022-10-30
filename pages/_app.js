@@ -48,6 +48,11 @@ export default function MyApp({ Component, pageProps }) {
                 <Head>
                     <title>MedicApp</title>
                     <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+                    <link
+                        rel="stylesheet"
+                        href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+                    />
+
                 </Head>
                 <ThemeProvider theme={themeMode}>
                     {
