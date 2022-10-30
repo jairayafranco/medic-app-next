@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { styled, useTheme } from '@mui/material/styles';
+import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
@@ -16,13 +15,22 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import App from 'next/app';
+import { Tooltip } from '@mui/material';
+import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
+import PersonIcon from '@mui/icons-material/Person';
+import FeaturedPlayListIcon from '@mui/icons-material/FeaturedPlayList';
+import FolderSharedIcon from '@mui/icons-material/FolderShared';
+import BloodtypeIcon from '@mui/icons-material/Bloodtype';
+import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered'
+import HomeIcon from '@mui/icons-material/Home';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import { useRouter } from 'next/router';
+import { useEffect, useState, useMemo } from 'react';
 
-const drawerWidth = 240;
+const drawerWidth = 200;
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -41,7 +49,7 @@ const closedMixin = (theme) => ({
     overflowX: 'hidden',
     width: `calc(${theme.spacing(7)} + 1px)`,
     [theme.breakpoints.up('sm')]: {
-        width: `calc(${theme.spacing(8)} + 1px)`,
+        width: `calc(${theme.spacing(7.1)} + 1px)`,
     },
 });
 
@@ -89,27 +97,34 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
 );
 
-export default function Dashboard({ children }) {
-    const theme = useTheme();
+export default function Dashboard({ children, changeTheme, theme }) {
     const [open, setOpen] = useState(false);
     const [pageTitle, setPageTitle] = useState('');
+    const [pageActive, setPageActive] = useState(null);
+    const router = useRouter();
 
-    const handleDrawerOpen = () => {
-        setOpen(true);
-    };
+    const handleDrawerOpen = () => setOpen(true);
+    const handleDrawerClose = () => setOpen(false);
 
-    const handleDrawerClose = () => {
-        setOpen(false);
-    };
+    const icons = [<PersonIcon />, <FeaturedPlayListIcon />, <FolderSharedIcon />,
+    <MedicalServicesIcon />, <BloodtypeIcon />, <AccessibilityNewIcon />,
+    <AssessmentIcon />, <FormatListNumberedIcon />];
 
     const routes = [
-        { name: 'Datos básicos', route: '/dashboard/datos-basicos' },
-        { name: 'Anamnesis', route: '/dashboard/anamnesis' },
-    ]
+        { name: 'Datos Básicos', route: '/panel/datos-basicos', active: 0 },
+        { name: 'Anamnesis y Revisión por Sistemas', route: '/panel/anamnesis', active: 1 },
+        { name: 'Antecedentes', route: '/panel/antecedentes', active: 2 },
+        { name: 'Signos Vitales', route: '/panel/signos-vitales', active: 3 },
+        { name: 'Función Renal - Tasa Filtración Glomerular', route: '/panel/funcion-renal', active: 4 },
+        { name: 'Examen Físico', route: '/panel/examen-fisico', active: 5 },
+        { name: 'Impresión Diagnóstica - Análisis', route: '/panel/impresion-diagnostica', active: 6 },
+        { name: 'Formulación', route: '/panel/formulacion', active: 7 },
+    ];
 
     useEffect(() => {
-        const title = routes.find(route => route.route === window.location.pathname)?.name;
-        setPageTitle(title);
+        const { name, active } = routes.find(route => route.route === window.location.pathname) || {};
+        setPageTitle(name || '');
+        setPageActive(active || null);
     }, [])
 
     return (
@@ -129,9 +144,32 @@ export default function Dashboard({ children }) {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap component="div">
+                    <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
                         {pageTitle}
                     </Typography>
+
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            color: 'text.primary',
+                            borderRadius: 1,
+                        }}
+                    >
+                        <Tooltip title='Menu Principal' placement='bottom'>
+                            <IconButton onClick={() => router.push('/panel')}>
+                                <HomeIcon />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title={theme.palette.mode === 'dark' ? 'Modo Claro' : 'Modo Oscuro'} placement='bottom'>
+                            <IconButton onClick={() => {
+                                changeTheme.toggleColorMode();
+                                localStorage.setItem('MUIThemeMode', theme.palette.mode === 'dark' ? 'light' : 'dark');
+                            }} color="inherit">
+                                {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+                            </IconButton>
+                        </Tooltip>
+                    </Box>
+
                 </Toolbar>
             </AppBar>
             <Drawer variant="permanent" open={open}>
@@ -142,31 +180,40 @@ export default function Dashboard({ children }) {
                 </DrawerHeader>
                 <Divider />
                 <List>
-                    {['All mail', 'Trash'].map((text, index) => (
-                        <ListItem key={text} disablePadding sx={{ display: 'block' }} onClick={() => {
-                            setPageTitle(routes[index].name);
-                            open && setOpen(false);
-                        }}>
-                            <Link href={routes[index].route} style={{ textDecoration: 'none', color: 'black' }}>
-                                <ListItemButton
+                    {['DI', 'ARS', 'ANT', 'SV', 'TFEF', 'EF', 'IDA', 'FORM'].map((text, index) => (
+                        <ListItem
+                            key={text}
+                            disablePadding
+                            sx={{ display: 'block' }}
+                            onClick={() => {
+                                setPageTitle(routes[index].name);
+                                open && setOpen(false);
+                                setPageActive(routes[index].active);
+                                router.push(routes[index].route); // shallow: true -> no hace refresh de la página
+                            }}
+                            style={index === pageActive ? { backgroundColor: theme.palette.primary.main, borderRadius: 10 } : { borderRadius: 10 }}
+                        >
+                            <ListItemButton
+                                sx={{
+                                    minHeight: 48,
+                                    justifyContent: open ? 'initial' : 'center',
+                                    px: 2.5,
+                                }}
+                            >
+                                <ListItemIcon
                                     sx={{
-                                        minHeight: 48,
-                                        justifyContent: open ? 'initial' : 'center',
-                                        px: 2.5,
+                                        minWidth: 0,
+                                        mr: open ? 3 : 'auto',
+                                        justifyContent: 'center',
+                                        color: index === pageActive && 'white'
                                     }}
                                 >
-                                    <ListItemIcon
-                                        sx={{
-                                            minWidth: 0,
-                                            mr: open ? 3 : 'auto',
-                                            justifyContent: 'center',
-                                        }}
-                                    >
-                                        {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                    </ListItemIcon>
-                                    <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                                </ListItemButton>
-                            </Link>
+                                    <Tooltip title={routes[index].name.toUpperCase()} placement='right'>
+                                        {icons[index]}
+                                    </Tooltip>
+                                </ListItemIcon>
+                                <ListItemText secondary={text} sx={{ opacity: open ? 1 : 0 }} />
+                            </ListItemButton>
                         </ListItem>
                     ))}
                 </List>
