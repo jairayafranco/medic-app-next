@@ -124,7 +124,7 @@ export default function Dashboard({ children, changeTheme, theme }) {
     useEffect(() => {
         const { name, active } = routes.find(route => route.route === window.location.pathname) || {};
         setPageTitle(name || '');
-        setPageActive(active || null);
+        setPageActive(active ?? null);
     }, [])
 
     return (
