@@ -10,6 +10,9 @@ export async function middleware(request) {
 
     try {
         await jwtVerify(token, new TextEncoder().encode(process.env.SECRET));
+        if(request.nextUrl.pathname === '/') {
+            return NextResponse.redirect(new URL('/panel', request.url));
+        }
         return NextResponse.next();
     } catch (err) {
         return NextResponse.redirect(new URL('/login', request.url));
@@ -17,5 +20,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-    matcher: ['/dashboard/:path*', '/'], 
+    matcher: ['/dashboard/:path*', '/'],
 }
