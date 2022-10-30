@@ -14,7 +14,7 @@ export default function Home() {
 
   const logout = async () => {
     await axios.post('/api/auth/logout').then(res => {
-      router.push('/login');
+      router.reload();
     }).catch(err => {
       console.log(err);
     });
