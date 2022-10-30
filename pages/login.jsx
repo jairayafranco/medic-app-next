@@ -8,7 +8,6 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Spinner from '../components/Spinner';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import { loginSchema } from '../schemas/schemas';
@@ -55,27 +54,6 @@ export default function Login() {
     return (
         <Grid container component="main" sx={{ height: '100vh' }}>
             <CssBaseline />
-
-            {
-                loading
-                    ? <Grid item xs={false} sm={4} md={7} >
-                        <Spinner />
-                    </Grid>
-                    : <Grid
-                        item
-                        xs={false}
-                        sm={4}
-                        md={7}
-                        sx={{
-                            backgroundImage: `url(${url})`,
-                            backgroundRepeat: 'no-repeat',
-                            backgroundColor: (t) =>
-                                t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                        }}
-                    />
-            }
 
             <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
                 <Box
@@ -144,6 +122,27 @@ export default function Login() {
                     </Box>
                 </Box>
             </Grid>
+
+            {
+                loading
+                    ? <Grid item xs={false} sm={4} md={7} >
+                        <Spinner />
+                    </Grid>
+                    : <Grid
+                        item
+                        xs={false}
+                        sm={4}
+                        md={7}
+                        sx={{
+                            backgroundImage: `url(${url})`,
+                            backgroundRepeat: 'no-repeat',
+                            backgroundColor: (t) =>
+                                t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                        }}
+                    />
+            }
         </Grid>
     );
 }
