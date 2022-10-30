@@ -5,7 +5,7 @@ export default function Home() {
   const router = useRouter();
 
   const getProfile = () => {
-    axios.get('/api/profile').then(res => {
+    axios.get('/api/settings/profile').then(res => {
       console.log(res.data);
     }).catch(err => {
       console.log(err);
