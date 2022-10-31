@@ -6,17 +6,20 @@ export const loginSchema = yup.object({
 });
 
 export const datosBasicosSchema = yup.object({
-    idMedico: yup.string().required('Identificacion Medico requerida'),
+    idMedico: yup.number().required('Identificacion Medico requerida'),
     nombreMedico: yup.string().required('Nombre Medico requerido'),
-    idUsuario: yup.string().required('Identificacion Usuario requerida'),
+    idUsuario: yup.number().required('Identificacion Usuario requerida'),
     nombreUsuario: yup.string().required('Nombres y Apellidos requeridos'),
     genero: yup.string().required('Genero requerido'),
     fechaNacimiento: yup.string().required('Fecha de Nacimiento requerida'),
     direccion: yup.string().required('Direccion requerida'),
-    contacto: yup.string().required('Contacto Telefonico requerido'),
+    contacto: yup.number().required('Contacto Telefonico requerido'),
     eps: yup.string().required('EPS requerida'),
     nivel: yup.string().required('Nivel requerido'),
-    nombreAcompanante: yup.string().required('Nombre del Acompañante requerido'),
-    contactoAcompanante: yup.string().required('Contacto del Acompañante requerido'),
+    nombreAcompanante: yup.string(),
+    contactoAcompanante: yup.number().when('nombreAcompanante', {
+        is: (val) => val ? true : false,
+        then: yup.number().required('Contacto Acompanante requerido'),
+    }),
     tipoConsulta: yup.string().required('Tipo de Consulta requerido'),
 });

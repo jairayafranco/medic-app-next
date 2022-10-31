@@ -1,4 +1,4 @@
-@media (max-width: 600px) {
+@media (max-width: 1225px) {
     .buttonGrid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);

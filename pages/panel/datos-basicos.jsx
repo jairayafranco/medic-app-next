@@ -18,19 +18,33 @@ import { datosBasicosSchema } from '../../schemas/schemas';
 export default function DatosBasicos() {
 
     const campos = [
-        { name: 'Identificacion Medico', property: 'idMedico' },
-        { name: 'Nombre Medico', property: 'nombreMedico' },
-        { name: 'Identificacion Usuario', property: 'idUsuario' },
-        { name: 'Nombres y Apellidos', property: 'nombreUsuario' },
-        { name: 'Genero', property: 'genero' },
-        { name: 'Fecha de Nacimiento', property: 'fechaNacimiento' },
-        { name: 'Direccion', property: 'direccion' },
-        { name: 'Contacto Telefonico', property: 'contacto' },
-        { name: 'EPS', property: 'eps' },
-        { name: 'Nivel', property: 'nivel' },
-        { name: 'Nombre del Acompañante', property: 'nombreAcompanante' },
-        { name: 'Contacto del Acompañante', property: 'contactoAcompanante' },
-        { name: 'Tipo de Consulta', property: 'tipoConsulta' }
+        { name: 'Identificacion Medico', property: 'idMedico', type: 'number' },
+        { name: 'Nombre Medico', property: 'nombreMedico', type: 'text' },
+        { name: 'Identificacion Usuario', property: 'idUsuario', type: 'number' },
+        { name: 'Nombres y Apellidos', property: 'nombreUsuario', type: 'text' },
+        { name: 'Genero', property: 'genero', type: 'text', options: ['Masculino', 'Femenino', 'Otro'] },
+        { name: 'Fecha de Nacimiento', property: 'fechaNacimiento', type: 'text' },
+        { name: 'Direccion', property: 'direccion', type: 'text' },
+        { name: 'Contacto Telefonico', property: 'contacto', type: 'number' },
+        { name: 'EPS', property: 'eps', type: 'text' },
+        { name: 'Nivel', property: 'nivel', type: 'text' },
+        { name: 'Nombre del Acompañante', property: 'nombreAcompanante', type: 'text' },
+        { name: 'Contacto del Acompañante', property: 'contactoAcompanante', type: 'number' },
+        {
+            name: 'Tipo de Consulta', property: 'tipoConsulta', type: 'text',
+            options: [
+                'M.Gral Primera Vez',
+                'Lectura',
+                'Control',
+                'Certificado de Salud',
+                'Certificado Visual',
+                'Examen Fisico de Ingreso',
+                'Crecimiento y Desarrollo',
+                'Lavado de un Oido',
+                'Lavado de Ambos Oidos',
+                'Onisectomia'
+            ]
+        },
     ];
 
     const formik = useFormik({
@@ -46,18 +60,20 @@ export default function DatosBasicos() {
     return (
         <form style={{ display: 'flex', flexWrap: 'wrap' }} onSubmit={formik.handleSubmit} autoComplete="off">
             <Grid container rowSpacing={2}>
-                {campos.map(({ name, property }, index) => (
+                {campos.map(({ name, property, type }, index) => (
                     <Grid item xs={12} md={5} key={index}>
                         <TextField
                             label={name}
                             name={property}
                             value={formik.values[property]}
                             onInput={formik.handleChange}
+                            type={type} // TODO: Cambiar por un datepicker
                             variant="standard"
                             fullWidth
                             style={{ width: '90%' }}
                             error={formik.touched[property] && Boolean(formik.errors[property])}
                             helperText={formik.touched[property] && formik.errors[property]}
+                            InputLabelProps={{ shrink: formik.values[property] ? true : false }}
                         />
                     </Grid>
                 ))}
@@ -75,7 +91,7 @@ export default function DatosBasicos() {
                     </Button>
                 </Grid>
             </Grid>
-            <ButtonGroup id={styles.buttonsContainer} orientation='horizontal' variant="contained" sx={{ mt: -5 }}>
+            <ButtonGroup id={styles.buttonsContainer} orientation='horizontal' variant="contained" sx={{ mt: -3 }}>
                 <Grid item className={styles.buttonGrid}>
                     <Button type="submit">Crear</Button>
                     <Button>Buscar</Button>
