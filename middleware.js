@@ -4,32 +4,27 @@ import { jwtVerify } from "jose";
 export async function middleware(request) {
     const token = request.cookies.get('token');
     const url = request.nextUrl.pathname;
-
-    if (!token && url !== '/login') {
-        return NextResponse.redirect(new URL('/login', request.url));
-    }
+    const redirect = (url) => NextResponse.redirect(new URL(url, request.url));
 
     const result = await validateToken(token);
 
     if (result && url === '/') {
-        return NextResponse.redirect(new URL('/panel', request.url));
+        return redirect('/panel');
     }
 
     if (!result && url.startsWith('/panel')) {
-        return NextResponse.redirect(new URL('/login', request.url));
+        return redirect('/login');
     }
 
     if (result && url === '/login') {
-        return NextResponse.redirect(new URL('/panel', request.url));
+        return redirect('/panel');
     }
-
-    // return NextResponse.next();
 
     async function validateToken(token) {
         try {
             await jwtVerify(token, new TextEncoder().encode(process.env.SECRET));
             return true;
-        } catch (err) {
+        } catch {
             return false;
         }
     }
