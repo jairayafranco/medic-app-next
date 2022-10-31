@@ -14,7 +14,7 @@ export default function loginHandler(req, res) {
             if (!user) return res.status(404).json({ status: false, message: 'Usuario y/o contraseña incorrectos' });
 
             bcrypt.compare(password, user.password, (err, result) => {
-                if (err) return res.status(500).json({ status: false, message: 'Error al comparar contraseñas' });
+                if (err) return res.status(500).json({ error: true, message: 'Error al comparar contraseñas' });
                 if (!result) return res.status(404).json({ status: false, message: 'Usuario y/o contraseña incorrectos' });
 
                 const token = jwt.sign({
