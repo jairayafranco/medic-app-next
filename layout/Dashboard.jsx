@@ -1,4 +1,4 @@
-import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
@@ -162,14 +162,14 @@ export default function Dashboard({ children, changeTheme, theme }) {
                                 setPageParams({ title: '', active: null })
                             }}
                             >
-                                <HomeIcon />
+                                <HomeIcon sx={{ color: '#fff' }} />
                             </IconButton>
                         </Tooltip>
                         <Tooltip title={theme.palette.mode === 'dark' ? 'Modo Claro' : 'Modo Oscuro'} placement='bottom'>
                             <IconButton onClick={() => {
                                 changeTheme.toggleColorMode();
                                 localStorage.setItem('MUIThemeMode', theme.palette.mode === 'dark' ? 'light' : 'dark');
-                            }} color="inherit">
+                            }} sx={{ color: '#fff' }}>
                                 {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
                             </IconButton>
                         </Tooltip>

@@ -2,8 +2,6 @@ import axios from "axios"
 import { useRouter } from "next/router";
 
 export default function Home() {
-  const router = useRouter();
-
   const getProfile = () => {
     axios.get('/api/settings/profile').then(res => {
       console.log(res.data);
