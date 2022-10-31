@@ -1,0 +1,19 @@
+@media (max-width: 600px) {
+    .buttonGrid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 0.2em;
+        border-right: 0px;
+        box-shadow: none;
+    }
+
+    /* button {
+        border-right: 0 !important;
+        border-radius: 0.2em !important;
+    } */
+
+    #buttonsContainer {
+        box-shadow: none;
+        margin-top: 5px;
+    }
+}
