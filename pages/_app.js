@@ -11,6 +11,7 @@ import '@fontsource/roboto/700.css';
 import '../styles/globals.css'
 import { AppContextProvider } from "../context/AppContext";
 import Notify from "../components/Snackbar";
+import Loader from "../components/Backdrop";
 
 export default function MyApp({ Component, pageProps }) {
     const router = useRouter();
@@ -66,6 +67,7 @@ export default function MyApp({ Component, pageProps }) {
                                     {loading ? <Spinner minHeight="80vh" /> : <Component {...pageProps} />}
                                 </Dashboard>
                         }
+                        <Loader />
                         <Notify />
                     </AppContextProvider>
                 </ThemeProvider>
