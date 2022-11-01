@@ -12,6 +12,10 @@ export async function middleware(request) {
         return redirect('/panel');
     }
 
+    if (!result && url === '/') {
+        return redirect('/login');
+    }
+
     if (!result && url.startsWith('/panel')) {
         return redirect('/login');
     }
