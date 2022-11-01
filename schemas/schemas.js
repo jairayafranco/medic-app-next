@@ -11,7 +11,7 @@ export const datosBasicosSchema = yup.object({
     idUsuario: yup.number().required('Identificacion Usuario requerida'),
     nombreUsuario: yup.string().required('Nombres y Apellidos requeridos'),
     genero: yup.string().required('Genero requerido'),
-    fechaNacimiento: yup.string().required('Fecha de Nacimiento requerida'),
+    fechaNacimiento: yup.date().required('Fecha de Nacimiento requerida'),
     direccion: yup.string().required('Direccion requerida'),
     contacto: yup.number().required('Contacto Telefonico requerido'),
     eps: yup.string().required('EPS requerida'),
