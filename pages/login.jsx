@@ -11,15 +11,16 @@ import Spinner from '../components/Spinner';
 import { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import { loginSchema } from '../schemas/schemas';
-import Notify from '../components/Snackbar';
+import { AppContext } from '../context/AppContext';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 
 export default function Login() {
     const [url, setUrl] = useState('');
     const [loading, setLoading] = useState(true);
-    const [call, setCall] = useState({ open: false, type: '', message: '' });
     const router = useRouter();
+
+    const { notifyHandler } = AppContext();
 
     useEffect(() => {
         axios.get('https://source.unsplash.com/1920x1080/?hospital')
@@ -42,12 +43,12 @@ export default function Login() {
                 }
             }).catch(({ response: { data: { error, status, message } } }) => {
                 if (!status) {
-                    setCall({ open: true, type: 'warning', message });
+                    notifyHandler(true, 'warning', message);
                     formik.setSubmitting(false);
                 }
 
                 if (error) {
-                    setCall({ open: true, type: 'error', message });
+                    notifyHandler(true, 'error', message);
                     formik.setSubmitting(false);
                 }
             });
@@ -148,7 +149,6 @@ export default function Login() {
                         />
                 }
             </Grid>
-            <Notify call={call} />;
         </>
     );
 }

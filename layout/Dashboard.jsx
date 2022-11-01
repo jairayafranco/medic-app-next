@@ -28,7 +28,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { useRouter } from 'next/router';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 
 const drawerWidth = 200;
 
