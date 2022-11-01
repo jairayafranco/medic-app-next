@@ -9,13 +9,15 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import '../styles/globals.css'
+import { AppContextProvider } from "../context/AppContext";
+import Notify from "../components/Snackbar";
 
 export default function MyApp({ Component, pageProps }) {
     const router = useRouter();
     const DOMLoaded = useState(false); // This is a hack to prevent the theme from flashing on page load. It's not a perfect solution, but it's better than nothing.
     const [loading, setLoading] = useState(false);
-
     const [mode, setMode] = useState('light');
+
     const colorMode = useMemo(
         () => ({
             toggleColorMode: () => {
@@ -55,14 +57,17 @@ export default function MyApp({ Component, pageProps }) {
                     <meta name="viewport" content="initial-scale=1.0, width=device-width" />
                 </Head>
                 <ThemeProvider theme={themeMode}>
-                    {
-                        ['/login', '/_error'].includes(router.pathname)
-                            ? <Component {...pageProps} />
-                            :
-                            <Dashboard changeTheme={colorMode} theme={themeMode}>
-                                {loading ? <Spinner minHeight="80vh" /> : <Component {...pageProps} />}
-                            </Dashboard>
-                    }
+                    <AppContextProvider>
+                        {
+                            ['/login', '/_error'].includes(router.pathname)
+                                ? <Component {...pageProps} />
+                                :
+                                <Dashboard changeTheme={colorMode} theme={themeMode}>
+                                    {loading ? <Spinner minHeight="80vh" /> : <Component {...pageProps} />}
+                                </Dashboard>
+                        }
+                        <Notify />
+                    </AppContextProvider>
                 </ThemeProvider>
             </>
         )
