@@ -1,17 +1,14 @@
 import TextField from '@mui/material/TextField';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import InsertInvitationIcon from '@mui/icons-material/InsertInvitation';
 import esLocale from 'date-fns/locale/es'
 
-export default function DateSelector({ name, label, value, onChange, error, helperText, InputLabelProps }) {
-    const onKeyDown = (e) => {
-        e.preventDefault();
-    };
-
+export default function DateSelector({ name, label, value, onChange, error, helperText }) {
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={esLocale} >
-            <DatePicker
+            <MobileDatePicker
                 openTo="year"
                 views={['year', 'month', 'day']}
                 label={label}
@@ -28,10 +25,13 @@ export default function DateSelector({ name, label, value, onChange, error, help
                         style={{ width: '90%' }}
                         error={error}
                         helperText={helperText}
-                        InputLabelProps={InputLabelProps}
-                        onKeyDown={onKeyDown}
                     />
                 }
+                InputProps={{
+                    endAdornment: (
+                        <InsertInvitationIcon />
+                    ),
+                }}
             />
         </LocalizationProvider>
     );
