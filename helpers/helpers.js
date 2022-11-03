@@ -48,8 +48,15 @@ export const getUpdatedValues = (userData, formikValues) => {
 }
 
 export const updatePaciente = async (currentUserData, newFormikValues, option) => {
-    const updatedValues = getUpdatedValues(currentUserData, newFormikValues);
+    const updatedValues = currentUserData ? getUpdatedValues(currentUserData, newFormikValues) : newFormikValues;
     if (Object.keys(updatedValues).length === 0) return { data: { empty: true, message: "No hay datos para actualizar" } };
 
-    return await axios.put(`/api/data/paciente?id=${currentUserData.idUsuario}&opt=${option}`, updatedValues)
+    const { idUsuario } = getSessionStorageData("datosBasicos");
+    if (!idUsuario) return { data: { error: true, message: "No se encontró el id del usuario" } };
+
+    try {
+        return await axios.put(`/api/data/paciente?id=${idUsuario}&opt=${option}`, updatedValues);
+    } catch (error) {
+        return error;
+    }
 }

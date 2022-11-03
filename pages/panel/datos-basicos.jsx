@@ -3,11 +3,9 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Avatar from '@mui/material/Avatar';
 import Grid from '@mui/material/Grid';
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import Selector from '../../components/Selector';
 import DateSelector from '../../components/DatePicker';
-// import FormDialog from '../../components/Dialog'
-// import Confirm from '../../components/Confirm'
 import styles from '../../styles/datosBasicos.module.css'
 import { useFormik } from 'formik';
 import { datosBasicosSchema } from '../../schemas/schemas';
@@ -110,21 +108,19 @@ export default function DatosBasicos() {
         const userData = getSessionStorageData("datosBasicos");
         const formikValues = formik.values;
 
-        try {
-            updatePaciente(userData, formikValues, "datosBasicos").then(({ data: { status, message, error, empty } }) => {
-                if (empty) notifyHandler(true, 'warning', message, { backdrop: false });
+        updatePaciente(userData, formikValues, "datosBasicos").then(res => {
+            const data = res.data || res.response?.data;
 
-                if (status) {
-                    notifyHandler(true, 'success', message, { backdrop: false });
-                    saveSessionStorageData("datosBasicos", formikValues);
-                }
+            if (data.empty) notifyHandler(true, 'warning', data.message, { backdrop: false });
 
-                if (!status) notifyHandler(true, 'warning', message, { backdrop: false });
-                if (error) notifyHandler(true, 'error', message, { backdrop: false });
-            });
-        } catch (error) {
-            notifyHandler(true, 'error', "Ocurrio un error", { backdrop: false });
-        }
+            if (data.status) {
+                notifyHandler(true, 'success', data.message, { backdrop: false });
+                saveSessionStorageData("datosBasicos", formikValues);
+            }
+
+            if (!data.status) notifyHandler(true, 'warning', data.message, { backdrop: false });
+            if (data.error) notifyHandler(true, 'error', data.message, { backdrop: false });
+        });
     }
 
     return (
@@ -135,8 +131,9 @@ export default function DatosBasicos() {
                         {
                             ![4, 5, 12].includes(index) && (
                                 <TextField
-                                    label={name}
+                                    id={property}
                                     name={property}
+                                    label={name}
                                     value={formik.values[property]}
                                     onChange={formik.handleChange}
                                     type={type}
@@ -205,7 +202,6 @@ export default function DatosBasicos() {
                         buttonActionTitle="Buscar"
                         buttonAction={searchPaciente}
                     />
-                    {/* <Button onClick={searchPaciente}>Buscar</Button> */}
                     <Button disabled={!availableSessionStorageData()} onClick={handleUpdatePaciente}>Actualizar</Button>
                     <Button onClick={() => { formik.resetForm(), clearSessionStorageData() }}>Limpiar</Button>
                     <Confirm
