@@ -4,7 +4,7 @@ export const saveSessionStorageData = (field, data) => {
     const storage = window.sessionStorage.getItem("userData");
     const validFields = ["datosBasicos", "anamnesis"];
 
-    if (!validFields.includes(field) || !field) {
+    if (!validFields.includes(field)) {
         alert(`El campo ${field} no es válido`);
         return;
     }
