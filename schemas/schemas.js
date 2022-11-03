@@ -17,9 +17,6 @@ export const datosBasicosSchema = yup.object({
     eps: yup.string().required('EPS requerida'),
     nivel: yup.string().required('Nivel requerido'),
     nombreAcompanante: yup.string(),
-    contactoAcompanante: yup.number().when('nombreAcompanante', {
-        is: (val) => val ? true : false,
-        then: yup.number().required('Contacto Acompanante requerido'),
-    }),
+    contactoAcompanante: yup.number(),
     tipoConsulta: yup.string().required('Tipo de Consulta requerido'),
 });

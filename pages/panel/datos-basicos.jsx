@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Avatar from '@mui/material/Avatar';
 import Grid from '@mui/material/Grid';
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Selector from '../../components/Selector';
 import DateSelector from '../../components/DatePicker';
 // import FormDialog from '../../components/Dialog'
@@ -12,10 +12,20 @@ import styles from '../../styles/datosBasicos.module.css'
 import { useFormik } from 'formik';
 import { datosBasicosSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
+import Dialog from '../../components/Dialog';
+import Confirm from '../../components/Confirm';
 import axios from 'axios';
+import { saveSessionStorageData, getSessionStorageData, clearSessionStorageData, availableSessionStorageData, updatePaciente } from '../../helpers/helpers';
 
 export default function DatosBasicos() {
     const { notifyHandler, backdropHandler } = AppContext();
+
+    useEffect(() => {
+        const data = getSessionStorageData("datosBasicos");
+        if (data) {
+            formik.setValues(data);
+        }
+    }, []);
 
     const campos = [
         { name: 'Identificacion Medico', property: 'idMedico', type: 'number' },
@@ -56,37 +66,65 @@ export default function DatosBasicos() {
             backdropHandler(true);
             axios.post('/api/data/paciente', values).then(({ data: { status, message } }) => {
                 if (status) {
-                    notifyHandler(open, 'success', message, { backdrop: false });
-                    formik.resetForm();
+                    notifyHandler(true, 'success', message, { backdrop: false });
+                    saveSessionStorageData("datosBasicos", values);
                 }
             }).catch(({ response: { data: { error, status, message } } }) => {
-                if (!status) {
-                    notifyHandler(open, 'warning', message, { backdrop: false });
-                }
-
-                if (error) {
-                    notifyHandler(open, 'error', message, { backdrop: false });
-                }
+                if (!status) notifyHandler(true, 'warning', message, { backdrop: false });
+                if (error) notifyHandler(true, 'error', message, { backdrop: false });
             });
         }
     });
 
     const searchPaciente = (id) => {
         backdropHandler(true);
-        axios.get(`/api/data/paciente?id=12345`).then(({ data: { status, paciente } }) => {
+        axios.get(`/api/data/paciente?id=${id}`).then(({ data: { status, paciente } }) => {
             if (status) {
                 formik.setValues(paciente.datosBasicos);
                 backdropHandler(false);
+                saveSessionStorageData("", paciente);
             }
         }).catch(({ response: { data: { error, status, message } } }) => {
-            if (!status) {
-                notifyHandler(true, 'warning', message, { backdrop: false });
-            }
-
-            if (error) {
-                notifyHandler(true, 'error', message, { backdrop: false });
-            }
+            if (!status) notifyHandler(true, 'warning', message, { backdrop: false });
+            if (error) notifyHandler(true, 'error', message, { backdrop: false });
         });
+    }
+
+    const deletePaciente = () => {
+        const id = getSessionStorageData("datosBasicos")?.idUsuario;
+        backdropHandler(true);
+        axios.delete(`/api/data/paciente?id=${id}`).then(({ data: { status, message } }) => {
+            if (status) {
+                notifyHandler(true, 'success', message, { backdrop: false });
+                clearSessionStorageData();
+                formik.resetForm();
+            }
+        }).catch(({ response: { data: { error, status, message } } }) => {
+            if (!status) notifyHandler(true, 'warning', message, { backdrop: false });
+            if (error) notifyHandler(true, 'error', message, { backdrop: false });
+        });
+    }
+
+    const handleUpdatePaciente = () => {
+        backdropHandler(true);
+        const userData = getSessionStorageData("datosBasicos");
+        const formikValues = formik.values;
+
+        try {
+            updatePaciente(userData, formikValues, "datosBasicos").then(({ data: { status, message, error, empty } }) => {
+                if (empty) notifyHandler(true, 'warning', message, { backdrop: false });
+
+                if (status) {
+                    notifyHandler(true, 'success', message, { backdrop: false });
+                    saveSessionStorageData("datosBasicos", formikValues);
+                }
+
+                if (!status) notifyHandler(true, 'warning', message, { backdrop: false });
+                if (error) notifyHandler(true, 'error', message, { backdrop: false });
+            });
+        } catch (error) {
+            notifyHandler(true, 'error', "Ocurrio un error", { backdrop: false });
+        }
     }
 
     return (
@@ -100,7 +138,7 @@ export default function DatosBasicos() {
                                     label={name}
                                     name={property}
                                     value={formik.values[property]}
-                                    onInput={formik.handleChange}
+                                    onChange={formik.handleChange}
                                     type={type}
                                     variant="standard"
                                     fullWidth
@@ -141,7 +179,7 @@ export default function DatosBasicos() {
                 }}>
                     <Avatar
                         alt="Remy Sharp"
-                        src="https://mui.com/static/images/avatar/1.jpg"
+                        src={''}
                         sx={{ width: 100, height: 100, mt: 0.5, mb: 0.5, ml: 1 }}
                     />
                     <Button variant="contained" color="secondary" component="label" sx={{ mt: 0.5, ml: 1 }}>
@@ -149,17 +187,34 @@ export default function DatosBasicos() {
                     </Button>
                     <Button variant="contained" component="label" sx={{ mt: 0.5, ml: 1 }}>
                         Subir Foto
-                        <input type="file" hidden />
+                        <input
+                            type="file"
+                            hidden
+                            accept='image/*'
+                        />
                     </Button>
                 </Grid>
             </Grid>
             <ButtonGroup id={styles.buttonsContainer} orientation='horizontal' variant="contained" sx={{ mt: -3 }}>
                 <Grid item className={styles.buttonGrid}>
-                    <Button type="submit">Crear</Button>
-                    <Button onClick={searchPaciente}>Buscar</Button>
-                    <Button>Actualizar</Button>
-                    <Button onClick={() => formik.resetForm()}>Limpiar</Button>
-                    <Button color="error">Eliminar</Button>
+                    <Button type="submit" disabled={availableSessionStorageData()}>Crear</Button>
+                    <Dialog
+                        buttonTitle="Buscar"
+                        title="Buscar Paciente"
+                        label="Identificacion Paciente"
+                        buttonActionTitle="Buscar"
+                        buttonAction={searchPaciente}
+                    />
+                    {/* <Button onClick={searchPaciente}>Buscar</Button> */}
+                    <Button disabled={!availableSessionStorageData()} onClick={handleUpdatePaciente}>Actualizar</Button>
+                    <Button onClick={() => { formik.resetForm(), clearSessionStorageData() }}>Limpiar</Button>
+                    <Confirm
+                        buttonTitle="Eliminar"
+                        title="Eliminar Paciente"
+                        content="¿Esta seguro que desea eliminar este paciente?"
+                        buttonAction={deletePaciente}
+                        disabled={!availableSessionStorageData()}
+                    />
                 </Grid>
             </ButtonGroup>
         </form>
