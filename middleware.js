@@ -24,6 +24,10 @@ export async function middleware(request) {
         return redirect('/panel');
     }
 
+    if (!result && url.startsWith('/api')) {
+        return NextResponse.redirect(new URL('/api/auth/unauthorized', request.url));
+    }
+
     async function validateToken(token) {
         try {
             await jwtVerify(token, new TextEncoder().encode(process.env.SECRET));
@@ -35,5 +39,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-    matcher: ['/panel/:path*', '/', '/login'],
+    matcher: ['/panel/:path*', '/', '/login', '/api/data/:path*'],
 }
