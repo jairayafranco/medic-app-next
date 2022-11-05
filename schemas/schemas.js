@@ -35,3 +35,42 @@ export const anamnesisSchema = yup.object({
     linfatico: yup.string().required("Linfatico requerido"),
     orgSentidos: yup.string().required("Organos de los Sentidos requerido"),
 });
+
+
+const campos = [
+    'Familiares',
+    'Patologicos',
+    'Quirurgicos',
+    'Traumaticos',
+    'Alergicos',
+    'Hospitalizaciones',
+    'Transfusiones',
+    'Cigarrillo - Humo de Leña',
+    'Licor',
+    'Sustancias Psicoactivas',
+    'Farmacologicos',
+    'Especialistas Tratantes',
+    'Gineco-Obstetricos',
+    'Ultima Citologia Cervicovaginal',
+    'Otros Antecedentes - Pediatrico',
+    'Otros Antecedentes - Adultos',
+]
+
+export const antecedentesSchema = yup.object({
+    familiares: yup.string().required("Familiares requerido"),
+    patologicos: yup.string().required("Patologicos requerido"),
+    quirurgicos: yup.string().required("Quirurgicos requerido"),
+    traumaticos: yup.string().required("Traumaticos requerido"),
+    alergicos: yup.string().required("Alergicos requerido"),
+    hospitalizaciones: yup.string().required("Hospitalizaciones requerido"),
+    transfusiones: yup.string().required("Transfusiones requerido"),
+    cigarrilloHumoLeña: yup.string().required("Cigarrillo - Humo de Leña requerido"),
+    licor: yup.string().required("Licor requerido"),
+    sustanciasPsicoactivas: yup.string().required("Sustancias Psicoactivas requerido"),
+    farmacologicos: yup.string().required("Farmacologicos requerido"),
+    especialistasTratantes: yup.string().required("Especialistas Tratantes requerido"),
+    ginecoObstetricos: yup.string().required("Gineco-Obstetricos requerido"),
+    ultimaCitologiaCervicoVaginal: yup.string().required("Ultima Citologia Cervicovaginal requerido"),
+    otrosAntecedentesPediatrico: yup.string().required("Otros Antecedentes - Pediatrico requerido"),
+    otrosAntecedentesAdultos: yup.string().required("Otros Antecedentes - Adultos requerido"),
+});
