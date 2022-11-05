@@ -1,14 +1,15 @@
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
 import Grid from '@mui/material/Grid';
 import { useEffect } from 'react'
 import { useFormik } from 'formik';
 import { anamnesisSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
-import { saveSessionStorageData, getSessionStorageData, availableSessionStorageData, updatePaciente } from '../../helpers/helpers';
+import { saveSessionStorageData, getSessionStorageData, moduleCompleted, updatePaciente } from '../../helpers/helpers';
 
 export default function Anamnesis() {
-    const { notifyHandler } = AppContext();
+    const { notifyHandler, backdropHandler } = AppContext();
 
     useEffect(() => {
         const data = getSessionStorageData("anamnesis");
@@ -38,6 +39,7 @@ export default function Anamnesis() {
         },
         validationSchema: anamnesisSchema,
         onSubmit: (values) => {
+            backdropHandler(true);
             const anamnesisData = getSessionStorageData("anamnesis");
             const formikValues = values;
 
@@ -56,6 +58,14 @@ export default function Anamnesis() {
             });
         },
     });
+
+    const handleNiega = () => {
+        const values = formik.values;
+        const newValues = Object.keys(values).reduce((acc, key) => ({ ...acc, [key]: "Niega" }), {});
+        newValues.enfermedadActual = formik.values.enfermedadActual;
+        newValues.motivoConsulta = formik.values.motivoConsulta;
+        formik.setValues(newValues);
+    }
 
     return (
         <form style={{ display: 'flex', flexWrap: 'wrap', gap: "1em" }} onSubmit={formik.handleSubmit} autoComplete="off">
@@ -86,25 +96,28 @@ export default function Anamnesis() {
                 helperText={formik.touched.motivoConsulta && formik.errors.motivoConsulta}
             />
             <Grid container rowSpacing={2}>
-                {campos.slice(2).map((campo, index) => (
+                {campos.slice(2).map(({ name, property }, index) => (
                     <Grid item xs={12} md={5} key={index}>
                         <TextField
-                            id={campo.property}
-                            name={campo.property}
-                            label={campo.name}
+                            id={property}
+                            name={property}
+                            label={name}
                             type="text"
                             variant="standard"
                             fullWidth
                             style={{ width: '90%' }}
-                            value={formik.values[campo.property]}
+                            value={formik.values[property]}
                             onChange={formik.handleChange}
-                            error={formik.touched[campo.property] && Boolean(formik.errors[campo.property])}
-                            helperText={formik.touched[campo.property] && formik.errors[campo.property]}
+                            error={formik.touched[property] && Boolean(formik.errors[property])}
+                            helperText={formik.touched[property] && formik.errors[property]}
                         />
                     </Grid>
                 ))}
             </Grid>
-            <Button type="submit" variant="contained" color="primary" disabled={!availableSessionStorageData()}>Guardar</Button>
+            <ButtonGroup>
+                <Button disabled={!moduleCompleted("datosBasicos")} variant="contained" type='submit'>Guardar</Button>
+                <Button variant="contained" color="secondary" onClick={handleNiega}>Niega</Button>
+            </ButtonGroup>
         </form>
     );
 }
