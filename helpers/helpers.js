@@ -1,8 +1,8 @@
 import axios from "axios";
+const validFields = ["datosBasicos", "anamnesis", "antecedentes"];
 
 export const saveSessionStorageData = (field, data) => {
     const storage = window.sessionStorage.getItem("userData");
-    const validFields = ["datosBasicos", "anamnesis"];
 
     if (!field) {
         window.sessionStorage.setItem("userData", JSON.stringify(data));
@@ -37,7 +37,7 @@ export const availableSessionStorageData = () => {
     return !!storage;
 }
 
-export const getUpdatedValues = (userData, formikValues) => {
+const getUpdatedValuesFromFormik = (userData, formikValues) => {
     const updatedValues = {};
     for (const key in userData) {
         if (userData[key] !== formikValues[key]) {
@@ -47,8 +47,20 @@ export const getUpdatedValues = (userData, formikValues) => {
     return updatedValues;
 }
 
+export const moduleCompleted = (module) => {
+    const userData = getSessionStorageData();
+    if (!userData) return false;
+    if (!module) return false;
+
+    return !!userData[module];
+}
+
 export const updatePaciente = async (currentUserData, newFormikValues, option) => {
-    const updatedValues = currentUserData ? getUpdatedValues(currentUserData, newFormikValues) : newFormikValues;
+    if (!validFields.includes(option)) {
+        return { data: { error: true, message: "Opción no válida" } };
+    }
+
+    const updatedValues = currentUserData ? getUpdatedValuesFromFormik(currentUserData, newFormikValues) : newFormikValues;
     if (Object.keys(updatedValues).length === 0) return { data: { empty: true, message: "No hay datos para actualizar" } };
 
     const { idUsuario } = getSessionStorageData("datosBasicos");
