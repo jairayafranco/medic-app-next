@@ -213,8 +213,8 @@ export default function SignosVitales() {
         if (values.peso && values.talla) {
             formik.setFieldValue("imc", imc);
             formik.setFieldValue("interpretacion", interpretacionIMC(imc));
-            formik.setFieldValue("pesoMinimo", (values.talla / 100) * (values.talla / 100) * 18.5).toFixed(1);
-            formik.setFieldValue("pesoMaximo", (values.talla / 100) * (values.talla / 100) * 24.9).toFixed(1);
+            formik.setFieldValue("pesoMinimo", ((values.talla / 100) * (values.talla / 100) * 18.5).toFixed(1));
+            formik.setFieldValue("pesoMaximo", ((values.talla / 100) * (values.talla / 100) * 24.9).toFixed(1));
         } else {
             formik.setFieldValue("imc", "");
             formik.setFieldValue("interpretacion", "");
