@@ -36,26 +36,6 @@ export const anamnesisSchema = yup.object({
     orgSentidos: yup.string().required("Organos de los Sentidos requerido"),
 });
 
-
-const campos = [
-    'Familiares',
-    'Patologicos',
-    'Quirurgicos',
-    'Traumaticos',
-    'Alergicos',
-    'Hospitalizaciones',
-    'Transfusiones',
-    'Cigarrillo - Humo de Leña',
-    'Licor',
-    'Sustancias Psicoactivas',
-    'Farmacologicos',
-    'Especialistas Tratantes',
-    'Gineco-Obstetricos',
-    'Ultima Citologia Cervicovaginal',
-    'Otros Antecedentes - Pediatrico',
-    'Otros Antecedentes - Adultos',
-]
-
 export const antecedentesSchema = yup.object({
     familiares: yup.string().required("Familiares requerido"),
     patologicos: yup.string().required("Patologicos requerido"),
@@ -73,4 +53,21 @@ export const antecedentesSchema = yup.object({
     ultimaCitologiaCervicoVaginal: yup.string().required("Ultima Citologia Cervicovaginal requerido"),
     otrosAntecedentesPediatrico: yup.string().required("Otros Antecedentes - Pediatrico requerido"),
     otrosAntecedentesAdultos: yup.string().required("Otros Antecedentes - Adultos requerido"),
+});
+
+export const signosVitalesSchema = yup.object({
+    tensionArterialSistolica: yup.number().required("Tension Arterial Sistolica requerida"),
+    tensionArterialDiastolica: yup.number().required("Tension Arterial Diastolica requerida"),
+    // tensionArterialMedia: yup.number().required("Tension Arterial Media requerida"),
+    frecuenciaCardiaca: yup.number().required("Frecuencia Cardiaca requerida"),
+    frecuenciaRespiratoria: yup.number().required("Frecuencia Respiratoria requerida"),
+    saturacionO2: yup.number().required("Saturacion de O2 requerida"),
+    temperatura: yup.number().required("Temperatura requerida"),
+    pAbdominal: yup.number().required("P. Abdominal requerido"),
+    peso: yup.number().required("Peso requerido"),
+    talla: yup.number().required("Talla requerida"),
+    // imc: yup.number().required("Indice de Masa Corporal requerido"),
+    // interpretacion: yup.string().required("Interpretacion requerida"),
+    // pesoMinimo: yup.number().required("Peso Minimo requerido"),
+    // pesoMaximo: yup.number().required("Peso Maximo requerido"),
 });
