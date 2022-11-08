@@ -25,7 +25,7 @@ export async function middleware(request) {
     }
 
     if (!result && url.startsWith('/api')) {
-        return NextResponse.redirect(new URL('/api/auth/unauthorized', request.url));
+        return redirect('/api/auth/unauthorized');
     }
 
     async function validateToken(token) {
