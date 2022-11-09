@@ -8,7 +8,8 @@ import { useEffect } from 'react'
 import { useFormik } from 'formik';
 import { signosVitalesSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
-import { saveSessionStorageData, getSessionStorageData, updatePaciente, moduleCompleted, handleSignosVitalesValues } from '../../helpers/helpers';
+import { saveSessionStorageData, getSessionStorageData, updatePaciente, moduleCompleted } from '../../helpers/helpers';
+import axios from 'axios';
 
 export default function SignosVitales() {
     const { notifyHandler, backdropHandler } = AppContext();
@@ -28,8 +29,6 @@ export default function SignosVitales() {
                     property: "tensionArterialSistolica",
                     type: "number",
                     unit: "mm/Hg",
-                    min: 90,
-                    max: 140,
                     abrev: "(TAS)",
                     variant: "filled",
                     size: "small"
@@ -39,8 +38,6 @@ export default function SignosVitales() {
                     property: "tensionArterialDiastolica",
                     type: "number",
                     unit: "mm/Hg",
-                    min: 60,
-                    max: 90,
                     abrev: "(TAD)",
                     variant: "filled",
                     size: "small"
@@ -65,8 +62,6 @@ export default function SignosVitales() {
                     property: "frecuenciaCardiaca",
                     type: "number",
                     unit: "L/M",
-                    min: 60,
-                    max: 100,
                     abrev: "(FC)",
                     variant: "filled",
                     size: "small"
@@ -76,8 +71,6 @@ export default function SignosVitales() {
                     property: "frecuenciaRespiratoria",
                     type: "number",
                     unit: "R/M",
-                    min: 12,
-                    max: 20,
                     abrev: "(FR)",
                     variant: "filled",
                     size: "small"
@@ -87,8 +80,6 @@ export default function SignosVitales() {
                     property: "saturacionO2",
                     type: "number",
                     unit: "%",
-                    min: 90,
-                    max: 100,
                     abrev: "(SO2)",
                     variant: "filled",
                     size: "small"
@@ -111,7 +102,7 @@ export default function SignosVitales() {
                     property: "pAbdominal",
                     type: "number",
                     unit: "Cms",
-                    abrev: "(Si no es RCV escriba no aplica)",
+                    abrev: "(Si no es RCV escriba 0)",
                     variant: "standard",
                     size: "small"
                 },
@@ -191,19 +182,86 @@ export default function SignosVitales() {
         },
         validationSchema: signosVitalesSchema,
         onSubmit: values => {
-            console.log(values);
+            backdropHandler(true);
+            const signosVitalesData = getSessionStorageData("signosVitales");
+            const formikValues = values;
+
+            updatePaciente(signosVitalesData, formikValues, "signosVitales").then(res => {
+                const data = res.data || res.response?.data;
+
+                if (data.empty) notifyHandler(true, 'warning', data.message, { backdrop: false });
+
+                if (data.status) {
+                    notifyHandler(true, 'success', data.message, { backdrop: false });
+                    saveSessionStorageData("signosVitales", formikValues);
+                    axios.post('/api/data/signosVitalesHistory', { ...formikValues, id: getSessionStorageData("datosBasicos")?.idUsuario });
+                }
+
+                if (!data.status) notifyHandler(true, 'warning', data.message, { backdrop: false });
+                if (data.error) notifyHandler(true, 'error', data.message, { backdrop: false });
+            });
         }
     });
+    useEffect(() => handleSomeValues(), [formik.values]);
 
-    const colorSchema = (value) => {
+    const colorSchema = (campo) => {
+        const { tensionArterialDiastolica, tensionArterialSistolica, peso, talla,
+            frecuenciaCardiaca, frecuenciaRespiratoria, saturacionO2
+        } = formik.values;
+        const name = campo.property;
+        const warning = "#CAB500";
+        const advertence = "#D32F2F";
 
+        const imc = (peso / ((talla / 100) * (talla / 100))).toFixed(2);
+
+        if (name === "interpretacion" && (peso && talla)) {
+            if (imc <= 17 || imc >= 30) {
+                return advertence;
+            }
+            if (imc >= 17 && imc <= 18.41 || imc >= 25 && imc <= 30) {
+                return warning;
+            }
+        }
+
+        if (name === "tensionArterialSistolica" && tensionArterialSistolica) {
+            if (tensionArterialSistolica < 90 || tensionArterialSistolica >= 140) {
+                return advertence;
+            }
+        }
+
+        if (name === "tensionArterialDiastolica" && tensionArterialDiastolica) {
+            if (tensionArterialDiastolica < 60 || tensionArterialDiastolica >= 90) {
+                return advertence;
+            }
+        }
+
+        if (name === "frecuenciaCardiaca" && frecuenciaCardiaca) {
+            if (frecuenciaCardiaca < 60 || frecuenciaCardiaca > 100) {
+                return advertence;
+            }
+        }
+
+        if (name === "frecuenciaRespiratoria" && frecuenciaRespiratoria) {
+            if (frecuenciaRespiratoria < 12 || frecuenciaRespiratoria > 20) {
+                return advertence;
+            }
+        }
+
+        if (name === "saturacionO2" && saturacionO2) {
+            if (saturacionO2 < 90 || saturacionO2 > 100) {
+                return advertence;
+            }
+        }
     }
 
     const handleSomeValues = () => {
         const { values } = formik;
 
         if (values.tensionArterialDiastolica && values.tensionArterialSistolica) {
-            formik.setFieldValue("tensionArterialMedia", Math.trunc(parseInt(values.tensionArterialDiastolica) + ((parseInt(values.tensionArterialSistolica) - parseInt(values.tensionArterialDiastolica))) / 3));
+            formik.setFieldValue(
+                "tensionArterialMedia",
+                Math.trunc(parseInt(values.tensionArterialDiastolica) + ((parseInt(values.tensionArterialSistolica) - parseInt(values.tensionArterialDiastolica))) / 3)
+            );
         } else {
             formik.setFieldValue("tensionArterialMedia", "");
         }
@@ -250,7 +308,6 @@ export default function SignosVitales() {
                                         style={{ width: "90%", backgroundColor: colorSchema(campo) }}
                                         value={formik.values[campo.property]}
                                         onChange={formik.handleChange}
-                                        onBlur={handleSomeValues}
                                         error={formik.touched[campo.property] && Boolean(formik.errors[campo.property])}
                                         helperText={formik.touched[campo.property] && formik.errors[campo.property]}
                                         size={campo.size}
@@ -269,7 +326,7 @@ export default function SignosVitales() {
                 </Paper>
             ))}
             <ButtonGroup>
-                <Button variant="contained" type="submit">Guardar</Button>
+                <Button variant="contained" type="submit" disabled={!moduleCompleted("antecedentes")}>Guardar</Button>
                 <Button variant="contained" type="submit" color="secondary">Historial</Button>
                 {/* <FullScreenDialog buttonName='historial' title='Historial Signos Vitales'>
                     <DataTable
