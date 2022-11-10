@@ -58,7 +58,6 @@ export const antecedentesSchema = yup.object({
 export const signosVitalesSchema = yup.object({
     tensionArterialSistolica: yup.number().required("Tension Arterial Sistolica requerida"),
     tensionArterialDiastolica: yup.number().required("Tension Arterial Diastolica requerida"),
-    // tensionArterialMedia: yup.number().required("Tension Arterial Media requerida"),
     frecuenciaCardiaca: yup.number().required("Frecuencia Cardiaca requerida"),
     frecuenciaRespiratoria: yup.number().required("Frecuencia Respiratoria requerida"),
     saturacionO2: yup.number().required("Saturacion de O2 requerida"),
@@ -66,8 +65,8 @@ export const signosVitalesSchema = yup.object({
     pAbdominal: yup.number().required("P. Abdominal requerido"),
     peso: yup.number().required("Peso requerido"),
     talla: yup.number().required("Talla requerida"),
-    // imc: yup.number().required("Indice de Masa Corporal requerido"),
-    // interpretacion: yup.string().required("Interpretacion requerida"),
-    // pesoMinimo: yup.number().required("Peso Minimo requerido"),
-    // pesoMaximo: yup.number().required("Peso Maximo requerido"),
+});
+
+export const funcionRenalSchema = yup.object({
+    creatinina: yup.number().required("Creatinina requerida"),
 });
