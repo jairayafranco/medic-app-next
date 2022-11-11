@@ -4,21 +4,26 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import InputAdornment from '@mui/material/InputAdornment';
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useFormik } from 'formik';
 import { signosVitalesSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
 import { saveSessionStorageData, getSessionStorageData, updatePaciente, moduleCompleted } from '../../helpers/helpers';
+import FullScreenModal from '../../components/FullScreenModal';
+import DataTable from '../../components/DataTable';
 import axios from 'axios';
 
 export default function SignosVitales() {
     const { notifyHandler, backdropHandler } = AppContext();
+
+    const [history, setHistory] = useState([]);
 
     useEffect(() => {
         const data = getSessionStorageData("signosVitales");
         if (data) {
             formik.setValues(data);
         }
+        getSignosVitalesHistory();
     }, []);
 
     const campos = [
@@ -194,7 +199,8 @@ export default function SignosVitales() {
                 if (data.status) {
                     notifyHandler(true, 'success', data.message, { backdrop: false });
                     saveSessionStorageData("signosVitales", formikValues);
-                    axios.post('/api/data/signosVitalesHistory', { ...formikValues, id: getSessionStorageData("datosBasicos")?.idUsuario });
+                    axios.post('/api/data/signosVitalesHistory', { ...formikValues, idUsuario: getSessionStorageData("datosBasicos")?.idUsuario });
+                    getSignosVitalesHistory();
                 }
 
                 if (!data.status) notifyHandler(true, 'warning', data.message, { backdrop: false });
@@ -203,6 +209,17 @@ export default function SignosVitales() {
         }
     });
     useEffect(() => handleSomeValues(), [formik.values]);
+
+    const getSignosVitalesHistory = () => {
+        const paciente = getSessionStorageData("datosBasicos");
+        if (paciente) {
+            axios.get(`/api/data/signosVitalesHistory?id=${paciente.idUsuario}`).then(({ data }) => {
+                setHistory(data.history);
+            }).catch(err => {
+                console.log(err);
+            });
+        }
+    }
 
     const colorSchema = (campo) => {
         const { tensionArterialDiastolica, tensionArterialSistolica, peso, talla,
@@ -293,7 +310,7 @@ export default function SignosVitales() {
 
     return (
         <form style={{ display: 'flex', flexWrap: 'wrap', gap: "2em" }} onSubmit={formik.handleSubmit} autoComplete="off">
-            {campos.map((campo, index) => (
+            {campos.map((group, index) => (
                 <Paper key={index} elevation={3} sx={{ p: 2, width: '100%' }}>
                     <Grid container rowSpacing={2}>
                         {
@@ -327,15 +344,16 @@ export default function SignosVitales() {
             ))}
             <ButtonGroup>
                 <Button variant="contained" type="submit" disabled={!moduleCompleted("antecedentes")}>Guardar</Button>
-                <Button variant="contained" type="submit" color="secondary">Historial</Button>
-                {/* <FullScreenDialog buttonName='historial' title='Historial Signos Vitales'>
+                <FullScreenModal buttonName='historial' title='Historial Signos Vitales'>
                     <DataTable
-                        columns={[['Fecha', ''], ...campos1, ...campos2, ...campos3, ...campos4].map(v => {
-                            return { field: camelCase(v[0]), headerName: v[0], width: v[0] == 'Fecha' ? 180 : 130 }
-                        })}
+                        columns={[{ headerName: 'Fecha', field: 'fecha', width: 180 }, campos.map((item) => {
+                            return item.fields.map((field) => {
+                                return { headerName: field.name, field: field.property, width: 130 }
+                            })
+                        }).flat()].flat()}
                         rows={history}
                     />
-                </FullScreenDialog> */}
+                </FullScreenModal>
             </ButtonGroup>
         </form>
     );
