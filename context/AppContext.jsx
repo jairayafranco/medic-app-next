@@ -14,11 +14,8 @@ export const AppContextProvider = ({ children }) => {
     const [notify, setNotify] = useState({ open: false, type: '', message: '' });
     const [backdrop, setBackdrop] = useState(false);
 
-    const notifyHandler = (open, type, message, backdrop) => {
+    const notifyHandler = (open, type, message) => {
         setNotify({ open, type, message });
-        if (backdrop) {
-            setBackdrop(backdrop.backdrop);
-        }
     }
 
     const backdropHandler = (open) => {

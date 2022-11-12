@@ -46,16 +46,16 @@ export default function Anamnesis() {
             updatePaciente(anamnesisData, formikValues, "anamnesis").then(res => {
                 const data = res.data || res.response?.data;
 
-                if (data.empty) notifyHandler(true, 'warning', data.message, { backdrop: false });
+                if (data.empty) notifyHandler(true, 'warning', data.message);
 
                 if (data.status) {
-                    notifyHandler(true, 'success', data.message, { backdrop: false });
+                    notifyHandler(true, 'success', data.message);
                     saveSessionStorageData("anamnesis", formikValues);
                 }
 
-                if (!data.status) notifyHandler(true, 'warning', data.message, { backdrop: false });
-                if (data.error) notifyHandler(true, 'error', data.message, { backdrop: false });
-            });
+                if (!data.status) notifyHandler(true, 'warning', data.message);
+                if (data.error) notifyHandler(true, 'error', data.message);
+            }).finally(() => backdropHandler(false));
         },
     });
 

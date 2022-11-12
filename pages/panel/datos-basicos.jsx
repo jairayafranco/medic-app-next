@@ -64,13 +64,13 @@ export default function DatosBasicos() {
             backdropHandler(true);
             axios.post('/api/data/paciente', values).then(({ data: { status, message } }) => {
                 if (status) {
-                    notifyHandler(true, 'success', message, { backdrop: false });
+                    notifyHandler(true, 'success', message);
                     saveSessionStorageData("datosBasicos", values);
                 }
             }).catch(({ response: { data: { error, status, message } } }) => {
-                if (!status) notifyHandler(true, 'warning', message, { backdrop: false });
-                if (error) notifyHandler(true, 'error', message, { backdrop: false });
-            });
+                if (!status) notifyHandler(true, 'warning', message);
+                if (error) notifyHandler(true, 'error', message);
+            }).finally(() => backdropHandler(false));
         }
     });
 
@@ -79,13 +79,12 @@ export default function DatosBasicos() {
         axios.get(`/api/data/paciente?id=${id}`).then(({ data: { status, paciente } }) => {
             if (status) {
                 formik.setValues(paciente.datosBasicos);
-                backdropHandler(false);
                 saveSessionStorageData("", paciente);
             }
         }).catch(({ response: { data: { error, status, message } } }) => {
-            if (!status) notifyHandler(true, 'warning', message, { backdrop: false });
-            if (error) notifyHandler(true, 'error', message, { backdrop: false });
-        });
+            if (!status) notifyHandler(true, 'warning', message);
+            if (error) notifyHandler(true, 'error', message);
+        }).finally(() => backdropHandler(false));
     }
 
     const deletePaciente = () => {
@@ -93,14 +92,14 @@ export default function DatosBasicos() {
         backdropHandler(true);
         axios.delete(`/api/data/paciente?id=${id}`).then(({ data: { status, message } }) => {
             if (status) {
-                notifyHandler(true, 'success', message, { backdrop: false });
+                notifyHandler(true, 'success', message);
                 clearSessionStorageData();
                 formik.resetForm();
             }
         }).catch(({ response: { data: { error, status, message } } }) => {
-            if (!status) notifyHandler(true, 'warning', message, { backdrop: false });
-            if (error) notifyHandler(true, 'error', message, { backdrop: false });
-        });
+            if (!status) notifyHandler(true, 'warning', message);
+            if (error) notifyHandler(true, 'error', message);
+        }).finally(() => backdropHandler(false));
     }
 
     const handleUpdatePaciente = () => {
@@ -111,16 +110,16 @@ export default function DatosBasicos() {
         updatePaciente(userData, formikValues, "datosBasicos").then(res => {
             const data = res.data || res.response?.data;
 
-            if (data.empty) notifyHandler(true, 'warning', data.message, { backdrop: false });
+            if (data.empty) notifyHandler(true, 'warning', data.message);
 
             if (data.status) {
-                notifyHandler(true, 'success', data.message, { backdrop: false });
+                notifyHandler(true, 'success', data.message);
                 saveSessionStorageData("datosBasicos", formikValues);
             }
 
-            if (!data.status) notifyHandler(true, 'warning', data.message, { backdrop: false });
-            if (data.error) notifyHandler(true, 'error', data.message, { backdrop: false });
-        });
+            if (!data.status) notifyHandler(true, 'warning', data.message);
+            if (data.error) notifyHandler(true, 'error', data.message);
+        }).finally(() => backdropHandler(false));
     }
 
     return (

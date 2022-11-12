@@ -194,18 +194,18 @@ export default function SignosVitales() {
             updatePaciente(signosVitalesData, formikValues, "signosVitales").then(res => {
                 const data = res.data || res.response?.data;
 
-                if (data.empty) notifyHandler(true, 'warning', data.message, { backdrop: false });
+                if (data.empty) notifyHandler(true, 'warning', data.message);
 
                 if (data.status) {
-                    notifyHandler(true, 'success', data.message, { backdrop: false });
+                    notifyHandler(true, 'success', data.message);
                     saveSessionStorageData("signosVitales", formikValues);
                     axios.post('/api/data/signosVitalesHistory', { ...formikValues, idUsuario: getSessionStorageData("datosBasicos")?.idUsuario });
                     getSignosVitalesHistory();
                 }
 
-                if (!data.status) notifyHandler(true, 'warning', data.message, { backdrop: false });
-                if (data.error) notifyHandler(true, 'error', data.message, { backdrop: false });
-            });
+                if (!data.status) notifyHandler(true, 'warning', data.message);
+                if (data.error) notifyHandler(true, 'error', data.message);
+            }).finally(() => backdropHandler(false));
         }
     });
     useEffect(() => handleSomeValues(), [formik.values]);
