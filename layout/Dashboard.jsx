@@ -27,6 +27,7 @@ import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered'
 import HomeIcon from '@mui/icons-material/Home';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import AccountMenu from '../components/AccountMenu';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -173,6 +174,7 @@ export default function Dashboard({ children, changeTheme, theme }) {
                                 {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
                             </IconButton>
                         </Tooltip>
+                        <AccountMenu />
                     </Box>
 
                 </Toolbar>
