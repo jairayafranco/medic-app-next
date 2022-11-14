@@ -1,6 +1,5 @@
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import ButtonGroup from '@mui/material/ButtonGroup';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -9,7 +8,6 @@ import { useFormik } from 'formik';
 import { funcionRenalSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
 import { saveSessionStorageData, getSessionStorageData, updatePaciente, moduleCompleted, calculateAge } from '../../helpers/helpers';
-import axios from 'axios';
 
 export default function FuncionRenal() {
     const { notifyHandler, backdropHandler } = AppContext();
@@ -31,7 +29,6 @@ export default function FuncionRenal() {
             formik.setFieldValue('peso', peso);
             formik.setFieldValue('talla', talla);
         }
-
     }, []);
 
     const campos = [
@@ -71,8 +68,8 @@ export default function FuncionRenal() {
 
     return (
         <form style={{ display: 'flex', flexWrap: 'wrap', gap: "1.5em" }} onSubmit={formik.handleSubmit} autoComplete="off">
-            {campos.map((campo, index) => (
-                <Container key={index} group={campo.group}>
+            {campos.map((group, index) => (
+                <Container key={index} group={group.group}>
                     {campos[index].fields.map((campo, index) => (
                         <Grid item xs={12} md={5} key={index}>
                             <TextField
