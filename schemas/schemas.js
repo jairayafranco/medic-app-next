@@ -70,3 +70,16 @@ export const signosVitalesSchema = yup.object({
 export const funcionRenalSchema = yup.object({
     creatinina: yup.number().required("Creatinina requerida"),
 });
+
+export const examenFisicoSchema = yup.object({
+    pielAnexos: yup.string().required("Piel/Anexos requerido"),
+    caraCraneo: yup.string().required("Cara/Craneo requerido"),
+    ojosBocaNariz: yup.string().required("Ojos/Boca/Nariz requerido"),
+    cuello: yup.string().required("Cuello requerido"),
+    torax: yup.string().required("Torax requerido"),
+    abdomen: yup.string().required("Abdomen requerido"),
+    genitourinario: yup.string().required("Genitourinario requerido"),
+    osteomuscular: yup.string().required("Osteomuscular requerido"),
+    extremidades: yup.string().required("Extremidades requerido"),
+    neurologico: yup.string().required("Neurologico requerido"),
+})

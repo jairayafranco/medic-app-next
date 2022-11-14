@@ -1,5 +1,5 @@
 import axios from "axios";
-const validFields = ["datosBasicos", "anamnesis", "antecedentes", "signosVitales", "funcionRenal"];
+const validFields = ["datosBasicos", "anamnesis", "antecedentes", "signosVitales", "funcionRenal", "examenFisico"];
 
 export const saveSessionStorageData = (field, data) => {
     const storage = window.sessionStorage.getItem("userData");
