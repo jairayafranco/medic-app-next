@@ -62,6 +62,16 @@ export default function Questions() {
             points: [10, 5, 0],
         },
         {
+            name: "DEAMBULACIÓN",
+            detail: [
+                "Es INDEPENDIENTE: camina solo 50 metros ",
+                "NECESITA AYUDA o supervisión física o verbal, para caminar 50 metros",
+                "INDEPENDIENTE EN SILLA DE RUEDAS, sin ayuda 50 metros. Capaz de girar esquinas",
+                "DEPENDIENTE: incapaz de manejarse sin asistencia"
+            ],
+            points: [15,10,5,0],
+        },
+        {
             name: "SUBIR Y BAJAR ESCALERAS",
             detail: [
                 "ES independiente. Sube y baja solo. Puede barandillas o bastones",

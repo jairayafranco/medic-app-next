@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,22 +8,55 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { TextField } from '@mui/material';
 import Questions from './BarthelQuestions';
+import { useFormik } from 'formik';
+import { AppContext } from '../context/AppContext';
 
 export default function BarthelTable() {
+    const { setBarthelResults } = AppContext();
     const questions = Questions();
-    const [inputKey, setInputKey] = useState('');
     const [points, setPoints] = useState({});
+    const [resultados, setResultados] = useState({});
+
+    const formik = useFormik({
+        initialValues: {
+            ...questions.reduce((acc, curr) => ({ ...acc, [curr.name]: '' }), {}),
+        },
+    });
 
     const handlePoints = (e, itemPoints) => {
         const { name, value } = e.target;
 
         if (!itemPoints.includes(Number(value))) {
-            setInputKey(`${Math.floor((Math.random() * 1000))}-min`);
+            formik.setFieldValue(name, '');
             return;
         }
 
-        setPoints(({ ...points, [name]: value }));
+        setPoints(({ ...points, [name]: Number(value) }));
     }
+
+    useEffect(() => {
+        const sumatoria = Object.values(points).reduce((a, b) => Number(a) + Number(b), 0);
+
+        if (sumatoria < 20) {
+            setResultados({ barthel: "DEPENDENCIA TOTAL", puntuacion: sumatoria });
+        }
+        if (sumatoria >= 20 && sumatoria < 36) {
+            setResultados({ barthel: "DEPENDENCIA GRAVE", puntuacion: sumatoria });
+        }
+        if (sumatoria >= 40 && sumatoria <= 55) {
+            setResultados({ barthel: "DEPENDENCIA MODERADA", puntuacion: sumatoria });
+        }
+        if (sumatoria >= 60 && sumatoria <= 95) {
+            setResultados({ barthel: "DEPENDENCIA LEVE", puntuacion: sumatoria });
+        }
+        if (sumatoria === 100) {
+            setResultados({ barthel: "INDEPENDENCIA", puntuacion: sumatoria });
+        }
+    }, [points]);
+
+    useEffect(() => {
+        setBarthelResults({ ...resultados, points });
+    }, [resultados]);
 
     return (
         <TableContainer component={Paper}>
@@ -57,14 +90,14 @@ export default function BarthelTable() {
                                                     name={item.name}
                                                     size='small'
                                                     variant="standard"
-                                                    type="text"
-                                                    defaultValue={points[item.name]}
+                                                    type="number"
+                                                    value={formik.values[item.name]}
+                                                    onChange={formik.handleChange}
                                                     onBlur={(e) => handlePoints(e, item.points)}
                                                     style={{ width: 50 }}
                                                     inputProps={{
                                                         style: { textAlign: 'center' }
                                                     }}
-                                                    key={inputKey}
                                                     autoComplete='off'
                                                 />
                                             </TableCell>
@@ -79,14 +112,14 @@ export default function BarthelTable() {
                         <TableCell style={{ textAlign: 'right' }} colSpan={3}>
                             SUMATORIA TOTAL
                         </TableCell>
-                        <TableCell colSpan={3} align="center">{Object.values(points).reduce((a, b) => Number(a) + Number(b), 0)}</TableCell>
+                        <TableCell colSpan={3} align="center">{resultados.puntuacion}</TableCell>
                     </TableRow>
 
                     <TableRow>
                         <TableCell style={{ textAlign: 'right' }} colSpan={2}>
                             RESULTADO DE VALORACIÓN DE LA CAPACIDAD FUNCIONAL SEGÚN INDICE DE BARTHEL:
                         </TableCell>
-                        <TableCell colSpan={2} align="center">DEPENDENCIA TOTAL</TableCell>
+                        <TableCell colSpan={2} align="center">{resultados.barthel}</TableCell>
                     </TableRow>
 
                 </TableBody>

@@ -13,6 +13,11 @@ export const AppContext = () => {
 export const AppContextProvider = ({ children }) => {
     const [notify, setNotify] = useState({ open: false, type: '', message: '' });
     const [backdrop, setBackdrop] = useState(false);
+    const [barthelResults, setBarthelResults] = useState({
+        barthel: "No Aplica",
+        puntuacion: "No Aplica",
+        points: {}
+    });
 
     const notifyHandler = (open, type, message) => {
         setNotify({ open, type, message });
@@ -23,7 +28,7 @@ export const AppContextProvider = ({ children }) => {
     }
 
     return (
-        <Context.Provider value={{ notify, notifyHandler, backdrop, backdropHandler }}>
+        <Context.Provider value={{ notify, notifyHandler, backdrop, backdropHandler, barthelResults, setBarthelResults }}>
             {children}
         </Context.Provider>
     );
