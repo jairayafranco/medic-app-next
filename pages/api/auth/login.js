@@ -5,17 +5,18 @@ import { serialize } from "cookie";
 
 export default function loginHandler(req, res) {
     const db = conn.collection('users');
+    const handleException = ({ code, message, status, type }) => res.status(code).json({ status, message, type });
 
     if (req.method === 'POST') {
         const { username, password } = req.body;
-        if (!username || !password) return res.status(400).json({ message: 'Usuario y contraseña requeridos' });
+        if (!username || !password) return handleException({ code: 400, message: 'Usuario y contraseña requeridos', status: false, type: 'warning' });
 
         db.findOne({ user: username }).then(user => {
-            if (!user) return res.status(404).json({ status: false, message: 'Usuario y/o contraseña incorrectos' });
+            if (!user) return handleException({ code: 404, message: 'Usuario y/o contraseña incorrectos', status: false, type: 'warning' });
 
             bcrypt.compare(password, user.password, (err, result) => {
-                if (err) return res.status(500).json({ error: true, message: 'Error al comparar contraseñas' });
-                if (!result) return res.status(404).json({ status: false, message: 'Usuario y/o contraseña incorrectos' });
+                if (err) return handleException({ code: 500, message: 'Error al comparar contraseña', status: false, type: 'error' });
+                if (!result) return handleException({ code: 404, message: 'Usuario y/o contraseña incorrectos', status: false, type: 'warning' });
 
                 const token = jwt.sign({
                     currentUser: user._id, user: user.user, username: user.username, cc: user.cc || '', admin: user.admin
@@ -30,14 +31,14 @@ export default function loginHandler(req, res) {
                 });
                 res.setHeader('Set-Cookie', serialized);
 
-                return res.json({ auth: true });
+                return res.json({ status: true });
             });
         }).catch(() => {
-            return res.status(500).json({ error: true, message: 'Error al buscar usuario' });
+            return handleException({ code: 500, message: 'Error al buscar usuario', status: false, type: 'error' });
         });
     }
 
     if (req.method !== 'POST') {
-        return res.status(405).json({ message: 'Method not allowed' });
+        return handleException({ code: 405, message: 'Método no permitido', status: false, type: 'error' });
     }
 }

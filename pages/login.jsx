@@ -14,6 +14,7 @@ import { loginSchema } from '../schemas/schemas';
 import { AppContext } from '../context/AppContext';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import { login } from '../api/axiosApi';
 
 export default function Login() {
     const [url, setUrl] = useState('');
@@ -27,8 +28,10 @@ export default function Login() {
             .then(res => {
                 setUrl(res.request.responseURL);
                 setLoading(false);
-            })
-    }, [])
+            }).catch(err => {
+                console.log(err);
+            });
+    }, []);
 
     const formik = useFormik({
         initialValues: {
@@ -37,20 +40,14 @@ export default function Login() {
         },
         validationSchema: loginSchema,
         onSubmit: values => {
-            axios.post('/api/auth/login', values).then(({ data: { auth } }) => {
-                if (auth) {
-                    router.push('/panel');
-                }
-            }).catch(({ response: { data: { error, status, message } } }) => {
-                if (!status) {
-                    notifyHandler(true, 'warning', message);
+            login(values).then(res => {
+                if(!res.status){
+                    notifyHandler(true, res.type, res.message);
                     formik.setSubmitting(false);
+                    return;
                 }
 
-                if (error) {
-                    notifyHandler(true, 'error', message);
-                    formik.setSubmitting(false);
-                }
+                router.push('/panel');
             });
         }
     })
