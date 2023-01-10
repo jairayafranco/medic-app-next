@@ -21,10 +21,15 @@ export default function FormDialog({ buttonTitle, title, label, buttonActionTitl
         setError(false);
     };
 
-    const handleButtonAction = () => {
+    const handleButtonAction = (e) => {
+        e.preventDefault();
         if (!input) return setError(true);
-        buttonAction(input);
-        handleClose();
+
+        buttonAction(input).then(res => {
+            if (res) {
+                handleClose();
+            }
+        })
     }
 
     return (
@@ -33,7 +38,7 @@ export default function FormDialog({ buttonTitle, title, label, buttonActionTitl
                 {buttonTitle}
             </Button>
 
-            <Dialog open={open} onClose={handleClose} maxWidth='sm' fullWidth={true} >
+            <Dialog component="form" onSubmit={handleButtonAction} open={open} onClose={handleClose} maxWidth='sm' fullWidth={true} >
                 <DialogTitle>{title}</DialogTitle>
                 <DialogContent>
                     <TextField
@@ -50,7 +55,7 @@ export default function FormDialog({ buttonTitle, title, label, buttonActionTitl
                 </DialogContent>
                 <DialogActions>
                     <Button variant='contained' color='error' onClick={handleClose}>Cancelar</Button>
-                    <Button variant='contained' onClick={handleButtonAction}>{buttonActionTitle}</Button>
+                    <Button variant='contained' type='submit'>{buttonActionTitle}</Button>
                 </DialogActions>
             </Dialog>
         </>
