@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { getUpdatedValuesFromFormik, getSessionStorageData, validFields } from '../helpers/helpers';
+import _ from 'lodash';
+import { getObjectsDifference, getSessionStorageData, validFields } from '../helpers/helpers';
 
 const api = axios.create({
     baseURL: '/api/',
@@ -38,20 +39,25 @@ export async function searchPaciente(id) {
 }
 
 export const updatePaciente = async (currentUserData, newFormikValues, option) => {
-    if (!validFields.includes(option)) {
-        return { status: false, message: "Opción no válida", type: "warning" };
-    }
+    if (!validFields.includes(option)) return { status: false, message: "Opción no válida", type: "warning" };
 
-    const updatedValues = currentUserData ? getUpdatedValuesFromFormik(currentUserData, newFormikValues) : newFormikValues;
-    if (Object.keys(updatedValues).length === 0) return { status: false, message: "No hay datos para actualizar", type: "warning" };
+    const updatedValues = currentUserData ? getObjectsDifference(currentUserData, newFormikValues) : newFormikValues;
+    if (_.isEmpty(updatedValues)) return { status: false, message: "No hay datos para actualizar", type: "warning" };
 
     const { idUsuario } = getSessionStorageData("datosBasicos");
-    if (!idUsuario) return { status: false, message: "No se encontró el id del usuario", type: "warning" };
 
     try {
-        return await api.put(`data/paciente?id=${idUsuario}&opt=${option}`, updatedValues);
-    } catch (error) {
-        return error;
+        const route = `data/paciente?id=${idUsuario}&opt=${option}`;
+
+        if (currentUserData) {
+            const response = await api.patch(route, updatedValues);
+            return response?.data;
+        } else {
+            const response = await api.put(route, updatedValues);
+            return response?.data;
+        }
+    } catch (exception) {
+        return exception.response?.data || handleError("Error al actualizar el paciente");
     }
 }
 

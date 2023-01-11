@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 export const validFields = ["datosBasicos", "anamnesis", "antecedentes", "signosVitales", "funcionRenal", "examenFisico"];
 
 export const saveSessionStorageData = (field, data) => {
@@ -36,14 +38,9 @@ export const availableSessionStorageData = () => {
     return !!storage;
 }
 
-export const getUpdatedValuesFromFormik = (userData, formikValues) => {
-    const updatedValues = {};
-    for (const key in userData) {
-        if (userData[key] !== formikValues[key]) {
-            updatedValues[key] = formikValues[key];
-        }
-    }
-    return updatedValues;
+export const getObjectsDifference = (userData, formikValues) => {
+    const updatedValues = _.differenceWith(_.toPairs(formikValues), _.toPairs(userData), _.isEqual);
+    return _.fromPairs(updatedValues);
 }
 
 export const moduleCompleted = (module) => {
