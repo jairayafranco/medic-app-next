@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getUpdatedValuesFromFormik, getSessionStorageData, validFields } from '../helpers/helpers';
 
 const api = axios.create({
     baseURL: '/api/',
@@ -36,7 +37,23 @@ export async function searchPaciente(id) {
     }
 }
 
-export async function updatePaciente() { }
+export const updatePaciente = async (currentUserData, newFormikValues, option) => {
+    if (!validFields.includes(option)) {
+        return { status: false, message: "Opción no válida", type: "warning" };
+    }
+
+    const updatedValues = currentUserData ? getUpdatedValuesFromFormik(currentUserData, newFormikValues) : newFormikValues;
+    if (Object.keys(updatedValues).length === 0) return { status: false, message: "No hay datos para actualizar", type: "warning" };
+
+    const { idUsuario } = getSessionStorageData("datosBasicos");
+    if (!idUsuario) return { status: false, message: "No se encontró el id del usuario", type: "warning" };
+
+    try {
+        return await api.put(`data/paciente?id=${idUsuario}&opt=${option}`, updatedValues);
+    } catch (error) {
+        return error;
+    }
+}
 
 export async function deletePaciente(id) {
     try {

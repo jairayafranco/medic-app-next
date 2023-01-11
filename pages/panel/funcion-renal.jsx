@@ -18,16 +18,14 @@ export default function FuncionRenal() {
         //     formik.setValues(data);
         // }
 
-        const paciente = getSessionStorageData("");
-        if (paciente) {
-            const { fechaNacimiento, genero } = paciente.datosBasicos;
-            const { peso, talla } = paciente.signosVitales;
+        const { datosBasicos, signosVitales } = getSessionStorageData("") || {};
+        if (datosBasicos && signosVitales) {
+            const { fechaNacimiento, genero } = datosBasicos;
+            const { peso, talla } = signosVitales;
             const edad = calculateAge(fechaNacimiento);
 
-            formik.setFieldValue('edad', edad);
-            formik.setFieldValue('sexo', genero);
-            formik.setFieldValue('peso', peso);
-            formik.setFieldValue('talla', talla);
+            const formikData = { edad, sexo: genero, peso, talla };
+            formik.setValues(formikData);
         }
     }, []);
 

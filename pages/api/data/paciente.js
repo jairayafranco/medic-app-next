@@ -36,7 +36,20 @@ export default function pacienteHandler(req, res) {
     if (req.method === "PUT") {
         const data = req.body;
         const { id, opt } = req.query;
-        if (!data || !id || !opt) return res.status(400).json({ status: false, message: 'Datos requeridos' });
+        if (!data || !id || !opt) return handleException({ code: 400, status: false, message: 'Datos requeridos', type: 'warning' });
+
+        db.findOneAndUpdate({ "datosBasicos.idUsuario": Number(id) }, { $set: { [opt]: data } }).then((paciente) => {
+            if (!paciente.value) return handleException({ code: 404, status: false, message: 'Paciente no encontrado', type: 'warning' });
+            return res.status(200).json({ status: true, message: 'Paciente actualizado correctamente', type: 'success' });
+        }).catch(() => {
+            return handleException({ code: 500, status: false, message: 'Error al actualizar el paciente', type: 'error' });
+        });
+    }
+
+    if (req.method === "PATCH") {
+        const data = req.body;
+        const { id, opt } = req.query;
+        if (!data || !id || !opt) return handleException({ code: 400, status: false, message: 'Datos requeridos', type: 'warning' });
 
         const update = { $set: {} };
         for (const key in data) {
@@ -44,10 +57,10 @@ export default function pacienteHandler(req, res) {
         }
 
         db.findOneAndUpdate({ "datosBasicos.idUsuario": Number(id) }, update).then((paciente) => {
-            if (!paciente.value) return res.status(404).json({ status: false, message: 'Paciente no encontrado' });
+            if (!paciente.value) return handleException({ code: 404, status: false, message: 'Paciente no encontrado', type: 'warning' });
             return res.status(200).json({ status: true, message: 'Paciente actualizado correctamente' });
         }).catch(() => {
-            return res.status(400).json({ error: true, message: 'Error al actualizar el paciente' });
+            return handleException({ code: 500, status: false, message: 'Error al actualizar el paciente', type: 'error' });
         });
     }
 

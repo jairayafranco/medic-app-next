@@ -1,5 +1,4 @@
-import axios from "axios";
-const validFields = ["datosBasicos", "anamnesis", "antecedentes", "signosVitales", "funcionRenal", "examenFisico"];
+export const validFields = ["datosBasicos", "anamnesis", "antecedentes", "signosVitales", "funcionRenal", "examenFisico"];
 
 export const saveSessionStorageData = (field, data) => {
     const storage = window.sessionStorage.getItem("userData");
@@ -37,7 +36,7 @@ export const availableSessionStorageData = () => {
     return !!storage;
 }
 
-const getUpdatedValuesFromFormik = (userData, formikValues) => {
+export const getUpdatedValuesFromFormik = (userData, formikValues) => {
     const updatedValues = {};
     for (const key in userData) {
         if (userData[key] !== formikValues[key]) {
@@ -53,24 +52,6 @@ export const moduleCompleted = (module) => {
     if (!module) return false;
 
     return !!userData[module];
-}
-
-export const updatePaciente = async (currentUserData, newFormikValues, option) => {
-    if (!validFields.includes(option)) {
-        return { data: { error: true, message: "Opción no válida" } };
-    }
-
-    const updatedValues = currentUserData ? getUpdatedValuesFromFormik(currentUserData, newFormikValues) : newFormikValues;
-    if (Object.keys(updatedValues).length === 0) return { data: { empty: true, message: "No hay datos para actualizar" } };
-
-    const { idUsuario } = getSessionStorageData("datosBasicos");
-    if (!idUsuario) return { data: { error: true, message: "No se encontró el id del usuario" } };
-
-    try {
-        return await axios.put(`/api/data/paciente?id=${idUsuario}&opt=${option}`, updatedValues);
-    } catch (error) {
-        return error;
-    }
 }
 
 export function calculateAge(birthday) {

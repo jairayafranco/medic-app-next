@@ -13,7 +13,8 @@ import { AppContext } from '../../context/AppContext';
 import Dialog from '../../components/Dialog';
 import Confirm from '../../components/Confirm';
 import axios from 'axios';
-import { saveSessionStorageData, getSessionStorageData, clearSessionStorageData, availableSessionStorageData, updatePaciente } from '../../helpers/helpers';
+import { saveSessionStorageData, getSessionStorageData, clearSessionStorageData, availableSessionStorageData } from '../../helpers/helpers';
+import { createPaciente, searchPaciente, deletePaciente, updatePaciente } from '../../api/axiosApi';
 
 export default function DatosBasicos() {
     const { notifyHandler, backdropHandler } = AppContext();
@@ -62,68 +63,72 @@ export default function DatosBasicos() {
         validationSchema: datosBasicosSchema,
         onSubmit: values => {
             backdropHandler(true);
-            axios.post('/api/data/paciente', values).then(({ data: { status, message } }) => {
-                if (status) {
-                    notifyHandler(true, 'success', message);
-                    saveSessionStorageData("datosBasicos", values);
+            createPaciente(values).then(res => {
+                if (!res.status) {
+                    notifyHandler(true, res.type, res.message);
+                    return;
                 }
-            }).catch(({ response: { data: { error, status, message } } }) => {
-                if (!status) notifyHandler(true, 'warning', message);
-                if (error) notifyHandler(true, 'error', message);
+
+                notifyHandler(true, res.type, res.message);
+                saveSessionStorageData("datosBasicos", values);
             }).finally(() => backdropHandler(false));
         }
     });
 
-    const searchPaciente = (id) => {
+    const handleSearchPaciente = (id) => {
         backdropHandler(true);
-        axios.get(`/api/data/paciente?id=${id}`).then(({ data: { status, paciente } }) => {
-            if (status) {
-                formik.setValues(paciente.datosBasicos);
-                saveSessionStorageData("", paciente);
+        const closeDialog = searchPaciente(id).then(res => {
+            if (!res.status) {
+                notifyHandler(true, res.type, res.message);
+                return false;
             }
-        }).catch(({ response: { data: { error, status, message } } }) => {
-            if (!status) notifyHandler(true, 'warning', message);
-            if (error) notifyHandler(true, 'error', message);
+
+            formik.setValues(res.paciente.datosBasicos);
+            saveSessionStorageData("", res.paciente);
+            return true;
         }).finally(() => backdropHandler(false));
+
+        return closeDialog; // Esto es para cerrar el dialogo segun sea el caso
     }
 
-    const deletePaciente = () => {
+    const handleDeletePaciente = () => {
         const id = getSessionStorageData("datosBasicos")?.idUsuario;
         backdropHandler(true);
-        axios.delete(`/api/data/paciente?id=${id}`).then(({ data: { status, message } }) => {
-            if (status) {
-                notifyHandler(true, 'success', message);
-                clearSessionStorageData();
-                formik.resetForm();
+
+        deletePaciente(id).then(res => {
+            if (!res.status) {
+                notifyHandler(true, res.type, res.message);
+                return;
             }
-        }).catch(({ response: { data: { error, status, message } } }) => {
-            if (!status) notifyHandler(true, 'warning', message);
-            if (error) notifyHandler(true, 'error', message);
+
+            notifyHandler(true, res.type, res.message);
+            clearSessionStorageData();
+            formik.resetForm();
         }).finally(() => backdropHandler(false));
     }
 
     const handleUpdatePaciente = () => {
-        backdropHandler(true);
+        // backdropHandler(true);
         const userData = getSessionStorageData("datosBasicos");
         const formikValues = formik.values;
 
-        updatePaciente(userData, formikValues, "datosBasicos").then(res => {
-            const data = res.data || res.response?.data;
+        // updatePaciente(userData, formikValues, "datosBasicos").then(res => {
+        //     const data = res.data || res.response?.data;
 
-            if (data.empty) notifyHandler(true, 'warning', data.message);
+        //     if (data.empty) notifyHandler(true, 'warning', data.message);
 
-            if (data.status) {
-                notifyHandler(true, 'success', data.message);
-                saveSessionStorageData("datosBasicos", formikValues);
-            }
+        //     if (data.status) {
+        //         notifyHandler(true, 'success', data.message);
+        //         saveSessionStorageData("datosBasicos", formikValues);
+        //     }
 
-            if (!data.status) notifyHandler(true, 'warning', data.message);
-            if (data.error) notifyHandler(true, 'error', data.message);
-        }).finally(() => backdropHandler(false));
+        //     if (!data.status) notifyHandler(true, 'warning', data.message);
+        //     if (data.error) notifyHandler(true, 'error', data.message);
+        // }).finally(() => backdropHandler(false));
     }
 
     return (
-        <form style={{ display: 'flex', flexWrap: 'wrap' }} onSubmit={formik.handleSubmit} autoComplete="off">
+        <div style={{ display: 'flex', flexWrap: 'wrap' }} autoComplete="off">
             <Grid container rowSpacing={2}>
                 {campos.map(({ name, property, type, options }, index) => (
                     <Grid item xs={12} md={5} key={index}>
@@ -193,13 +198,13 @@ export default function DatosBasicos() {
             </Grid>
             <ButtonGroup id={styles.buttonsContainer} orientation='horizontal' variant="contained" sx={{ mt: -3 }}>
                 <Grid item className={styles.buttonGrid}>
-                    <Button type="submit" disabled={availableSessionStorageData()}>Crear</Button>
+                    <Button onClick={formik.handleSubmit} disabled={availableSessionStorageData()}>Crear</Button>
                     <Dialog
                         buttonTitle="Buscar"
                         title="Buscar Paciente"
                         label="Identificacion Paciente"
                         buttonActionTitle="Buscar"
-                        buttonAction={searchPaciente}
+                        buttonAction={handleSearchPaciente}
                     />
                     <Button disabled={!availableSessionStorageData()} onClick={handleUpdatePaciente}>Actualizar</Button>
                     <Button onClick={() => { formik.resetForm(), clearSessionStorageData() }}>Limpiar</Button>
@@ -207,11 +212,11 @@ export default function DatosBasicos() {
                         buttonTitle="Eliminar"
                         title="Eliminar Paciente"
                         content="¿Esta seguro que desea eliminar este paciente?"
-                        buttonAction={deletePaciente}
+                        buttonAction={handleDeletePaciente}
                         disabled={!availableSessionStorageData()}
                     />
                 </Grid>
             </ButtonGroup>
-        </form>
+        </div>
     );
 }

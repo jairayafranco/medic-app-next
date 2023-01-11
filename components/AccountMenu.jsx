@@ -12,6 +12,7 @@ import Logout from '@mui/icons-material/Logout';
 import UserAvatar from './UserAvatar';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import { clearSessionStorageData } from '../helpers/helpers';
 
 export default function AccountMenu() {
     const [userName, setUserName] = useState('');
@@ -104,6 +105,7 @@ export default function AccountMenu() {
                 <MenuItem onClick={() => {
                     axios.post('/api/auth/logout').then(() => {
                         window.location.reload();
+                        clearSessionStorageData();
                     }).catch(err => {
                         console.log(err);
                     });
