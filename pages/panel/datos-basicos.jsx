@@ -172,7 +172,6 @@ export default function DatosBasicos() {
                         }
                     </Grid>
                 ))}
-
             </Grid>
             <ButtonGroup
                 id={styles.buttonsContainer}
@@ -197,9 +196,6 @@ export default function DatosBasicos() {
                         buttonAction={handleDeletePaciente}
                         disabled={!availableSessionStorageData()}
                     />
-                </Grid>
-                <Grid item>
-                    <UserPicture />
                 </Grid>
             </ButtonGroup>
         </div>

@@ -8,14 +8,13 @@ import { useEffect, useState } from 'react'
 import { useFormik } from 'formik';
 import { signosVitalesSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
-import { saveSessionStorageData, getSessionStorageData, updatePaciente, moduleCompleted } from '../../helpers/helpers';
+import { saveSessionStorageData, getSessionStorageData, moduleCompleted } from '../../helpers/helpers';
+import { updatePaciente, getSignosVitalesHistory, saveSignosVitalesHistory } from '../../api/axiosApi';
 import FullScreenModal from '../../components/FullScreenModal';
 import DataTable from '../../components/DataTable';
-import axios from 'axios';
 
 export default function SignosVitales() {
     const { notifyHandler, backdropHandler } = AppContext();
-
     const [history, setHistory] = useState([]);
 
     useEffect(() => {
@@ -23,7 +22,7 @@ export default function SignosVitales() {
         if (data) {
             formik.setValues(data);
         }
-        getSignosVitalesHistory();
+        getSignosVitalesHistory().then(res => setHistory(res.history))
     }, []);
 
     const campos = [
@@ -192,34 +191,19 @@ export default function SignosVitales() {
             const formikValues = values;
 
             updatePaciente(signosVitalesData, formikValues, "signosVitales").then(res => {
-                const data = res.data || res.response?.data;
-
-                if (data.empty) notifyHandler(true, 'warning', data.message);
-
-                if (data.status) {
-                    notifyHandler(true, 'success', data.message);
-                    saveSessionStorageData("signosVitales", formikValues);
-                    axios.post('/api/data/signosVitalesHistory', { ...formikValues, idUsuario: getSessionStorageData("datosBasicos")?.idUsuario });
-                    getSignosVitalesHistory();
+                if (!res.status) {
+                    notifyHandler(true, res.type, res.message);
+                    return;
                 }
 
-                if (!data.status) notifyHandler(true, 'warning', data.message);
-                if (data.error) notifyHandler(true, 'error', data.message);
+                notifyHandler(true, res.type, res.message);
+                saveSessionStorageData("signosVitales", formikValues);
+                saveSignosVitalesHistory({ ...formikValues, idUsuario: getSessionStorageData("datosBasicos")?.idUsuario })
+                    .then(() => getSignosVitalesHistory().then(res => setHistory(res.history)))
             }).finally(() => backdropHandler(false));
         }
     });
     useEffect(() => handleSomeValues(), [formik.values]);
-
-    const getSignosVitalesHistory = () => {
-        const paciente = getSessionStorageData("datosBasicos");
-        if (paciente) {
-            axios.get(`/api/data/signosVitalesHistory?id=${paciente.idUsuario}`).then(({ data }) => {
-                setHistory(data.history);
-            }).catch(err => {
-                console.log(err);
-            });
-        }
-    }
 
     const colorSchema = (campo) => {
         const { tensionArterialDiastolica, tensionArterialSistolica, peso, talla,
@@ -314,7 +298,7 @@ export default function SignosVitales() {
                 <Paper key={index} elevation={3} sx={{ p: 2, width: '100%' }}>
                     <Grid container rowSpacing={2}>
                         {
-                            campos[index].fields.map((campo, index) => (
+                            group.fields.map((campo, index) => (
                                 <Grid item xs={12} md={5} key={index}>
                                     <TextField
                                         id={campo.property}

@@ -6,7 +6,8 @@ import { useEffect } from 'react'
 import { useFormik } from 'formik';
 import { antecedentesSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
-import { saveSessionStorageData, getSessionStorageData, updatePaciente, moduleCompleted } from '../../helpers/helpers';
+import { saveSessionStorageData, getSessionStorageData, moduleCompleted } from '../../helpers/helpers';
+import { updatePaciente } from '../../api/axiosApi';
 
 export default function Antecedentes() {
     const { notifyHandler, backdropHandler } = AppContext();
@@ -48,17 +49,13 @@ export default function Antecedentes() {
             const formikValues = values;
 
             updatePaciente(antecedentesData, formikValues, "antecedentes").then(res => {
-                const data = res.data || res.response?.data;
-
-                if (data.empty) notifyHandler(true, 'warning', data.message);
-
-                if (data.status) {
-                    notifyHandler(true, 'success', data.message);
-                    saveSessionStorageData("antecedentes", formikValues);
+                if (!res.status) {
+                    notifyHandler(true, res.type, res.message);
+                    return;
                 }
 
-                if (!data.status) notifyHandler(true, 'warning', data.message);
-                if (data.error) notifyHandler(true, 'error', data.message);
+                notifyHandler(true, res.type, res.message);
+                saveSessionStorageData("antecedentes", formikValues);
             }).finally(() => backdropHandler(false));
         },
     });

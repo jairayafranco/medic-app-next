@@ -69,3 +69,24 @@ export async function deletePaciente(id) {
         return exception.response?.data || handleError("Error al eliminar el paciente");
     }
 }
+
+export async function getSignosVitalesHistory() {
+    const paciente = getSessionStorageData("datosBasicos");
+    if (paciente) {
+        try {
+            const response = await api.get(`data/signosVitalesHistory?id=${paciente.idUsuario}`);
+            return response?.data;
+        } catch (exception) {
+            return exception.response?.data || handleError("Error al obtener la historia de signos vitales");
+        }
+    }
+}
+
+export async function saveSignosVitalesHistory(data) {
+    try {
+        const response = await api.post('data/signosVitalesHistory', data);
+        return response?.data;
+    } catch (exception) {
+        return exception.response?.data || handleError("Error al guardar la historia de signos vitales");
+    }
+}

@@ -17,13 +17,3 @@
         width: 90%;
     }
 }
-
-/* medium screen */
-@media (min-width: 768px) {
-    #buttonsContainer {
-        display: flex;
-        flex-direction: row;
-        gap: 5em;
-        align-items: center
-    }
-}

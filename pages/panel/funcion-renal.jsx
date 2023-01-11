@@ -68,7 +68,7 @@ export default function FuncionRenal() {
         <form style={{ display: 'flex', flexWrap: 'wrap', gap: "1.5em" }} onSubmit={formik.handleSubmit} autoComplete="off">
             {campos.map((group, index) => (
                 <Container key={index} group={group.group}>
-                    {campos[index].fields.map((campo, index) => (
+                    {group.fields.map((campo, index) => (
                         <Grid item xs={12} md={5} key={index}>
                             <TextField
                                 id={campo.name}
