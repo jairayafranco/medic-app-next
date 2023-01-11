@@ -108,23 +108,19 @@ export default function DatosBasicos() {
     }
 
     const handleUpdatePaciente = () => {
-        // backdropHandler(true);
         const userData = getSessionStorageData("datosBasicos");
         const formikValues = formik.values;
 
-        // updatePaciente(userData, formikValues, "datosBasicos").then(res => {
-        //     const data = res.data || res.response?.data;
+        backdropHandler(true);
+        updatePaciente(userData, formikValues, "datosBasicos").then(res => {
+            if (!res.status) {
+                notifyHandler(true, res.type, res.message);
+                return;
+            }
 
-        //     if (data.empty) notifyHandler(true, 'warning', data.message);
-
-        //     if (data.status) {
-        //         notifyHandler(true, 'success', data.message);
-        //         saveSessionStorageData("datosBasicos", formikValues);
-        //     }
-
-        //     if (!data.status) notifyHandler(true, 'warning', data.message);
-        //     if (data.error) notifyHandler(true, 'error', data.message);
-        // }).finally(() => backdropHandler(false));
+            notifyHandler(true, res.type, res.message);
+            saveSessionStorageData("datosBasicos", formikValues);
+        }).finally(() => backdropHandler(false));
     }
 
     return (
@@ -135,6 +131,7 @@ export default function DatosBasicos() {
                         {
                             ![4, 5, 12].includes(index) && (
                                 <TextField
+                                    autoComplete='off'
                                     id={property}
                                     name={property}
                                     label={name}
@@ -175,28 +172,13 @@ export default function DatosBasicos() {
                         }
                     </Grid>
                 ))}
-                <Grid item xs={12} md={5} sx={{
-                    display: 'flex', alignItems: 'center'
-                }}>
-                    <Avatar
-                        alt="Remy Sharp"
-                        src={''}
-                        sx={{ width: 100, height: 100, mt: 0.5, mb: 0.5, ml: 1 }}
-                    />
-                    <Button variant="contained" color="secondary" component="label" sx={{ mt: 0.5, ml: 1 }}>
-                        Tomar Foto
-                    </Button>
-                    <Button variant="contained" component="label" sx={{ mt: 0.5, ml: 1 }}>
-                        Subir Foto
-                        <input
-                            type="file"
-                            hidden
-                            accept='image/*'
-                        />
-                    </Button>
-                </Grid>
+
             </Grid>
-            <ButtonGroup id={styles.buttonsContainer} orientation='horizontal' variant="contained" sx={{ mt: -3 }}>
+            <ButtonGroup
+                id={styles.buttonsContainer}
+                orientation='horizontal' variant="contained"
+                sx={{ mt: 3 }}
+            >
                 <Grid item className={styles.buttonGrid}>
                     <Button onClick={formik.handleSubmit} disabled={availableSessionStorageData()}>Crear</Button>
                     <Dialog
@@ -216,7 +198,37 @@ export default function DatosBasicos() {
                         disabled={!availableSessionStorageData()}
                     />
                 </Grid>
+                <Grid item>
+                    <UserPicture />
+                </Grid>
             </ButtonGroup>
         </div>
     );
 }
+
+function UserPicture() {
+    return (
+        <Grid item xs={12} md={5} sx={{
+            display: 'flex', alignItems: 'center', gap: 0.5
+        }}>
+            <Avatar
+                alt="Remy Sharp"
+                src={''}
+                sx={{ width: 80, height: 80, my: 0.5 }}
+            />
+            <ButtonGroup orientation='horizontal' variant="contained">
+                <Button color="secondary" component="label">
+                    Tomar Foto
+                </Button>
+                <Button component="label">
+                    Subir Foto
+                    <input
+                        type="file"
+                        hidden
+                        accept='image/*'
+                    />
+                </Button>
+            </ButtonGroup>
+        </Grid>
+    );
+} 

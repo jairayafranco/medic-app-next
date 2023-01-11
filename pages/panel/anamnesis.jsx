@@ -6,7 +6,8 @@ import { useEffect } from 'react'
 import { useFormik } from 'formik';
 import { anamnesisSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
-import { saveSessionStorageData, getSessionStorageData, moduleCompleted, updatePaciente } from '../../helpers/helpers';
+import { saveSessionStorageData, getSessionStorageData, moduleCompleted } from '../../helpers/helpers';
+import { updatePaciente } from '../../api/axiosApi';
 
 export default function Anamnesis() {
     const { notifyHandler, backdropHandler } = AppContext();
@@ -44,17 +45,13 @@ export default function Anamnesis() {
             const formikValues = values;
 
             updatePaciente(anamnesisData, formikValues, "anamnesis").then(res => {
-                const data = res.data || res.response?.data;
-
-                if (data.empty) notifyHandler(true, 'warning', data.message);
-
-                if (data.status) {
-                    notifyHandler(true, 'success', data.message);
-                    saveSessionStorageData("anamnesis", formikValues);
+                if (!res.status) {
+                    notifyHandler(true, res.type, res.message);
+                    return;
                 }
 
-                if (!data.status) notifyHandler(true, 'warning', data.message);
-                if (data.error) notifyHandler(true, 'error', data.message);
+                notifyHandler(true, res.type, res.message);
+                saveSessionStorageData("anamnesis", formikValues);
             }).finally(() => backdropHandler(false));
         },
     });
