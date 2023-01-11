@@ -24,6 +24,11 @@ export default function Login() {
     const { notifyHandler } = AppContext();
 
     useEffect(() => {
+        const windowWidth = window.innerWidth;
+        if (windowWidth < 600) {
+            setLoading(false);
+        }
+
         axios.get('https://source.unsplash.com/1920x1080/?hospital')
             .then(res => {
                 setUrl(res.request.responseURL);
@@ -41,7 +46,7 @@ export default function Login() {
         validationSchema: loginSchema,
         onSubmit: values => {
             login(values).then(res => {
-                if(!res.status){
+                if (!res.status) {
                     notifyHandler(true, res.type, res.message);
                     formik.setSubmitting(false);
                     return;
@@ -56,7 +61,6 @@ export default function Login() {
         <>
             <Grid container component="main" sx={{ height: '100vh' }}>
                 <CssBaseline />
-
                 <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
                     <Box
                         sx={{
@@ -127,7 +131,7 @@ export default function Login() {
 
                 {
                     loading
-                        ? <Grid item xs={false} sm={4} md={7} >
+                        ? <Grid item xs={false} sm={4} md={7}>
                             <Spinner />
                         </Grid>
                         : <Grid
@@ -145,6 +149,7 @@ export default function Login() {
                             }}
                         />
                 }
+
             </Grid>
         </>
     );
