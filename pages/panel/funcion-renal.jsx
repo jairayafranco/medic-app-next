@@ -20,12 +20,13 @@ export default function FuncionRenal() {
 
         const { datosBasicos, signosVitales } = getSessionStorageData("") || {};
         if (datosBasicos && signosVitales) {
-            const { fechaNacimiento, genero } = datosBasicos;
-            const { peso, talla } = signosVitales;
+            const { fechaNacimiento, genero, peso, talla } = { ...datosBasicos, ...signosVitales };
             const edad = calculateAge(fechaNacimiento);
 
-            const formikData = { edad, sexo: genero, peso, talla };
-            formik.setValues(formikData);
+            formik.setFieldValue('edad', edad);
+            formik.setFieldValue('sexo', genero);
+            formik.setFieldValue('peso', peso);
+            formik.setFieldValue('talla', talla);
         }
     }, []);
 

@@ -45,10 +45,9 @@ export default function Antecedentes() {
         validationSchema: antecedentesSchema,
         onSubmit: (values) => {
             backdropHandler(true);
-            const antecedentesData = getSessionStorageData("antecedentes");
             const formikValues = values;
 
-            updatePaciente(antecedentesData, formikValues, "antecedentes").then(res => {
+            updatePaciente(formikValues).then(res => {
                 if (!res.status) {
                     notifyHandler(true, res.type, res.message);
                     return;

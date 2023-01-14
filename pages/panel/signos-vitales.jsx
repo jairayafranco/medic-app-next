@@ -187,10 +187,9 @@ export default function SignosVitales() {
         validationSchema: signosVitalesSchema,
         onSubmit: values => {
             backdropHandler(true);
-            const signosVitalesData = getSessionStorageData("signosVitales");
             const formikValues = values;
 
-            updatePaciente(signosVitalesData, formikValues, "signosVitales").then(res => {
+            updatePaciente(formikValues).then(res => {
                 if (!res.status) {
                     notifyHandler(true, res.type, res.message);
                     return;

@@ -12,7 +12,6 @@ import { datosBasicosSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
 import Dialog from '../../components/Dialog';
 import Confirm from '../../components/Confirm';
-import axios from 'axios';
 import { saveSessionStorageData, getSessionStorageData, clearSessionStorageData, availableSessionStorageData } from '../../helpers/helpers';
 import { createPaciente, searchPaciente, deletePaciente, updatePaciente } from '../../api/axiosApi';
 
@@ -92,10 +91,8 @@ export default function DatosBasicos() {
     }
 
     const handleDeletePaciente = () => {
-        const id = getSessionStorageData("datosBasicos")?.idUsuario;
         backdropHandler(true);
-
-        deletePaciente(id).then(res => {
+        deletePaciente().then(res => {
             if (!res.status) {
                 notifyHandler(true, res.type, res.message);
                 return;
@@ -108,11 +105,10 @@ export default function DatosBasicos() {
     }
 
     const handleUpdatePaciente = () => {
-        const userData = getSessionStorageData("datosBasicos");
         const formikValues = formik.values;
 
         backdropHandler(true);
-        updatePaciente(userData, formikValues, "datosBasicos").then(res => {
+        updatePaciente(formikValues).then(res => {
             if (!res.status) {
                 notifyHandler(true, res.type, res.message);
                 return;

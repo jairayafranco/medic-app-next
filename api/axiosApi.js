@@ -1,6 +1,6 @@
 import axios from 'axios';
 import _ from 'lodash';
-import { getObjectsDifference, getSessionStorageData, validFields } from '../helpers/helpers';
+import { getObjectsDifference, getSessionStorageData, routesToModules } from '../helpers/helpers';
 
 const api = axios.create({
     baseURL: '/api/',
@@ -38,30 +38,34 @@ export async function searchPaciente(id) {
     }
 }
 
-export const updatePaciente = async (currentUserData, newFormikValues, option) => {
-    if (!validFields.includes(option)) return { status: false, message: "Opción no válida", type: "warning" };
+export const updatePaciente = async (newFormikValues) => {
+    const ruta = window.location.pathname.split("/")[2];
+    const { name } = routesToModules.find(({ route }) => route === ruta);
+    const currentUserData = getSessionStorageData(name);
 
-    const updatedValues = currentUserData ? getObjectsDifference(currentUserData, newFormikValues) : newFormikValues;
+    if (_.isNull(currentUserData)) return { status: false, message: "No se encontraron los datos", type: "error" };
+    if (_.isUndefined(currentUserData)) return { status: false, message: "El modulo no existe", type: "error" };
+
+    const updatedValues = !!currentUserData ? getObjectsDifference(currentUserData, newFormikValues) : newFormikValues;
     if (_.isEmpty(updatedValues)) return { status: false, message: "No hay datos para actualizar", type: "warning" };
 
     const { idUsuario } = getSessionStorageData("datosBasicos");
+    if (!_.isNumber(idUsuario)) return { status: false, message: "No se encontró el id del paciente", type: "error" };
 
+    const route = `data/paciente?id=${idUsuario}&opt=${name}`;
     try {
-        const route = `data/paciente?id=${idUsuario}&opt=${option}`;
-
-        if (currentUserData) {
-            const response = await api.patch(route, updatedValues);
-            return response?.data;
-        } else {
-            const response = await api.put(route, updatedValues);
-            return response?.data;
-        }
+        const opt = !!currentUserData ? "patch" : "put";
+        const response = await api[opt](route, updatedValues);
+        return response?.data;
     } catch (exception) {
         return exception.response?.data || handleError("Error al actualizar el paciente");
     }
 }
 
-export async function deletePaciente(id) {
+export async function deletePaciente() {
+    const id = getSessionStorageData("datosBasicos")?.idUsuario;
+    if (!id) return { status: false, message: "No se encontró el id del paciente", type: "error" };
+
     try {
         const response = await api.delete(`data/paciente?id=${id}`);
         return response?.data;

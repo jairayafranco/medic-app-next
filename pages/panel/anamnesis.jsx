@@ -41,10 +41,9 @@ export default function Anamnesis() {
         validationSchema: anamnesisSchema,
         onSubmit: (values) => {
             backdropHandler(true);
-            const anamnesisData = getSessionStorageData("anamnesis");
             const formikValues = values;
 
-            updatePaciente(anamnesisData, formikValues, "anamnesis").then(res => {
+            updatePaciente(formikValues).then(res => {
                 if (!res.status) {
                     notifyHandler(true, res.type, res.message);
                     return;
