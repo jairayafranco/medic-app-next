@@ -7,26 +7,27 @@ import { useEffect } from 'react'
 import { useFormik } from 'formik';
 import { funcionRenalSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
-import { saveSessionStorageData, getSessionStorageData, updatePaciente, moduleCompleted, calculateAge } from '../../helpers/helpers';
+import { saveSessionStorageData, getSessionStorageData, moduleCompleted, calculateAge } from '../../helpers/helpers';
+import { updatePaciente } from '../../api/axiosApi';
 
 export default function FuncionRenal() {
     const { notifyHandler, backdropHandler } = AppContext();
 
     useEffect(() => {
-        // const data = getSessionStorageData('funcionRenal');
-        // if (data) {
-        //     formik.setValues(data);
-        // }
+        const data = getSessionStorageData('funcionRenal');
+        if (data) {
+            formik.setValues(data);
+        } else {
+            const { datosBasicos, signosVitales } = getSessionStorageData("") || {};
+            if (datosBasicos && signosVitales) {
+                const { fechaNacimiento, genero, peso, talla } = { ...datosBasicos, ...signosVitales };
+                const edad = calculateAge(fechaNacimiento);
 
-        const { datosBasicos, signosVitales } = getSessionStorageData("") || {};
-        if (datosBasicos && signosVitales) {
-            const { fechaNacimiento, genero, peso, talla } = { ...datosBasicos, ...signosVitales };
-            const edad = calculateAge(fechaNacimiento);
-
-            formik.setFieldValue('edad', edad);
-            formik.setFieldValue('sexo', genero);
-            formik.setFieldValue('peso', peso);
-            formik.setFieldValue('talla', talla);
+                formik.setFieldValue('edad', edad);
+                formik.setFieldValue('sexo', genero);
+                formik.setFieldValue('peso', peso);
+                formik.setFieldValue('talla', talla);
+            }
         }
     }, []);
 
