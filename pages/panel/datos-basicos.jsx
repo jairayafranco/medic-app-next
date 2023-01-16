@@ -1,7 +1,6 @@
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import Avatar from '@mui/material/Avatar';
 import Grid from '@mui/material/Grid';
 import { useEffect } from 'react'
 import Selector from '../../components/Selector';
@@ -12,9 +11,8 @@ import { datosBasicosSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
 import Dialog from '../../components/Dialog';
 import Confirm from '../../components/Confirm';
+import PacientePicture from '../../components/PacientePicture';
 import Box from '@mui/material/Box';
-import UploadIcon from '@mui/icons-material/Upload';
-import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import { saveSessionStorageData, getSessionStorageData, clearSessionStorageData, availableSessionStorageData } from '../../helpers/helpers';
 import { createPaciente, searchPaciente, deletePaciente, updatePaciente } from '../../api/axiosApi';
 
@@ -124,7 +122,7 @@ export default function DatosBasicos() {
 
     return (
         <Box className={styles.mainContainer}>
-            <UserPicture />
+            <PacientePicture />
             <Box style={{ display: 'flex', flexWrap: 'wrap' }} autoComplete="off">
                 <Grid container rowSpacing={2}>
                     {campos.map(({ name, property, type, options }, index) => (
@@ -195,6 +193,7 @@ export default function DatosBasicos() {
                             title="Eliminar Paciente"
                             content="¿Esta seguro que desea eliminar este paciente?"
                             buttonAction={handleDeletePaciente}
+                            buttonColor="error"
                             disabled={!availableSessionStorageData()}
                         />
                     </Grid>
@@ -203,28 +202,3 @@ export default function DatosBasicos() {
         </Box>
     );
 }
-
-function UserPicture() {
-    return (
-        <Box className={styles.userImgContainer}>
-            <Avatar
-                alt="Remy Sharp"
-                src={''}
-                sx={{ width: 170, height: 170 }}
-            />
-            <ButtonGroup orientation='vertical' variant="contained">
-                <Button color="secondary" component="label" startIcon={<CameraAltIcon />}>
-                    Tomar Foto
-                </Button>
-                <Button component="label" startIcon={<UploadIcon />}>
-                    Subir Foto
-                    <input
-                        type="file"
-                        hidden
-                        accept='image/*'
-                    />
-                </Button>
-            </ButtonGroup>
-        </Box>
-    );
-} 

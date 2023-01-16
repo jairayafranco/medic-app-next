@@ -6,7 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-export default function Confirm({ buttonTitle, title, content, buttonAction, disabled }) {
+export default function Confirm({ buttonTitle, title, content, buttonAction, disabled, buttonColor, buttonStartIcon, buttonComponentType }) {
     const [open, setOpen] = useState(false);
 
     const handleClickOpen = () => {
@@ -24,7 +24,7 @@ export default function Confirm({ buttonTitle, title, content, buttonAction, dis
 
     return (
         <>
-            <Button variant="contained" color='error' onClick={handleClickOpen} disabled={disabled}>
+            <Button variant="contained" component={buttonComponentType} color={buttonColor} onClick={handleClickOpen} disabled={disabled} startIcon={buttonStartIcon}>
                 {buttonTitle}
             </Button>
 

@@ -17,12 +17,6 @@
         width: 90%;
     }
 
-    .userImgContainer {
-        display: flex;
-        align-items: center;
-        gap: 0.5em;
-    }
-
     .mainContainer {
         display: flex;
         flex-direction: column;
@@ -32,12 +26,4 @@
 
 .mainContainer {
     display: flex;
-}
-
-.userImgContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5em;
-    margin: 1.5em;
 }

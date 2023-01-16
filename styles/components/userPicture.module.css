@@ -1,0 +1,16 @@
+/* small screen */
+@media (max-width: 1225px) {
+    .userImgContainer {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+    }
+}
+
+.userImgContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5em;
+    margin: 1.5em;
+}
