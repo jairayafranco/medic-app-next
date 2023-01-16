@@ -22,7 +22,7 @@ export default function SignosVitales() {
         if (data) {
             formik.setValues(data);
         }
-        getSignosVitalesHistory().then(res => setHistory(res.history))
+        getSignosVitalesHistory().then(res => setHistory(res?.history))
     }, []);
 
     const campos = [
@@ -198,7 +198,7 @@ export default function SignosVitales() {
                 notifyHandler(true, res.type, res.message);
                 saveSessionStorageData("signosVitales", formikValues);
                 saveSignosVitalesHistory({ ...formikValues, idUsuario: getSessionStorageData("datosBasicos")?.idUsuario })
-                    .then(() => getSignosVitalesHistory().then(res => setHistory(res.history)))
+                    .then(() => getSignosVitalesHistory().then(res => setHistory(res?.history)))
             }).finally(() => backdropHandler(false));
         }
     });
