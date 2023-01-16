@@ -12,6 +12,9 @@ import { datosBasicosSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
 import Dialog from '../../components/Dialog';
 import Confirm from '../../components/Confirm';
+import Box from '@mui/material/Box';
+import UploadIcon from '@mui/icons-material/Upload';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import { saveSessionStorageData, getSessionStorageData, clearSessionStorageData, availableSessionStorageData } from '../../helpers/helpers';
 import { createPaciente, searchPaciente, deletePaciente, updatePaciente } from '../../api/axiosApi';
 
@@ -120,99 +123,100 @@ export default function DatosBasicos() {
     }
 
     return (
-        <div style={{ display: 'flex', flexWrap: 'wrap' }} autoComplete="off">
-            <Grid container rowSpacing={2}>
-                {campos.map(({ name, property, type, options }, index) => (
-                    <Grid item xs={12} md={5} key={index}>
-                        {
-                            ![4, 5, 12].includes(index) && (
-                                <TextField
-                                    autoComplete='off'
-                                    id={property}
-                                    name={property}
-                                    label={name}
-                                    value={formik.values[property]}
-                                    onChange={formik.handleChange}
-                                    type={type}
-                                    variant="standard"
-                                    fullWidth
-                                    style={{ width: '90%' }}
-                                    error={formik.touched[property] && Boolean(formik.errors[property])}
-                                    helperText={formik.touched[property] && formik.errors[property]}
-                                />
-                            )
-                        }
-                        {
-                            index === 5 && (
-                                <DateSelector
-                                    label={name}
-                                    name={property}
-                                    value={formik.values[property]}
-                                    onChange={value => formik.setFieldValue(property, value)}
-                                    error={formik.touched[property] && Boolean(formik.errors[property])}
-                                    helperText={formik.touched[property] && formik.errors[property]}
-                                />
-                            )
-                        }
-                        {
-                            [4, 12].includes(index) && (
-                                <Selector
-                                    title={name}
-                                    value={formik.values[property]}
-                                    values={options}
-                                    error={formik.touched[property] && Boolean(formik.errors[property])}
-                                    onChange={value => formik.setFieldValue(property, value)}
-                                    helperText={formik.touched[property] && formik.errors[property]}
-                                />
-                            )
-                        }
-                    </Grid>
-                ))}
-            </Grid>
-            <ButtonGroup
-                id={styles.buttonsContainer}
-                orientation='horizontal' variant="contained"
-                sx={{ mt: 3 }}
-            >
-                <Grid item className={styles.buttonGrid}>
-                    <Button onClick={formik.handleSubmit} disabled={availableSessionStorageData()}>Crear</Button>
-                    <Dialog
-                        buttonTitle="Buscar"
-                        title="Buscar Paciente"
-                        label="Identificacion Paciente"
-                        buttonActionTitle="Buscar"
-                        buttonAction={handleSearchPaciente}
-                    />
-                    <Button disabled={!availableSessionStorageData()} onClick={handleUpdatePaciente}>Actualizar</Button>
-                    <Button onClick={() => { formik.resetForm(), clearSessionStorageData() }}>Limpiar</Button>
-                    <Confirm
-                        buttonTitle="Eliminar"
-                        title="Eliminar Paciente"
-                        content="¿Esta seguro que desea eliminar este paciente?"
-                        buttonAction={handleDeletePaciente}
-                        disabled={!availableSessionStorageData()}
-                    />
+        <Box className={styles.mainContainer}>
+            <UserPicture />
+            <Box style={{ display: 'flex', flexWrap: 'wrap' }} autoComplete="off">
+                <Grid container rowSpacing={2}>
+                    {campos.map(({ name, property, type, options }, index) => (
+                        <Grid item xs={12} md={5} key={index}>
+                            {
+                                ![4, 5, 12].includes(index) && (
+                                    <TextField
+                                        autoComplete='off'
+                                        id={property}
+                                        name={property}
+                                        label={name}
+                                        value={formik.values[property]}
+                                        onChange={formik.handleChange}
+                                        type={type}
+                                        variant="standard"
+                                        fullWidth
+                                        style={{ width: '90%' }}
+                                        error={formik.touched[property] && Boolean(formik.errors[property])}
+                                        helperText={formik.touched[property] && formik.errors[property]}
+                                    />
+                                )
+                            }
+                            {
+                                index === 5 && (
+                                    <DateSelector
+                                        label={name}
+                                        name={property}
+                                        value={formik.values[property]}
+                                        onChange={value => formik.setFieldValue(property, value)}
+                                        error={formik.touched[property] && Boolean(formik.errors[property])}
+                                        helperText={formik.touched[property] && formik.errors[property]}
+                                    />
+                                )
+                            }
+                            {
+                                [4, 12].includes(index) && (
+                                    <Selector
+                                        title={name}
+                                        value={formik.values[property]}
+                                        values={options}
+                                        error={formik.touched[property] && Boolean(formik.errors[property])}
+                                        onChange={value => formik.setFieldValue(property, value)}
+                                        helperText={formik.touched[property] && formik.errors[property]}
+                                    />
+                                )
+                            }
+                        </Grid>
+                    ))}
                 </Grid>
-            </ButtonGroup>
-        </div>
+                <ButtonGroup
+                    id={styles.buttonsContainer}
+                    orientation='horizontal' variant="contained"
+                    sx={{ mt: 3 }}
+                >
+                    <Grid item className={styles.buttonGrid}>
+                        <Button onClick={formik.handleSubmit} disabled={availableSessionStorageData()}>Crear</Button>
+                        <Dialog
+                            buttonTitle="Buscar"
+                            title="Buscar Paciente"
+                            label="Identificacion Paciente"
+                            buttonActionTitle="Buscar"
+                            buttonAction={handleSearchPaciente}
+                        />
+                        <Button disabled={!availableSessionStorageData()} onClick={handleUpdatePaciente}>Actualizar</Button>
+                        <Button onClick={() => { formik.resetForm(), clearSessionStorageData() }}>Limpiar</Button>
+                        <Confirm
+                            buttonTitle="Eliminar"
+                            title="Eliminar Paciente"
+                            content="¿Esta seguro que desea eliminar este paciente?"
+                            buttonAction={handleDeletePaciente}
+                            disabled={!availableSessionStorageData()}
+                        />
+                    </Grid>
+                </ButtonGroup>
+            </Box>
+        </Box>
     );
 }
 
 function UserPicture() {
     return (
-        <Grid item xs={12} md={5} sx={{
-            display: 'flex', alignItems: 'center', gap: 0.5
-        }}>
+        <Box className={styles.userImgContainer}>
             <Avatar
                 alt="Remy Sharp"
                 src={''}
-                sx={{ width: 80, height: 80, my: 0.5 }}
+                sx={{ width: 170, height: 170 }}
             />
-            <ButtonGroup orientation='horizontal' variant="contained">
-                <Button color="secondary" component="label">
+            <ButtonGroup orientation='vertical' variant="contained">
+                <Button color="secondary" component="label" startIcon={<CameraAltIcon />}>
                     Tomar Foto
                 </Button>
-                <Button component="label">
+                <Button component="label" startIcon={<UploadIcon />}>
                     Subir Foto
                     <input
                         type="file"
@@ -221,6 +225,6 @@ function UserPicture() {
                     />
                 </Button>
             </ButtonGroup>
-        </Grid>
+        </Box>
     );
 } 
