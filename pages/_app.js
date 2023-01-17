@@ -12,6 +12,7 @@ import '../styles/globals.css'
 import { AppContextProvider } from "../context/AppContext";
 import Notify from "../components/Snackbar";
 import Loader from "../components/Backdrop";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function MyApp({ Component, pageProps }) {
     const router = useRouter();
@@ -62,9 +63,24 @@ export default function MyApp({ Component, pageProps }) {
                         {
                             ['/login', '/_error'].includes(router.pathname)
                                 ? <Component {...pageProps} />
-                                :
-                                <Dashboard changeTheme={colorMode} theme={themeMode}>
-                                    {loading ? <Spinner minHeight="80vh" /> : <Component {...pageProps} />}
+                                : <Dashboard changeTheme={colorMode} theme={themeMode}>
+                                    {
+                                        loading
+                                            ? <Spinner minHeight="80vh" />
+                                            : (
+                                                <AnimatePresence mode="wait">
+                                                    <motion.div
+                                                        key={router.route}
+                                                        initial={{ opacity: 0 }}
+                                                        animate={{ opacity: 1 }}
+                                                        exit={{ opacity: 0 }}
+                                                        transition={{ duration: 0.2 }}
+                                                    >
+                                                        <Component {...pageProps} />
+                                                    </motion.div>
+                                                </AnimatePresence>
+                                            )
+                                    }
                                 </Dashboard>
                         }
                         <Loader />

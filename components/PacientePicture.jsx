@@ -137,11 +137,19 @@ export default function PacientePicture() {
                         <ClearIcon />
                     </Button>
                 </Tooltip>
-                <Tooltip title="Eliminar Imagen" placement="bottom" disabled={!paciente?.foto}>
-                    <Button component="label" color="error" variant="contained" onClick={handleDeleteImage}>
-                        <DeleteIcon />
-                    </Button>
-                </Tooltip>
+                <Confirm
+                    buttonTitle={
+                        <Tooltip title="Eliminar Imagen" placement="bottom">
+                            <DeleteIcon />
+                        </Tooltip>
+                    }
+                    title="Eliminar Imagen"
+                    content="¿Está seguro que desea eliminar la imagen?"
+                    buttonAction={handleDeleteImage}
+                    buttonColor="error"
+                    buttonComponentType="label"
+                    disabled={!paciente?.foto}
+                />
             </ButtonGroup>
         </Box>
     );
