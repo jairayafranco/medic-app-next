@@ -20,6 +20,15 @@ export async function login(user) {
     }
 }
 
+export async function logout() {
+    try {
+        await api.post('auth/logout');
+        return { status: true, message: "Sesión cerrada" }
+    } catch {
+        return { status: false, message: "Error al cerrar sesión" };
+    }
+}
+
 export async function createPaciente(data) {
     try {
         const response = await api.post('data/paciente', data);
@@ -92,5 +101,23 @@ export async function saveSignosVitalesHistory(data) {
         return response?.data;
     } catch (exception) {
         return exception.response?.data || handleError("Error al guardar la historia de signos vitales");
+    }
+}
+
+export const getLoginImage = async () => {
+    try {
+        const response = await axios.get('https://source.unsplash.com/1920x1080/?hospital');
+        return { url: response?.request.responseURL, status: true };
+    } catch (error) {
+        return { error, status: false, message: "Error al obtener la imagen de fondo", type: "error" };
+    }
+}
+
+export const getUserProfile = async () => {
+    try {
+        const response = await api.get('settings/profile');
+        return { ...response?.data, status: true };
+    } catch (error) {
+        return { error, status: false, message: "Error al obtener el perfil del usuario" };
     }
 }

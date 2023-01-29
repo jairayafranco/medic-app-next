@@ -10,9 +10,9 @@ import Tooltip from '@mui/material/Tooltip';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import UserAvatar from './UserAvatar';
-import axios from 'axios';
 import { useRouter } from 'next/router';
 import { clearSessionStorageData } from '../helpers/helpers';
+import { getUserProfile, logout } from '../api/axiosApi';
 
 export default function AccountMenu() {
     const [userName, setUserName] = useState('');
@@ -20,10 +20,12 @@ export default function AccountMenu() {
     const router = useRouter();
 
     useEffect(() => {
-        axios.get('/api/settings/profile').then(res => {
-            setUserName(res.data.username);
-        }).catch(err => {
-            console.log(err);
+        getUserProfile().then(res => {
+            if (!res.status) {
+                console.log(res);
+                return;
+            }
+            setUserName(res.username);
         });
     }, []);
 
@@ -92,7 +94,7 @@ export default function AccountMenu() {
                     <ListItemIcon>
                         <PersonIcon />
                     </ListItemIcon>
-                    {userName.charAt(0).toUpperCase() + userName.slice(1)}
+                    {userName}
                 </MenuItem>
 
                 <MenuItem onClick={() => router.push('/panel/ajustes')}>
@@ -103,11 +105,13 @@ export default function AccountMenu() {
                 </MenuItem>
 
                 <MenuItem onClick={() => {
-                    axios.post('/api/auth/logout').then(() => {
-                        window.location.reload();
+                    logout().then(res => {
+                        if (!res.status) {
+                            console.log(res);
+                            return;
+                        }
                         clearSessionStorageData();
-                    }).catch(err => {
-                        console.log(err);
+                        router.push('/login');
                     });
                 }}>
                     <ListItemIcon>

@@ -12,30 +12,29 @@ import { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import { loginSchema } from '../schemas/schemas';
 import { AppContext } from '../context/AppContext';
-import axios from 'axios';
 import { useRouter } from 'next/router';
-import { login } from '../api/axiosApi';
+import { login, getLoginImage } from '../api/axiosApi';
 
 export default function Login() {
     const [url, setUrl] = useState('');
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
 
     const { notifyHandler } = AppContext();
 
     useEffect(() => {
         const windowWidth = window.innerWidth;
-        if (windowWidth < 600) {
-            setLoading(false);
-        }
-
-        axios.get('https://source.unsplash.com/1920x1080/?hospital')
-            .then(res => {
-                setUrl(res.request.responseURL);
+        if (windowWidth > 600) {
+            setLoading(true);
+            getLoginImage().then(res => {
+                if (!res.status) {
+                    console.log(res);
+                    return;
+                }
+                setUrl(res.url);
                 setLoading(false);
-            }).catch(err => {
-                console.log(err);
             });
+        }
     }, []);
 
     const formik = useFormik({
