@@ -6,6 +6,6 @@ export default function profileHandler(req, res) {
 
     verify(token, process.env.SECRET, (err, decoded) => {
         if (err) return res.status(500).json({ message: 'Error al verificar token' });
-        return res.json(decoded);
+        return res.json({ ...decoded, status: true });
     });
 }

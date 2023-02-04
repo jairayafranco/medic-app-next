@@ -11,23 +11,23 @@ const api = axios.create({
 
 const handleError = (msg) => ({ status: false, message: msg, type: 'error' });
 
-async function handlePetitions({ method, data = [], customError, route }) {
+async function handlePetitions({ method, data = [], route, customError }) {
     try {
         const response = await api[method](route, data);
         return response?.data;
     } catch (exception) {
-        console.log(exception);
+        console.error(exception);
         return exception.response?.data || handleError(customError);
     }
 }
 
-export const login = (user) => handlePetitions({ method: 'post', data: user, customError: "Error al iniciar sesión", route: "auth/login" });
+export const login = (user) => handlePetitions({ method: 'post', data: user, route: "auth/login", customError: "Error al iniciar sesión" });
 
-export const logout = () => handlePetitions({ method: 'post', customError: "Error al cerrar sesión", route: "auth/logout" });
+export const logout = () => handlePetitions({ method: 'post', route: "auth/logout", customError: "Error al cerrar sesión" });
 
-export const createPaciente = (data) => handlePetitions({ method: 'post', data, customError: "Error al crear el paciente", route: "data/paciente" });
+export const createPaciente = (data) => handlePetitions({ method: 'post', data, route: "data/paciente", customError: "Error al crear el paciente" });
 
-export const searchPaciente = (id) => handlePetitions({ method: 'get', customError: "Error al buscar el paciente", route: `data/paciente?id=${id}` });
+export const searchPaciente = (id) => handlePetitions({ method: 'get', route: `data/paciente?id=${id}`, customError: "Error al buscar el paciente" });
 
 export const updatePaciente = async (newFormikValues) => {
     const ruta = window.location.pathname.split("/")[2];
@@ -52,29 +52,23 @@ export async function deletePaciente() {
     const id = getSessionStorageData("datosBasicos")?.idUsuario;
     if (!id) return { status: false, message: "No se encontró el id del paciente", type: "error" };
 
-    return handlePetitions({ method: 'delete', customError: "Error al eliminar el paciente", route: `data/paciente?id=${id}` });
+    return handlePetitions({ method: 'delete', route: `data/paciente?id=${id}`, customError: "Error al eliminar el paciente" });
 }
 
 export async function getSignosVitalesHistory() {
     const paciente = getSessionStorageData("datosBasicos");
     if (paciente) {
-        try {
-            const response = await api.get(`data/signosVitalesHistory?id=${paciente.idUsuario}`);
-            return response?.data;
-        } catch (exception) {
-            return exception.response?.data || handleError("Error al obtener la historia de signos vitales");
-        }
+        return handlePetitions({
+            method: 'get',
+            route: `data/signosVitalesHistory?id=${paciente.idUsuario}`,
+            customError: "Error al obtener la historia de signos vitales"
+        });
     }
 }
 
-export async function saveSignosVitalesHistory(data) {
-    try {
-        const response = await api.post('data/signosVitalesHistory', data);
-        return response?.data;
-    } catch (exception) {
-        return exception.response?.data || handleError("Error al guardar la historia de signos vitales");
-    }
-}
+export const saveSignosVitalesHistory = (data) => handlePetitions({
+    method: 'post', data, route: `data/signosVitalesHistory`, customError: "Error al guardar la historia de signos vitales"
+});
 
 export const getLoginImage = async () => {
     try {
@@ -85,11 +79,4 @@ export const getLoginImage = async () => {
     }
 }
 
-export const getUserProfile = async () => {
-    try {
-        const response = await api.get('settings/profile');
-        return { ...response?.data, status: true };
-    } catch (error) {
-        return { error, status: false, message: "Error al obtener el perfil del usuario" };
-    }
-}
+export const getUserProfile = () => handlePetitions({ method: 'get', route: "settings/profile", customError: "Error al obtener el perfil del usuario" });
