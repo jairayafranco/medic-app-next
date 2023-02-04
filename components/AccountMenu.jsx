@@ -15,17 +15,17 @@ import { clearSessionStorageData } from '../helpers/helpers';
 import { getUserProfile, logout } from '../api/axiosApi';
 
 export default function AccountMenu() {
-    const [userName, setUserName] = useState('');
+    // const [userName, setUserName] = useState('');
 
     const router = useRouter();
 
-    useEffect(() => {
-        getUserProfile().then(res => {
-            setUserName(res.username);
-        }).catch(() => {
-            router.push('/login');
-        });
-    }, []);
+    // useEffect(() => {
+    //     getUserProfile().then(res => {
+    //         setUserName(res.username);
+    //     }).catch(() => {
+    //         router.push('/login');
+    //     });
+    // }, []);
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -92,7 +92,7 @@ export default function AccountMenu() {
                     <ListItemIcon>
                         <PersonIcon />
                     </ListItemIcon>
-                    {userName}
+                    {/* {userName} */}
                 </MenuItem>
 
                 <MenuItem onClick={() => router.push('/panel/ajustes')}>
