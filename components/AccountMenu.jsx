@@ -19,13 +19,13 @@ export default function AccountMenu() {
 
     const router = useRouter();
 
-    // useEffect(() => {
-    //     getUserProfile().then(res => {
-    //         setUserName(res.username);
-    //     }).catch(() => {
-    //         router.push('/login');
-    //     });
-    // }, []);
+    useEffect(() => {
+        getUserProfile().then(res => {
+            setUserName(res.username);
+        }).catch(err => {
+            console.error('Error al obtener el perfil del usuario', err);
+        });
+    }, []);
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -92,7 +92,7 @@ export default function AccountMenu() {
                     <ListItemIcon>
                         <PersonIcon />
                     </ListItemIcon>
-                    {/* {userName} */}
+                    {userName}
                 </MenuItem>
 
                 <MenuItem onClick={() => router.push('/panel/ajustes')}>
