@@ -13,6 +13,7 @@ export const AppContext = () => {
 export const AppContextProvider = ({ children }) => {
     const [notify, setNotify] = useState({ open: false, type: '', message: '' });
     const [backdrop, setBackdrop] = useState(false);
+    const [closeDialog, setCloseDialog] = useState(false);
     const [barthelResults, setBarthelResults] = useState({
         barthel: "No Aplica",
         puntuacion: "No Aplica",
@@ -27,8 +28,12 @@ export const AppContextProvider = ({ children }) => {
         setBackdrop(open);
     }
 
+    const closeDialogHandler = (open) => {
+        setCloseDialog(open);
+    }
+
     return (
-        <Context.Provider value={{ notify, notifyHandler, backdrop, backdropHandler, barthelResults, setBarthelResults }}>
+        <Context.Provider value={{ notify, notifyHandler, backdrop, backdropHandler, barthelResults, setBarthelResults, closeDialog, closeDialogHandler }}>
             {children}
         </Context.Provider>
     );

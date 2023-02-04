@@ -15,9 +15,10 @@ import PacientePicture from '../../components/PacientePicture';
 import Box from '@mui/material/Box';
 import { saveSessionStorageData, getSessionStorageData, clearSessionStorageData, availableSessionStorageData } from '../../helpers/helpers';
 import { createPaciente, searchPaciente, deletePaciente, updatePaciente } from '../../api/axiosApi';
+import { datosBasicosFields } from '../../data/inputs';
 
 export default function DatosBasicos() {
-    const { notifyHandler, backdropHandler } = AppContext();
+    const { notifyHandler, backdropHandler, closeDialogHandler } = AppContext();
 
     useEffect(() => {
         const data = getSessionStorageData("datosBasicos");
@@ -26,50 +27,16 @@ export default function DatosBasicos() {
         }
     }, []);
 
-    const campos = [
-        { name: 'Identificacion Medico', property: 'idMedico', type: 'number' },
-        { name: 'Nombre Medico', property: 'nombreMedico', type: 'text' },
-        { name: 'Identificacion Usuario', property: 'idUsuario', type: 'number' },
-        { name: 'Nombres y Apellidos', property: 'nombreUsuario', type: 'text' },
-        { name: 'Genero', property: 'genero', type: 'text', options: ['Masculino', 'Femenino', 'Otro'] },
-        { name: 'Fecha de Nacimiento', property: 'fechaNacimiento', type: 'text' },
-        { name: 'Direccion', property: 'direccion', type: 'text' },
-        { name: 'Contacto Telefonico', property: 'contacto', type: 'number' },
-        { name: 'EPS', property: 'eps', type: 'text' },
-        { name: 'Nivel', property: 'nivel', type: 'text' },
-        { name: 'Nombre del Acompañante', property: 'nombreAcompanante', type: 'text' },
-        { name: 'Contacto del Acompañante', property: 'contactoAcompanante', type: 'number' },
-        {
-            name: 'Tipo de Consulta', property: 'tipoConsulta', type: 'text',
-            options: [
-                'M.Gral Primera Vez',
-                'Lectura',
-                'Control',
-                'Certificado de Salud',
-                'Certificado Visual',
-                'Examen Fisico de Ingreso',
-                'Crecimiento y Desarrollo',
-                'Lavado de un Oido',
-                'Lavado de Ambos Oidos',
-                'Onisectomia'
-            ]
-        },
-    ];
-
     const formik = useFormik({
         initialValues: {
-            ...campos.reduce((acc, { property }) => ({ ...acc, [property]: '' }), {})
+            ...datosBasicosFields.reduce((acc, { property }) => ({ ...acc, [property]: '' }), {})
         },
         validationSchema: datosBasicosSchema,
         onSubmit: values => {
             backdropHandler(true);
             createPaciente(values).then(res => {
-                if (!res.status) {
-                    notifyHandler(true, res.type, res.message);
-                    return;
-                }
-
                 notifyHandler(true, res.type, res.message);
+                if (!res.status) return;
                 saveSessionStorageData("datosBasicos", values);
             }).finally(() => backdropHandler(false));
         }
@@ -77,29 +44,23 @@ export default function DatosBasicos() {
 
     const handleSearchPaciente = (id) => {
         backdropHandler(true);
-        const closeDialog = searchPaciente(id).then(res => {
+        searchPaciente(id).then(res => {
             if (!res.status) {
                 notifyHandler(true, res.type, res.message);
-                return false;
+                closeDialogHandler(false);
+                return;
             }
-
             formik.setValues(res.paciente.datosBasicos);
             saveSessionStorageData("", res.paciente);
-            return true;
+            closeDialogHandler(true);
         }).finally(() => backdropHandler(false));
-
-        return closeDialog; // Esto es para cerrar el dialogo segun sea el caso
     }
 
     const handleDeletePaciente = () => {
         backdropHandler(true);
         deletePaciente().then(res => {
-            if (!res.status) {
-                notifyHandler(true, res.type, res.message);
-                return;
-            }
-
             notifyHandler(true, res.type, res.message);
+            if (!res.status) return;
             clearSessionStorageData();
             formik.resetForm();
         }).finally(() => backdropHandler(false));
@@ -110,12 +71,8 @@ export default function DatosBasicos() {
 
         backdropHandler(true);
         updatePaciente(formikValues).then(res => {
-            if (!res.status) {
-                notifyHandler(true, res.type, res.message);
-                return;
-            }
-
             notifyHandler(true, res.type, res.message);
+            if (!res.status) return;
             saveSessionStorageData("datosBasicos", formikValues);
         }).finally(() => backdropHandler(false));
     }
@@ -125,7 +82,7 @@ export default function DatosBasicos() {
             <PacientePicture />
             <Box style={{ display: 'flex', flexWrap: 'wrap' }} autoComplete="off">
                 <Grid container rowSpacing={2}>
-                    {campos.map(({ name, property, type, options }, index) => (
+                    {datosBasicosFields.map(({ name, property, type, options }, index) => (
                         <Grid item xs={12} md={5} key={index}>
                             {
                                 ![4, 5, 12].includes(index) && (
