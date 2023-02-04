@@ -8,6 +8,7 @@ import { antecedentesSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
 import { saveSessionStorageData, getSessionStorageData, moduleCompleted } from '../../helpers/helpers';
 import { updatePaciente } from '../../api/axiosApi';
+import { antecedentesFields } from '../../data/inputs';
 
 export default function Antecedentes() {
     const { notifyHandler, backdropHandler } = AppContext();
@@ -19,28 +20,9 @@ export default function Antecedentes() {
         }
     }, []);
 
-    const campos = [
-        { name: "Familiares", property: "familiares" },
-        { name: "Patologicos", property: "patologicos" },
-        { name: "Quirurgicos", property: "quirurgicos" },
-        { name: "Traumaticos", property: "traumaticos" },
-        { name: "Alergicos", property: "alergicos" },
-        { name: "Hospitalizaciones", property: "hospitalizaciones" },
-        { name: "Transfusiones", property: "transfusiones" },
-        { name: "Cigarrillo - Humo de Leña", property: "cigarrilloHumoLeña" },
-        { name: "Licor", property: "licor" },
-        { name: "Sustancias Psicoactivas", property: "sustanciasPsicoactivas" },
-        { name: "Farmacologicos", property: "farmacologicos" },
-        { name: "Especialistas Tratantes", property: "especialistasTratantes" },
-        { name: "Gineco-Obstetricos", property: "ginecoObstetricos" },
-        { name: "Ultima Citologia Cervicovaginal", property: "ultimaCitologiaCervicoVaginal" },
-        { name: "Otros Antecedentes - Pediatrico", property: "otrosAntecedentesPediatrico" },
-        { name: "Otros Antecedentes - Adultos", property: "otrosAntecedentesAdultos" },
-    ];
-
     const formik = useFormik({
         initialValues: {
-            ...campos.reduce((acc, { property }) => ({ ...acc, [property]: "" }), {}),
+            ...antecedentesFields.reduce((acc, { property }) => ({ ...acc, [property]: "" }), {}),
         },
         validationSchema: antecedentesSchema,
         onSubmit: (values) => {
@@ -68,7 +50,7 @@ export default function Antecedentes() {
     return (
         <form style={{ display: 'flex', flexWrap: 'wrap', gap: "1em" }} onSubmit={formik.handleSubmit} autoComplete="off">
             <Grid container rowSpacing={2}>
-                {campos.map(({ name, property }) => (
+                {antecedentesFields.map(({ name, property }) => (
                     <Grid item xs={12} md={5} key={property}>
                         <TextField
                             id={property}

@@ -9,6 +9,7 @@ import { funcionRenalSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
 import { saveSessionStorageData, getSessionStorageData, moduleCompleted, calculateAge } from '../../helpers/helpers';
 import { updatePaciente } from '../../api/axiosApi';
+import { funcionRenalFields } from '../../data/inputs';
 
 export default function FuncionRenal() {
     const { notifyHandler, backdropHandler } = AppContext();
@@ -31,29 +32,9 @@ export default function FuncionRenal() {
         }
     }, []);
 
-    const campos = [
-        {
-            group: 1, fields: [
-                { name: 'Edad', property: 'edad', unit: '', readOnly: true, variant: 'outlined' },
-                { name: 'Sexo', property: 'sexo', unit: '', readOnly: true, variant: 'outlined' },
-                { name: 'Peso', property: 'peso', unit: 'Kg', readOnly: true, variant: 'outlined' },
-                { name: 'Talla', property: 'talla', unit: 'Cms', readOnly: true, variant: 'outlined' },
-            ]
-        },
-        {
-            group: 2, fields: [
-                { name: 'Creatinina', property: 'creatinina', unit: 'Mg/MI', variant: 'filled', size: 'small', type: "number" },
-                { name: 'TFG Corregida', property: 'tfgCorregida', unit: 'mL/min/1,73 m2', readOnly: true, size: 'small', shrink: true, variant: 'filled' },
-                { name: 'Estadio', property: 'estadio', unit: '', readOnly: true, size: 'small', shrink: true, variant: 'filled' },
-                { name: 'Clasificacion (KDIGO)', property: 'clasificacion', unit: '', readOnly: true, size: 'small', shrink: true, variant: 'filled' },
-            ]
-        },
-
-    ];
-
     const formik = useFormik({
         initialValues: {
-            ...campos.reduce((acc, curr) => {
+            ...funcionRenalFields.reduce((acc, curr) => {
                 curr.fields.forEach(field => {
                     acc[field.property] = '';
                 });
@@ -68,7 +49,7 @@ export default function FuncionRenal() {
 
     return (
         <form style={{ display: 'flex', flexWrap: 'wrap', gap: "1.5em" }} onSubmit={formik.handleSubmit} autoComplete="off">
-            {campos.map((group, index) => (
+            {funcionRenalFields.map((group, index) => (
                 <Container key={index} group={group.group}>
                     {group.fields.map((campo, index) => (
                         <Grid item xs={12} md={5} key={index}>

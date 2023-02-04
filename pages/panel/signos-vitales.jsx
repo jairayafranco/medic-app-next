@@ -12,6 +12,7 @@ import { saveSessionStorageData, getSessionStorageData, moduleCompleted } from '
 import { updatePaciente, getSignosVitalesHistory, saveSignosVitalesHistory } from '../../api/axiosApi';
 import FullScreenModal from '../../components/FullScreenModal';
 import DataTable from '../../components/DataTable';
+import { signosVitalesFields } from '../../data/inputs';
 
 export default function SignosVitales() {
     const { notifyHandler, backdropHandler } = AppContext();
@@ -25,159 +26,9 @@ export default function SignosVitales() {
         getSignosVitalesHistory().then(res => setHistory(res?.history))
     }, []);
 
-    const campos = [
-        {
-            group: 1, fields: [
-                {
-                    name: "Tension Arterial Sistolica",
-                    property: "tensionArterialSistolica",
-                    type: "number",
-                    unit: "mm/Hg",
-                    abrev: "(TAS)",
-                    variant: "filled",
-                    size: "small"
-                },
-                {
-                    name: "Tension Arterial Diastolica",
-                    property: "tensionArterialDiastolica",
-                    type: "number",
-                    unit: "mm/Hg",
-                    abrev: "(TAD)",
-                    variant: "filled",
-                    size: "small"
-                },
-                {
-                    name: "Tension Arterial Media",
-                    property: "tensionArterialMedia",
-                    type: "number",
-                    unit: "mm/Hg",
-                    abrev: "(TAM)",
-                    variant: "outlined",
-                    size: "small",
-                    shrink: true,
-                    readOnly: true
-                },
-            ]
-        },
-        {
-            group: 2, fields: [
-                {
-                    name: "Frecuencia Cardiaca",
-                    property: "frecuenciaCardiaca",
-                    type: "number",
-                    unit: "L/M",
-                    abrev: "(FC)",
-                    variant: "filled",
-                    size: "small"
-                },
-                {
-                    name: "Frecuencia Respiratoria",
-                    property: "frecuenciaRespiratoria",
-                    type: "number",
-                    unit: "R/M",
-                    abrev: "(FR)",
-                    variant: "filled",
-                    size: "small"
-                },
-                {
-                    name: "Saturacion de O2",
-                    property: "saturacionO2",
-                    type: "number",
-                    unit: "%",
-                    abrev: "(SO2)",
-                    variant: "filled",
-                    size: "small"
-                },
-            ]
-        },
-        {
-            group: 3, fields: [
-                {
-                    name: "Temperatura",
-                    property: "temperatura",
-                    type: "number",
-                    unit: "Grados",
-                    abrev: "(T°)",
-                    variant: "standard",
-                    size: "small"
-                },
-                {
-                    name: "P. Abdominal",
-                    property: "pAbdominal",
-                    type: "number",
-                    unit: "Cms",
-                    abrev: "(Si no es RCV escriba 0)",
-                    variant: "standard",
-                    size: "small"
-                },
-                {
-                    name: "Peso",
-                    property: "peso",
-                    type: "number",
-                    unit: "Kg",
-                    abrev: "(KG)",
-                    variant: "standard",
-                    size: "small"
-                },
-                {
-                    name: "Talla",
-                    property: "talla",
-                    type: "number",
-                    unit: "Cms",
-                    abrev: "(CMS)",
-                    variant: "standard",
-                    size: "small"
-                },
-                {
-                    name: "Indice de Masa Corporal",
-                    property: "imc",
-                    type: "number",
-                    unit: "",
-                    abrev: "(IMC)",
-                    variant: "outlined",
-                    size: "small",
-                    shrink: true,
-                    readOnly: true
-                },
-                {
-                    name: "Interpretacion",
-                    property: "interpretacion",
-                    type: "text",
-                    abrev: "",
-                    variant: "filled",
-                    size: "small",
-                    shrink: true,
-                    readOnly: true
-                },
-                {
-                    name: "Peso Minimo",
-                    property: "pesoMinimo",
-                    type: "number",
-                    unit: "Kg",
-                    abrev: "",
-                    variant: "outlined",
-                    size: "small",
-                    shrink: true,
-                    readOnly: true
-                },
-                {
-                    name: "Peso Maximo",
-                    property: "pesoMaximo",
-                    type: "number",
-                    unit: "Kg",
-                    abrev: "",
-                    variant: "outlined",
-                    size: "small",
-                    shrink: true,
-                    readOnly: true
-                },
-            ]
-        },
-    ];
-
     const formik = useFormik({
         initialValues: {
-            ...campos.reduce((acc, curr) => {
+            ...signosVitalesFields.reduce((acc, curr) => {
                 curr.fields.forEach(field => {
                     acc[field.property] = "";
                 });
@@ -293,7 +144,7 @@ export default function SignosVitales() {
 
     return (
         <form style={{ display: 'flex', flexWrap: 'wrap', gap: "2em" }} onSubmit={formik.handleSubmit} autoComplete="off">
-            {campos.map((group, index) => (
+            {signosVitalesFields.map((group, index) => (
                 <Paper key={index} elevation={3} sx={{ p: 2, width: '100%' }}>
                     <Grid container rowSpacing={2}>
                         {
@@ -329,7 +180,7 @@ export default function SignosVitales() {
                 <Button variant="contained" type="submit" disabled={!moduleCompleted("antecedentes")}>Guardar</Button>
                 <FullScreenModal buttonName='historial' title='Historial Signos Vitales'>
                     <DataTable
-                        columns={[{ headerName: 'Fecha', field: 'fecha', width: 180 }, campos.map((item) => {
+                        columns={[{ headerName: 'Fecha', field: 'fecha', width: 180 }, signosVitalesFields.map((item) => {
                             return item.fields.map((field) => {
                                 return { headerName: field.name, field: field.property, width: 130 }
                             })

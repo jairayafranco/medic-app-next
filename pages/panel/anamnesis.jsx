@@ -8,6 +8,7 @@ import { anamnesisSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
 import { saveSessionStorageData, getSessionStorageData, moduleCompleted } from '../../helpers/helpers';
 import { updatePaciente } from '../../api/axiosApi';
+import { anamnesisFields } from '../../data/inputs';
 
 export default function Anamnesis() {
     const { notifyHandler, backdropHandler } = AppContext();
@@ -19,24 +20,9 @@ export default function Anamnesis() {
         }
     }, [])
 
-    const campos = [
-        { name: "Enfermedad actual", property: "enfermedadActual" },
-        { name: "Motivo de consulta", property: "motivoConsulta" },
-        { name: "Tegumentario", property: "tegumentario" },
-        { name: "Osteomuscular", property: "osteomuscular" },
-        { name: "Cardiovascular", property: "cardiovascular" },
-        { name: "Respiratorio", property: "respiratorio" },
-        { name: "Neurologico", property: "neurologico" },
-        { name: "Digestivo", property: "digestivo" },
-        { name: "Urogenital", property: "urogenital" },
-        { name: "Endocrinologico", property: "endocrinologico" },
-        { name: "Linfatico", property: "linfatico" },
-        { name: "Org. Sentidos", property: "orgSentidos" },
-    ];
-
     const formik = useFormik({
         initialValues: {
-            ...campos.reduce((acc, { property }) => ({ ...acc, [property]: "" }), {}),
+            ...anamnesisFields.reduce((acc, { property }) => ({ ...acc, [property]: "" }), {}),
         },
         validationSchema: anamnesisSchema,
         onSubmit: (values) => {
@@ -92,7 +78,7 @@ export default function Anamnesis() {
                 helperText={formik.touched.motivoConsulta && formik.errors.motivoConsulta}
             />
             <Grid container rowSpacing={2}>
-                {campos.slice(2).map(({ name, property }, index) => (
+                {anamnesisFields.slice(2).map(({ name, property }, index) => (
                     <Grid item xs={12} md={5} key={index}>
                         <TextField
                             id={property}

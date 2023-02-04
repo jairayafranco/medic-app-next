@@ -9,6 +9,7 @@ import { AppContext } from '../../context/AppContext';
 import { saveSessionStorageData, getSessionStorageData, updatePaciente, moduleCompleted } from '../../helpers/helpers';
 import FullScreenModal from '../../components/FullScreenModal';
 import BarthelTable from '../../components/TestBarthel';
+import { examenFisicoFields } from '../../data/inputs';
 
 export default function ExamenFisico() {
     const { notifyHandler, backdropHandler, barthelResults } = AppContext();
@@ -23,22 +24,9 @@ export default function ExamenFisico() {
         // }
     }, []);
 
-    const campos = [
-        { name: "Piel/Anexos", property: "pielAnexos" },
-        { name: "Cara/Craneo", property: "caraCraneo" },
-        { name: "Ojos/Boca/Nariz", property: "ojosBocaNariz" },
-        { name: "Cuello", property: "cuello" },
-        { name: "Torax", property: "torax" },
-        { name: "Abdomen", property: "abdomen" },
-        { name: "Genitourinario", property: "genitourinario" },
-        { name: "Osteomuscular", property: "osteomuscular" },
-        { name: "Extremidades", property: "extremidades" },
-        { name: "Neurologico", property: "neurologico" },
-    ];
-
     const formik = useFormik({
         initialValues: {
-            ...campos.reduce((acc, curr) => ({ ...acc, [curr.property]: '' }), {}),
+            ...examenFisicoFields.reduce((acc, curr) => ({ ...acc, [curr.property]: '' }), {}),
         },
         validationSchema: examenFisicoSchema,
         onSubmit: values => {
@@ -60,7 +48,7 @@ export default function ExamenFisico() {
     return (
         <form style={{ display: 'flex', flexWrap: 'wrap', gap: "1.5em" }} onSubmit={formik.handleSubmit} autoComplete="off">
             <Grid container spacing={2}>
-                {campos.map((campo, index) => (
+                {examenFisicoFields.map((campo, index) => (
                     <Grid item xs={12} md={5} key={index}>
                         <TextField
                             id={campo.name}
