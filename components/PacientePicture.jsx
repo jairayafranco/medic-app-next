@@ -11,7 +11,7 @@ import Tooltip from '@mui/material/Tooltip';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Confirm from './Confirm';
 import styles from '../styles/components/userPicture.module.css';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { uploadImage, deleteImage } from '../firebase/config';
 import { getSessionStorageData, saveSessionStorageData } from '../helpers/helpers';
 import { AppContext } from '../context/AppContext';
@@ -91,7 +91,7 @@ export default function PacientePicture() {
     return (
         <Box className={styles.userImgContainer}>
             <Avatar
-                alt="Remy Sharp"
+                alt={paciente?.nombreUsuario}
                 src={image ? image : paciente?.foto}
                 sx={{ width: 170, height: 170 }}
             />

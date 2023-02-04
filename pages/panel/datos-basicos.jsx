@@ -18,7 +18,7 @@ import { createPaciente, searchPaciente, deletePaciente, updatePaciente } from '
 import { datosBasicosFields } from '../../data/inputs';
 
 export default function DatosBasicos() {
-    const { notifyHandler, backdropHandler, closeDialogHandler } = AppContext();
+    const { notifyHandler, backdropHandler } = AppContext();
 
     useEffect(() => {
         const data = getSessionStorageData("datosBasicos");
@@ -47,12 +47,10 @@ export default function DatosBasicos() {
         searchPaciente(id).then(res => {
             if (!res.status) {
                 notifyHandler(true, res.type, res.message);
-                closeDialogHandler(false);
                 return;
             }
             formik.setValues(res.paciente.datosBasicos);
             saveSessionStorageData("", res.paciente);
-            closeDialogHandler(true);
         }).finally(() => backdropHandler(false));
     }
 
