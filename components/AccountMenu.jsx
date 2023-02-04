@@ -22,7 +22,7 @@ export default function AccountMenu() {
     useEffect(() => {
         getUserProfile().then(res => {
             if (!res.status) {
-                console.log(res);
+                router.push('/login');
                 return;
             }
             setUserName(res.username);
