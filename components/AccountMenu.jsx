@@ -15,8 +15,7 @@ import { clearSessionStorageData } from '../helpers/helpers';
 import { getUserProfile, logout } from '../api/axiosApi';
 
 export default function AccountMenu() {
-    // const [userName, setUserName] = useState('');
-
+    const [userName, setUserName] = useState('');
     const router = useRouter();
 
     useEffect(() => {
