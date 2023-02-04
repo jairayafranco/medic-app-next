@@ -21,11 +21,9 @@ export default function AccountMenu() {
 
     useEffect(() => {
         getUserProfile().then(res => {
-            if (!res.status) {
-                router.push('/login');
-                return;
-            }
             setUserName(res.username);
+        }).catch(() => {
+            router.push('/login');
         });
     }, []);
 
