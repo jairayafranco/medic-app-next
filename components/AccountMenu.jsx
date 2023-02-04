@@ -109,7 +109,7 @@ export default function AccountMenu() {
                             return;
                         }
                         clearSessionStorageData();
-                        router.push('/login');
+                        router.replace('/login');
                     });
                 }}>
                     <ListItemIcon>
