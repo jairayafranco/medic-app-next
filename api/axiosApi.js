@@ -11,41 +11,23 @@ const api = axios.create({
 
 const handleError = (msg) => ({ status: false, message: msg, type: 'error' });
 
-export async function login(user) {
+async function handlePetitions({ method, data = [], customError, route }) {
     try {
-        const response = await api.post('auth/login', user);
+        const response = await api[method](route, data);
         return response?.data;
     } catch (exception) {
-        return exception.response?.data || handleError("Error al iniciar sesión");
+        console.log(exception);
+        return exception.response?.data || handleError(customError);
     }
 }
 
-export async function logout() {
-    try {
-        await api.post('auth/logout');
-        return { status: true, message: "Sesión cerrada" }
-    } catch {
-        return { status: false, message: "Error al cerrar sesión" };
-    }
-}
+export const login = (user) => handlePetitions({ method: 'post', data: user, customError: "Error al iniciar sesión", route: "auth/login" });
 
-export async function createPaciente(data) {
-    try {
-        const response = await api.post('data/paciente', data);
-        return response?.data;
-    } catch (exception) {
-        return exception.response?.data || handleError("Error al crear el paciente");
-    }
-}
+export const logout = () => handlePetitions({ method: 'post', customError: "Error al cerrar sesión", route: "auth/logout" });
 
-export async function searchPaciente(id) {
-    try {
-        const response = await api.get(`data/paciente?id=${id}`);
-        return response?.data;
-    } catch (exception) {
-        return exception.response?.data || handleError("Error al obtener el paciente");
-    }
-}
+export const createPaciente = (data) => handlePetitions({ method: 'post', data, customError: "Error al crear el paciente", route: "data/paciente" });
+
+export const searchPaciente = (id) => handlePetitions({ method: 'get', customError: "Error al buscar el paciente", route: `data/paciente?id=${id}` });
 
 export const updatePaciente = async (newFormikValues) => {
     const ruta = window.location.pathname.split("/")[2];
@@ -53,7 +35,7 @@ export const updatePaciente = async (newFormikValues) => {
     const currentUserData = getSessionStorageData(name);
 
     if (_.isNull(currentUserData)) return { status: false, message: "No se encontraron los datos", type: "error" };
-    if (_.isUndefined(currentUserData)) return { status: false, message: "El modulo no existe", type: "error" };
+    // if (_.isUndefined(currentUserData)) return { status: false, message: "El modulo no existe", type: "error" };
 
     const updatedValues = !!currentUserData ? getObjectsDifference(currentUserData, newFormikValues) : newFormikValues;
     if (_.isEmpty(updatedValues)) return { status: false, message: "No hay datos para actualizar", type: "warning" };
@@ -61,26 +43,16 @@ export const updatePaciente = async (newFormikValues) => {
     const { idUsuario } = getSessionStorageData("datosBasicos");
     if (!_.isNumber(idUsuario)) return { status: false, message: "No se encontró el id del paciente", type: "error" };
 
+    const opt = !!currentUserData ? "patch" : "put";
     const route = `data/paciente?id=${idUsuario}&opt=${name}`;
-    try {
-        const opt = !!currentUserData ? "patch" : "put";
-        const response = await api[opt](route, updatedValues);
-        return response?.data;
-    } catch (exception) {
-        return exception.response?.data || handleError("Error al actualizar el paciente");
-    }
+    return handlePetitions({ method: opt, data: updatedValues, route, customError: "Error al actualizar el paciente" });
 }
 
 export async function deletePaciente() {
     const id = getSessionStorageData("datosBasicos")?.idUsuario;
     if (!id) return { status: false, message: "No se encontró el id del paciente", type: "error" };
 
-    try {
-        const response = await api.delete(`data/paciente?id=${id}`);
-        return response?.data;
-    } catch (exception) {
-        return exception.response?.data || handleError("Error al eliminar el paciente");
-    }
+    return handlePetitions({ method: 'delete', customError: "Error al eliminar el paciente", route: `data/paciente?id=${id}` });
 }
 
 export async function getSignosVitalesHistory() {

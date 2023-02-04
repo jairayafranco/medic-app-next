@@ -16,13 +16,13 @@ export default function logoutHandler(req, res) {
                 path: '/'
             })
             res.setHeader('Set-Cookie', serialized);
-            return res.json({ auth: false });
+            return res.json({ status: true, message: "Sesión cerrada" });
         } catch (error) {
-            return res.status(500).json({ message: 'Error al verificar token' });
+            return res.status(500).json({ message: 'Error al verificar token', type: 'error' });
         }
     }
 
     if (req.method !== 'POST') {
-        return res.status(405).json({ message: 'Method not allowed' });
+        return res.status(405).json({ message: 'Method not allowed', type: 'error' });
     }
 }
