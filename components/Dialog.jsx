@@ -11,13 +11,6 @@ export default function FormDialog({ buttonTitle, title, label, buttonActionTitl
     const [open, setOpen] = useState(false);
     const [error, setError] = useState(false);
     const [input, setInput] = useState('');
-    const { closeDialog } = AppContext();
-
-    useEffect(() => {
-        if (closeDialog) {
-            handleClose();
-        }
-    }, [closeDialog]);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -33,6 +26,7 @@ export default function FormDialog({ buttonTitle, title, label, buttonActionTitl
         e.preventDefault();
         if (!input) return setError(true);
         buttonAction(input);
+        handleClose();
     }
 
     return (
