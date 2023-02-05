@@ -3,15 +3,13 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Grid from '@mui/material/Grid';
 import { useEffect } from 'react'
-import { useFormik } from 'formik';
 import { antecedentesSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
 import { saveSessionStorageData, getSessionStorageData, moduleCompleted } from '../../helpers/helpers';
-import { updatePaciente } from '../../api/axiosApi';
 import { antecedentesFields } from '../../data/inputs';
 
 export default function Antecedentes() {
-    const { notifyHandler, backdropHandler } = AppContext();
+    const { useUpdateNew } = AppContext();
 
     useEffect(() => {
         const data = getSessionStorageData("antecedentes");
@@ -20,26 +18,12 @@ export default function Antecedentes() {
         }
     }, []);
 
-    const formik = useFormik({
+    const formik = useUpdateNew({
         initialValues: {
             ...antecedentesFields.reduce((acc, { property }) => ({ ...acc, [property]: "" }), {}),
         },
-        validationSchema: antecedentesSchema,
-        onSubmit: (values) => {
-            backdropHandler(true);
-            const formikValues = values;
-
-            updatePaciente(formikValues).then(res => {
-                if (!res.status) {
-                    notifyHandler(true, res.type, res.message);
-                    return;
-                }
-
-                notifyHandler(true, res.type, res.message);
-                saveSessionStorageData("antecedentes", formikValues);
-            }).finally(() => backdropHandler(false));
-        },
-    });
+        schema: antecedentesSchema,
+    }, (data) => saveSessionStorageData("antecedentes", data));
 
     const handleNiega = () => {
         const values = formik.values;

@@ -6,7 +6,6 @@ import { useEffect } from 'react'
 import Selector from '../../components/Selector';
 import DateSelector from '../../components/DatePicker';
 import styles from '../../styles/datosBasicos.module.css'
-import { useFormik } from 'formik';
 import { datosBasicosSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
 import Dialog from '../../components/Dialog';
@@ -14,11 +13,10 @@ import Confirm from '../../components/Confirm';
 import PacientePicture from '../../components/PacientePicture';
 import Box from '@mui/material/Box';
 import { saveSessionStorageData, getSessionStorageData, clearSessionStorageData, availableSessionStorageData } from '../../helpers/helpers';
-import { createPaciente, searchPaciente, deletePaciente, updatePaciente } from '../../api/axiosApi';
 import { datosBasicosFields } from '../../data/inputs';
 
 export default function DatosBasicos() {
-    const { notifyHandler, backdropHandler } = AppContext();
+    const { useSearch, useCreate, useDelete, useUpdate } = AppContext();
 
     useEffect(() => {
         const data = getSessionStorageData("datosBasicos");
@@ -27,52 +25,32 @@ export default function DatosBasicos() {
         }
     }, []);
 
-    const formik = useFormik({
+    const formik = useCreate({
         initialValues: {
             ...datosBasicosFields.reduce((acc, { property }) => ({ ...acc, [property]: '' }), {})
         },
-        validationSchema: datosBasicosSchema,
-        onSubmit: values => {
-            backdropHandler(true);
-            createPaciente(values).then(res => {
-                notifyHandler(true, res.type, res.message);
-                if (!res.status) return;
-                saveSessionStorageData("datosBasicos", values);
-            }).finally(() => backdropHandler(false));
-        }
-    });
+        schema: datosBasicosSchema,
+    }, (data) => saveSessionStorageData("datosBasicos", data));
 
     const handleSearchPaciente = (id) => {
-        backdropHandler(true);
-        searchPaciente(id).then(res => {
-            if (!res.status) {
-                notifyHandler(true, res.type, res.message);
-                return;
-            }
-            formik.setValues(res.paciente.datosBasicos);
-            saveSessionStorageData("", res.paciente);
-        }).finally(() => backdropHandler(false));
+        useSearch(id, (data) => {
+            formik.setValues(data.paciente.datosBasicos);
+            saveSessionStorageData("", data.paciente);
+        });
     }
 
     const handleDeletePaciente = () => {
-        backdropHandler(true);
-        deletePaciente().then(res => {
-            notifyHandler(true, res.type, res.message);
-            if (!res.status) return;
+        useDelete(() => {
             clearSessionStorageData();
             formik.resetForm();
-        }).finally(() => backdropHandler(false));
+        })
     }
 
     const handleUpdatePaciente = () => {
         const formikValues = formik.values;
-
-        backdropHandler(true);
-        updatePaciente(formikValues).then(res => {
-            notifyHandler(true, res.type, res.message);
-            if (!res.status) return;
+        useUpdate(formikValues, () => {
             saveSessionStorageData("datosBasicos", formikValues);
-        }).finally(() => backdropHandler(false));
+        });
     }
 
     return (

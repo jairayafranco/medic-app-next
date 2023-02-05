@@ -1,4 +1,6 @@
 import { useContext, createContext, useState } from "react";
+import { searchPaciente, createPaciente, updatePaciente, deletePaciente } from "../api/axiosApi";
+import { useFormik } from "formik";
 
 export const Context = createContext({});
 
@@ -19,16 +21,57 @@ export const AppContextProvider = ({ children }) => {
         points: {}
     });
 
-    const notifyHandler = (open, type, message) => {
-        setNotify({ open, type, message });
+    const useForm = ({ initialValues, schema }, callback) => {
+        const formik = useFormik({
+            initialValues: {
+                ...initialValues
+            },
+            validationSchema: schema,
+            onSubmit: values => {
+                callback(values);
+            }
+        });
+        return formik;
     }
 
-    const backdropHandler = (open) => {
-        setBackdrop(open);
+    const useCreate = ({ initialValues, schema }, callback) => {
+        const formik = useForm({ initialValues, schema }, (data) => {
+            handlePetitions(createPaciente, data, () => callback(data));
+        });
+        return formik;
+    }
+
+    const useUpdateNew = ({ initialValues, schema }, callback) => {
+        const formik = useForm({ initialValues, schema }, (data) => {
+            handlePetitions(updatePaciente, data, () => callback(data));
+        });
+        return formik;
+    }
+
+    const useSearch = (id, callback) => handlePetitions(searchPaciente, id, callback);
+
+    const useDelete = (callback) => handlePetitions(deletePaciente, null, callback);
+
+    const useUpdate = (data, callback) => handlePetitions(updatePaciente, data, callback);
+
+    function handlePetitions(method, data, callback) {
+        setBackdrop(true);
+        method(data).then(res => {
+            if (method === searchPaciente) {
+                if (!res.status) {
+                    setNotify({ open: true, type: res.type, message: res.message });
+                    return;
+                }
+            } else {
+                setNotify({ open: true, type: res.type, message: res.message });
+                if (!res.status) return;
+            }
+            callback(res);
+        }).finally(() => setBackdrop(false));
     }
 
     return (
-        <Context.Provider value={{ notify, notifyHandler, backdrop, backdropHandler, barthelResults, setBarthelResults }}>
+        <Context.Provider value={{ notify, backdrop, barthelResults, setBarthelResults, useSearch, useCreate, useDelete, useUpdate, useUpdateNew }}>
             {children}
         </Context.Provider>
     );

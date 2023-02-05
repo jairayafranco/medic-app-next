@@ -3,15 +3,13 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Grid from '@mui/material/Grid';
 import { useEffect } from 'react'
-import { useFormik } from 'formik';
 import { anamnesisSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
 import { saveSessionStorageData, getSessionStorageData, moduleCompleted } from '../../helpers/helpers';
-import { updatePaciente } from '../../api/axiosApi';
 import { anamnesisFields } from '../../data/inputs';
 
 export default function Anamnesis() {
-    const { notifyHandler, backdropHandler } = AppContext();
+    const { useUpdateNew } = AppContext();
 
     useEffect(() => {
         const data = getSessionStorageData("anamnesis");
@@ -20,25 +18,13 @@ export default function Anamnesis() {
         }
     }, [])
 
-    const formik = useFormik({
+    const formik = useUpdateNew({
         initialValues: {
             ...anamnesisFields.reduce((acc, { property }) => ({ ...acc, [property]: "" }), {}),
         },
-        validationSchema: anamnesisSchema,
-        onSubmit: (values) => {
-            backdropHandler(true);
-            const formikValues = values;
-
-            updatePaciente(formikValues).then(res => {
-                if (!res.status) {
-                    notifyHandler(true, res.type, res.message);
-                    return;
-                }
-
-                notifyHandler(true, res.type, res.message);
-                saveSessionStorageData("anamnesis", formikValues);
-            }).finally(() => backdropHandler(false));
-        },
+        schema: anamnesisSchema,
+    }, (data) => {
+        saveSessionStorageData("anamnesis", data);
     });
 
     const handleNiega = () => {
