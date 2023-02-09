@@ -50,7 +50,7 @@ export const updatePaciente = async (newFormikValues) => {
 
 export async function deletePaciente() {
     const id = getSessionStorageData("datosBasicos")?.idUsuario;
-    if (!id) return { status: false, message: "No se encontró el id del paciente", type: "error" };
+    if (!id) return handleError("No se encontró el id del paciente");
 
     return handlePetitions({ method: 'delete', route: `data/paciente?id=${id}`, customError: "Error al eliminar el paciente" });
 }
@@ -66,9 +66,13 @@ export async function getSignosVitalesHistory() {
     }
 }
 
-export const saveSignosVitalesHistory = (data) => handlePetitions({
-    method: 'post', data, route: `data/signosVitalesHistory`, customError: "Error al guardar la historia de signos vitales"
-});
+export const saveSignosVitalesHistory = (data) => {
+    const { idUsuario } = getSessionStorageData("datosBasicos");
+    if (!idUsuario) return handleError("No se encontró el id del paciente");
+    return handlePetitions({
+        method: 'post', data: { ...data, idUsuario }, route: `data/signosVitalesHistory`, customError: "Error al guardar la historia de signos vitales"
+    })
+};
 
 export const getLoginImage = async () => {
     try {
