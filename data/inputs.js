@@ -72,7 +72,9 @@ export const signosVitalesFields = [
                 unit: "mm/Hg",
                 abrev: "(TAS)",
                 variant: "filled",
-                size: "small"
+                size: "small",
+                min: 90,
+                max: 140,
             },
             {
                 name: "Tension Arterial Diastolica",
@@ -81,7 +83,9 @@ export const signosVitalesFields = [
                 unit: "mm/Hg",
                 abrev: "(TAD)",
                 variant: "filled",
-                size: "small"
+                size: "small",
+                min: 60,
+                max: 90
             },
             {
                 name: "Tension Arterial Media",
@@ -105,7 +109,9 @@ export const signosVitalesFields = [
                 unit: "L/M",
                 abrev: "(FC)",
                 variant: "filled",
-                size: "small"
+                size: "small",
+                min: 60,
+                max: 100
             },
             {
                 name: "Frecuencia Respiratoria",
@@ -114,7 +120,9 @@ export const signosVitalesFields = [
                 unit: "R/M",
                 abrev: "(FR)",
                 variant: "filled",
-                size: "small"
+                size: "small",
+                min: 12,
+                max: 20
             },
             {
                 name: "Saturacion de O2",
@@ -123,7 +131,9 @@ export const signosVitalesFields = [
                 unit: "%",
                 abrev: "(SO2)",
                 variant: "filled",
-                size: "small"
+                size: "small",
+                min: 90,
+                max: 100
             },
         ]
     },

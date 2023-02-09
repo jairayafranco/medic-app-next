@@ -12,6 +12,7 @@ import { getSignosVitalesHistory, saveSignosVitalesHistory } from '../../api/axi
 import FullScreenModal from '../../components/FullScreenModal';
 import DataTable from '../../components/DataTable';
 import { signosVitalesFields } from '../../data/inputs';
+import { useFormik } from 'formik';
 
 export default function SignosVitales() {
     const { useUpdateNew } = AppContext();
@@ -37,11 +38,8 @@ export default function SignosVitales() {
         schema: signosVitalesSchema,
     }, (data) => {
         saveSessionStorageData("signosVitales", data);
-        saveSignosVitalesHistory({ ...data, idUsuario: getSessionStorageData("datosBasicos")?.idUsuario })
-            .then(() => getSignosVitalesHistory().then(res => setHistory(res?.history)))
+        saveSignosVitalesHistory(data).then(() => getSignosVitalesHistory().then(res => setHistory(res?.history)));
     });
-
-    useEffect(() => handleSVInputValues(formik), [formik.values]);
 
     return (
         <form style={{ display: 'flex', flexWrap: 'wrap', gap: "2em" }} onSubmit={formik.handleSubmit} autoComplete="off">
@@ -58,7 +56,7 @@ export default function SignosVitales() {
                                         variant={campo.variant}
                                         type={campo.type}
                                         style={{ width: "90%", backgroundColor: signosVitalesColorSchema(campo, formik) }}
-                                        value={formik.values[campo.property]}
+                                        value={handleSVInputValues(formik, campo)}
                                         onChange={formik.handleChange}
                                         error={formik.touched[campo.property] && Boolean(formik.errors[campo.property])}
                                         helperText={formik.touched[campo.property] && formik.errors[campo.property]}

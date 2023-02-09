@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { IMC, getTensionArterialMedia, getPesoMaximo, getPesoMinimo, interpretacionIMC } from "../math/formulas";
 
 const routes = ["datos-basicos", "anamnesis", "antecedentes", "signos-vitales", "funcion-renal", "examen-fisico"]
 
@@ -65,88 +66,49 @@ export function calculateAge(birthday) {
 }
 
 export const signosVitalesColorSchema = (campo, formik) => {
-    const { tensionArterialDiastolica, tensionArterialSistolica, peso, talla,
-        frecuenciaCardiaca, frecuenciaRespiratoria, saturacionO2
-    } = formik.values;
-    const name = campo.property;
+    const valuesFromFields = formik.values;
+    const fieldNames = ["tensionArterialSistolica", "tensionArterialDiastolica", "frecuenciaCardiaca", "frecuenciaRespiratoria", "saturacionO2"];
+    const currentField = campo.property;
     const warning = "#CAB500";
     const advertence = "#D32F2F";
+    const imc = IMC(valuesFromFields.peso, valuesFromFields.talla);
+    const findField = fieldNames.find((fieldName) => fieldName === currentField);
 
-    const imc = (peso / ((talla / 100) * (talla / 100))).toFixed(2);
+    if (findField && valuesFromFields[findField]) {
+        return !_.inRange(valuesFromFields[findField], campo.min, campo.max) ? advertence : "";
+    }
 
-    if (name === "interpretacion" && (peso && talla)) {
-        if (imc <= 17 || imc >= 30) {
+    if (currentField === "interpretacion" && valuesFromFields["interpretacion"]) {
+        if (!_.inRange(imc, 17, 30)) {
             return advertence;
         }
-        if (imc >= 17 && imc <= 18.41 || imc >= 25 && imc <= 30) {
+
+        if (_.inRange(imc, 17, 18.5) || _.inRange(imc, 24.9, 30)) {
             return warning;
-        }
-    }
-
-    if (name === "tensionArterialSistolica" && tensionArterialSistolica) {
-        if (tensionArterialSistolica < 90 || tensionArterialSistolica >= 140) {
-            return advertence;
-        }
-    }
-
-    if (name === "tensionArterialDiastolica" && tensionArterialDiastolica) {
-        if (tensionArterialDiastolica < 60 || tensionArterialDiastolica >= 90) {
-            return advertence;
-        }
-    }
-
-    if (name === "frecuenciaCardiaca" && frecuenciaCardiaca) {
-        if (frecuenciaCardiaca < 60 || frecuenciaCardiaca > 100) {
-            return advertence;
-        }
-    }
-
-    if (name === "frecuenciaRespiratoria" && frecuenciaRespiratoria) {
-        if (frecuenciaRespiratoria < 12 || frecuenciaRespiratoria > 20) {
-            return advertence;
-        }
-    }
-
-    if (name === "saturacionO2" && saturacionO2) {
-        if (saturacionO2 < 90 || saturacionO2 > 100) {
-            return advertence;
         }
     }
 }
 
-export const handleSVInputValues = (formik) => {
-    const { values } = formik;
+export const handleSVInputValues = (formik, campo) => {
+    const { tensionArterialDiastolica, tensionArterialSistolica, peso, talla } = formik.values;
+    const imc = IMC(peso, talla);
 
-    if (values.tensionArterialDiastolica && values.tensionArterialSistolica) {
-        formik.setFieldValue(
-            "tensionArterialMedia",
-            Math.trunc(parseInt(values.tensionArterialDiastolica) + ((parseInt(values.tensionArterialSistolica) - parseInt(values.tensionArterialDiastolica))) / 3)
-        );
-    } else {
-        formik.setFieldValue("tensionArterialMedia", "");
+    if (tensionArterialDiastolica && tensionArterialSistolica) {
+        if (campo.property === "tensionArterialMedia") {
+            formik.values.tensionArterialMedia = getTensionArterialMedia(tensionArterialSistolica, tensionArterialDiastolica);
+        }
     }
 
-    const imc = (values.peso / ((values.talla / 100) * (values.talla / 100))).toFixed(2);
-
-    if (values.peso && values.talla) {
-        formik.setFieldValue("imc", imc);
-        formik.setFieldValue("interpretacion", interpretacionIMC(imc));
-        formik.setFieldValue("pesoMinimo", ((values.talla / 100) * (values.talla / 100) * 18.5).toFixed(1));
-        formik.setFieldValue("pesoMaximo", ((values.talla / 100) * (values.talla / 100) * 24.9).toFixed(1));
-    } else {
-        formik.setFieldValue("imc", "");
-        formik.setFieldValue("interpretacion", "");
-        formik.setFieldValue("pesoMinimo", "");
-        formik.setFieldValue("pesoMaximo", "");
+    if (peso && talla) {
+        if (["imc", "interpretacion", "pesoMinimo", "pesoMaximo"].includes(campo.property)) {
+            formik.values[campo.property] = {
+                imc,
+                interpretacion: interpretacionIMC(imc),
+                pesoMinimo: getPesoMinimo(talla),
+                pesoMaximo: getPesoMaximo(talla)
+            }[campo.property];
+        }
     }
 
-    function interpretacionIMC(imc) {
-        if (imc < 17) return 'Desnutricion';
-        if (imc < 18.5) return 'Peso bajo';
-        if (imc >= 18.5 && imc <= 24.9) return 'Peso normal';
-        if (imc >= 25 && imc <= 29.9) return 'Sobrepeso';
-        if (imc >= 30 && imc <= 34.9) return 'Obesidad grado 1';
-        if (imc >= 35 && imc <= 39.9) return 'Obesidad grado 2';
-        if (imc >= 40) return 'Obesidad grado 3';
-    }
+    return formik.values[campo.property];
 }
