@@ -68,7 +68,7 @@ export const signosVitalesSchema = yup.object({
 });
 
 export const funcionRenalSchema = yup.object({
-    creatinina: yup.number().required("Creatinina requerida"),
+    tfgCorregida: yup.number().required("Creatinina requerida"),
 });
 
 export const examenFisicoSchema = yup.object({

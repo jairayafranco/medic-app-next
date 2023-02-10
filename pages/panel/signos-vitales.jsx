@@ -12,7 +12,6 @@ import { getSignosVitalesHistory, saveSignosVitalesHistory } from '../../api/axi
 import FullScreenModal from '../../components/FullScreenModal';
 import DataTable from '../../components/DataTable';
 import { signosVitalesFields } from '../../data/inputs';
-import { useFormik } from 'formik';
 
 export default function SignosVitales() {
     const { useUpdateNew } = AppContext();
@@ -57,7 +56,7 @@ export default function SignosVitales() {
                                         type={campo.type}
                                         style={{ width: "90%", backgroundColor: signosVitalesColorSchema(campo, formik) }}
                                         value={handleSVInputValues(formik, campo)}
-                                        onChange={formik.handleChange}
+                                        onInput={formik.handleChange}
                                         error={formik.touched[campo.property] && Boolean(formik.errors[campo.property])}
                                         helperText={formik.touched[campo.property] && formik.errors[campo.property]}
                                         size={campo.size}

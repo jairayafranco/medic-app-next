@@ -234,7 +234,7 @@ export const funcionRenalFields = [
     {
         group: 2, fields: [
             { name: 'Creatinina', property: 'creatinina', unit: 'Mg/MI', variant: 'filled', size: 'small', type: "number" },
-            { name: 'TFG Corregida', property: 'tfgCorregida', unit: 'mL/min/1,73 m2', readOnly: true, size: 'small', shrink: true, variant: 'filled' },
+            { name: 'TFG Corregida', property: 'tfgCorregida', unit: 'mL/min/1,73 m2', size: 'small', variant: 'filled', type: "number" },
             { name: 'Estadio', property: 'estadio', unit: '', readOnly: true, size: 'small', shrink: true, variant: 'filled' },
             { name: 'Clasificacion (KDIGO)', property: 'clasificacion', unit: '', readOnly: true, size: 'small', shrink: true, variant: 'filled' },
         ]

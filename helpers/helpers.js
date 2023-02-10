@@ -1,5 +1,13 @@
 import _ from "lodash";
-import { IMC, getTensionArterialMedia, getPesoMaximo, getPesoMinimo, interpretacionIMC } from "../math/formulas";
+
+import {
+    IMC,
+    getTensionArterialMedia,
+    getPesoMaximo, getPesoMinimo,
+    interpretacionIMC,
+    funcionRenalClasificacion,
+    funcionRenalEstadio
+} from "../math/formulas";
 
 const routes = ["datos-basicos", "anamnesis", "antecedentes", "signos-vitales", "funcion-renal", "examen-fisico"]
 
@@ -75,7 +83,7 @@ export const signosVitalesColorSchema = (campo, formik) => {
     const findField = fieldNames.find((fieldName) => fieldName === currentField);
 
     if (findField && valuesFromFields[findField]) {
-        return !_.inRange(valuesFromFields[findField], campo.min, campo.max) ? advertence : "";
+        return !_.inRange(valuesFromFields[findField], campo.min, campo.max + 1) ? advertence : "";
     }
 
     if (currentField === "interpretacion" && valuesFromFields["interpretacion"]) {
@@ -83,7 +91,7 @@ export const signosVitalesColorSchema = (campo, formik) => {
             return advertence;
         }
 
-        if (_.inRange(imc, 17, 18.5) || _.inRange(imc, 24.9, 30)) {
+        if (_.inRange(imc, 17, (18.5) + 0.1) || _.inRange(imc, 24.9, (30 + 1))) {
             return warning;
         }
     }
@@ -91,23 +99,53 @@ export const signosVitalesColorSchema = (campo, formik) => {
 
 export const handleSVInputValues = (formik, campo) => {
     const { tensionArterialDiastolica, tensionArterialSistolica, peso, talla } = formik.values;
-    const imc = IMC(peso, talla);
 
-    if (tensionArterialDiastolica && tensionArterialSistolica) {
-        if (campo.property === "tensionArterialMedia") {
-            formik.values.tensionArterialMedia = getTensionArterialMedia(tensionArterialSistolica, tensionArterialDiastolica);
-        }
+    if (campo.property === "tensionArterialMedia") {
+        formik.values.tensionArterialMedia
+            = getTensionArterialMedia(tensionArterialSistolica, tensionArterialDiastolica);
     }
 
-    if (peso && talla) {
-        if (["imc", "interpretacion", "pesoMinimo", "pesoMaximo"].includes(campo.property)) {
-            formik.values[campo.property] = {
-                imc,
-                interpretacion: interpretacionIMC(imc),
-                pesoMinimo: getPesoMinimo(talla),
-                pesoMaximo: getPesoMaximo(talla)
-            }[campo.property];
+    if (["imc", "interpretacion", "pesoMinimo", "pesoMaximo"].includes(campo.property)) {
+        const imc = IMC(peso, talla);
+        formik.values[campo.property] = {
+            imc,
+            interpretacion: interpretacionIMC(imc),
+            pesoMinimo: getPesoMinimo(talla),
+            pesoMaximo: getPesoMaximo(talla)
+        }[campo.property];
+    }
+
+    return formik.values[campo.property];
+}
+
+export const funcionRenalColorSchema = (formik, campo) => {
+    const { tfgCorregida, estadio } = formik.values;
+    const alert = "#FFC000";
+    const warning = "#CAB500";
+    const advertence = "#D32F2F";
+
+    if (tfgCorregida) {
+        if (["clasificacion", "estadio"].includes(campo.property)) {
+            return {
+                "3B": warning,
+                "4": alert,
+                "5": advertence
+            }[estadio];
         }
+    }
+}
+
+export const handleFRInputValues = (formik, campo) => {
+    const { tfgCorregida } = formik.values;
+
+    if (["clasificacion", "estadio"].includes(campo.property)) {
+        const estadio = funcionRenalEstadio(tfgCorregida);
+        const clasificacion = funcionRenalClasificacion(estadio);
+
+        formik.values[campo.property] = {
+            estadio,
+            clasificacion
+        }[campo.property];
     }
 
     return formik.values[campo.property];

@@ -4,15 +4,13 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useEffect } from 'react'
-import { useFormik } from 'formik';
 import { funcionRenalSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
-import { saveSessionStorageData, getSessionStorageData, moduleCompleted, calculateAge } from '../../helpers/helpers';
-import { updatePaciente } from '../../api/axiosApi';
+import { saveSessionStorageData, getSessionStorageData, moduleCompleted, calculateAge, handleFRInputValues, funcionRenalColorSchema } from '../../helpers/helpers';
 import { funcionRenalFields } from '../../data/inputs';
 
 export default function FuncionRenal() {
-    const { notifyHandler, backdropHandler } = AppContext();
+    const { useUpdateNew } = AppContext();
 
     useEffect(() => {
         const data = getSessionStorageData('funcionRenal');
@@ -24,15 +22,16 @@ export default function FuncionRenal() {
                 const { fechaNacimiento, genero, peso, talla } = { ...datosBasicos, ...signosVitales };
                 const edad = calculateAge(fechaNacimiento);
 
-                formik.setFieldValue('edad', edad);
-                formik.setFieldValue('sexo', genero);
-                formik.setFieldValue('peso', peso);
-                formik.setFieldValue('talla', talla);
+                const fields = ['edad', 'sexo', 'peso', 'talla'];
+                const values = [edad, genero, peso, talla];
+                fields.forEach((field, index) => {
+                    formik.setFieldValue(field, values[index]);
+                });
             }
         }
     }, []);
 
-    const formik = useFormik({
+    const formik = useUpdateNew({
         initialValues: {
             ...funcionRenalFields.reduce((acc, curr) => {
                 curr.fields.forEach(field => {
@@ -41,10 +40,9 @@ export default function FuncionRenal() {
                 return acc;
             }, {})
         },
-        validationSchema: funcionRenalSchema,
-        onSubmit: values => {
-            console.log(values);
-        }
+        schema: funcionRenalSchema,
+    }, (data) => {
+        saveSessionStorageData('funcionRenal', data);
     });
 
     return (
@@ -57,7 +55,7 @@ export default function FuncionRenal() {
                                 id={campo.name}
                                 name={campo.property}
                                 label={campo.name}
-                                value={formik.values[campo.property]}
+                                value={handleFRInputValues(formik, campo)}
                                 onChange={formik.handleChange}
                                 error={formik.touched[campo.property] && Boolean(formik.errors[campo.property])}
                                 helperText={formik.touched[campo.property] && formik.errors[campo.property]}
@@ -69,7 +67,7 @@ export default function FuncionRenal() {
                                 InputLabelProps={{
                                     shrink: campo.shrink,
                                 }}
-                                style={{ width: '90%' }}
+                                style={{ width: '90%', backgroundColor: funcionRenalColorSchema(formik, campo) }}
                                 variant={campo.variant}
                                 type={campo.type}
                             />
