@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -6,16 +6,14 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { TextField } from '@mui/material';
-import Questions from './BarthelQuestions';
+import TextField from '@mui/material/TextField';
+import { questions } from '../data/barthelQuestions';
 import { useFormik } from 'formik';
 import { AppContext } from '../context/AppContext';
+import _ from 'lodash';
 
 export default function BarthelTable() {
-    const { setBarthelResults } = AppContext();
-    const questions = Questions();
-    const [points, setPoints] = useState({});
-    const [resultados, setResultados] = useState({});
+    const { barthelResults, setBarthelResults } = AppContext();
 
     const formik = useFormik({
         initialValues: {
@@ -23,40 +21,38 @@ export default function BarthelTable() {
         },
     });
 
+    useEffect(() => {
+        const points = barthelResults.points;
+        if (!_.isEmpty(points)) {
+            _.forEach(points, (value, key) => {
+                formik.setFieldValue(key, value);
+            });
+        }
+    }, []);
+
     const handlePoints = (e, itemPoints) => {
         const { name, value } = e.target;
+        const points = { ...barthelResults.points, [name]: Number(value) };
+        const sumatoria = _.sum(_.values(points));
 
         if (!itemPoints.includes(Number(value))) {
             formik.setFieldValue(name, '');
             return;
         }
 
-        setPoints(({ ...points, [name]: Number(value) }));
+        const barthel = {
+            0: 'DEPENDENCIA TOTAL',
+            20: 'DEPENDENCIA GRAVE',
+            40: 'DEPENDENCIA MODERADA',
+            60: 'DEPENDENCIA LEVE',
+            100: 'INDEPENDENCIA',
+        }
+
+        const barthelIndex = _.findKey(barthel, (value, key) => sumatoria <= key);
+        const barthelResult = barthel[barthelIndex];
+
+        setBarthelResults({ points, barthel: barthelResult, puntuacion: sumatoria });
     }
-
-    useEffect(() => {
-        const sumatoria = Object.values(points).reduce((a, b) => Number(a) + Number(b), 0);
-
-        if (sumatoria < 20) {
-            setResultados({ barthel: "DEPENDENCIA TOTAL", puntuacion: sumatoria });
-        }
-        if (sumatoria >= 20 && sumatoria < 36) {
-            setResultados({ barthel: "DEPENDENCIA GRAVE", puntuacion: sumatoria });
-        }
-        if (sumatoria >= 40 && sumatoria <= 55) {
-            setResultados({ barthel: "DEPENDENCIA MODERADA", puntuacion: sumatoria });
-        }
-        if (sumatoria >= 60 && sumatoria <= 95) {
-            setResultados({ barthel: "DEPENDENCIA LEVE", puntuacion: sumatoria });
-        }
-        if (sumatoria === 100) {
-            setResultados({ barthel: "INDEPENDENCIA", puntuacion: sumatoria });
-        }
-    }, [points]);
-
-    useEffect(() => {
-        setBarthelResults({ ...resultados, points });
-    }, [resultados]);
 
     return (
         <TableContainer component={Paper}>
@@ -112,14 +108,14 @@ export default function BarthelTable() {
                         <TableCell style={{ textAlign: 'right' }} colSpan={3}>
                             SUMATORIA TOTAL
                         </TableCell>
-                        <TableCell colSpan={3} align="center">{resultados.puntuacion}</TableCell>
+                        <TableCell colSpan={3} align="center">{barthelResults.puntuacion}</TableCell>
                     </TableRow>
 
                     <TableRow>
                         <TableCell style={{ textAlign: 'right' }} colSpan={2}>
                             RESULTADO DE VALORACIÓN DE LA CAPACIDAD FUNCIONAL SEGÚN INDICE DE BARTHEL:
                         </TableCell>
-                        <TableCell colSpan={2} align="center">{resultados.barthel}</TableCell>
+                        <TableCell colSpan={2} align="center">{barthelResults.barthel}</TableCell>
                     </TableRow>
 
                 </TableBody>

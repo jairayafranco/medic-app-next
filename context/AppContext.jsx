@@ -41,9 +41,10 @@ export const AppContextProvider = ({ children }) => {
         return formik;
     }
 
-    const useUpdateNew = ({ initialValues, schema }, callback) => {
+    const useUpdateNew = ({ initialValues, schema, moreData = {} }, callback) => {
         const formik = useForm({ initialValues, schema }, (data) => {
-            handlePetitions(updatePaciente, data, () => callback(data));
+            const dataToSend = { ...data, ...moreData };
+            handlePetitions(updatePaciente, dataToSend, () => callback(dataToSend));
         });
         return formik;
     }

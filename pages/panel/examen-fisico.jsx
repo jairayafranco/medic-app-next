@@ -2,36 +2,39 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Grid from '@mui/material/Grid';
-import { useEffect, useRef } from 'react'
-import { useFormik } from 'formik';
+import { useEffect } from 'react'
 import { examenFisicoSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
-import { saveSessionStorageData, getSessionStorageData, updatePaciente, moduleCompleted } from '../../helpers/helpers';
+import { saveSessionStorageData, getSessionStorageData, moduleCompleted, getObjectsDifference } from '../../helpers/helpers';
 import FullScreenModal from '../../components/FullScreenModal';
 import BarthelTable from '../../components/TestBarthel';
 import { examenFisicoFields } from '../../data/inputs';
 
 export default function ExamenFisico() {
-    const { notifyHandler, backdropHandler, barthelResults } = AppContext();
-
-    const barthelPuntuacion = useRef();
-    const barthelMessage = useRef();
+    const { useUpdateNew, barthelResults, setBarthelResults } = AppContext();
 
     useEffect(() => {
-        // const data = getSessionStorageData('examenFisico');
-        // if (data) {
-        //     formik.setValues(data);
-        // }
+        const data = getSessionStorageData('examenFisico');
+        if (data) {
+            formik.setValues(data);
+            setBarthelResults(data.barthel);
+        } else {
+            setBarthelResults({
+                barthel: 'No aplica',
+                puntuacion: 'No Aplica',
+                points: {},
+            });
+        }
     }, []);
 
-    const formik = useFormik({
+    const formik = useUpdateNew({
         initialValues: {
             ...examenFisicoFields.reduce((acc, curr) => ({ ...acc, [curr.property]: '' }), {}),
         },
-        validationSchema: examenFisicoSchema,
-        onSubmit: values => {
-            console.log({ ...values, barthelResults });
-        }
+        schema: examenFisicoSchema,
+        moreData: { barthel: barthelResults },
+    }, (data) => {
+        saveSessionStorageData('examenFisico', data);
     });
 
     const handleNormal = () => {
@@ -39,11 +42,6 @@ export default function ExamenFisico() {
         const newValues = Object.keys(values).reduce((acc, key) => ({ ...acc, [key]: "Normal" }), {});
         formik.setValues(newValues);
     }
-
-    useEffect(() => {
-        barthelPuntuacion.current.value = barthelResults.puntuacion;
-        barthelMessage.current.value = barthelResults.barthel;
-    }, [barthelResults]);
 
     return (
         <form style={{ display: 'flex', flexWrap: 'wrap', gap: "1.5em" }} onSubmit={formik.handleSubmit} autoComplete="off">
@@ -68,7 +66,7 @@ export default function ExamenFisico() {
             <Grid container justifyContent='space-between'>
                 <Grid item xs={12} md={6}>
                     <ButtonGroup variant="contained">
-                        <Button color="primary" type="submit">Guardar</Button>
+                        <Button color="primary" type="submit" disabled={!moduleCompleted('funcionRenal')}>Guardar</Button>
                         <Button color="secondary" onClick={handleNormal}>Normal</Button>
                     </ButtonGroup>
                 </Grid>
@@ -91,7 +89,7 @@ export default function ExamenFisico() {
                                             readOnly: true,
                                             style: { textAlign: 'center' }
                                         }}
-                                        inputRef={barthelPuntuacion}
+                                        value={barthelResults.puntuacion}
                                     />
                                 </td>
                                 <td>
@@ -103,7 +101,7 @@ export default function ExamenFisico() {
                                             readOnly: true,
                                             style: { textAlign: 'center' }
                                         }}
-                                        inputRef={barthelMessage}
+                                        value={barthelResults.barthel}
                                     />
                                 </td>
                             </tr>
