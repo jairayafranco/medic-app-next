@@ -72,7 +72,7 @@ export const AppContextProvider = ({ children }) => {
     }
 
     return (
-        <Context.Provider value={{ notify, backdrop, barthelResults, setBarthelResults, useSearch, useCreate, useDelete, useUpdate, useUpdateNew }}>
+        <Context.Provider value={{ notify, setNotify, backdrop, barthelResults, setBarthelResults, useSearch, useCreate, useDelete, useUpdate, useUpdateNew }}>
             {children}
         </Context.Provider>
     );

@@ -20,7 +20,7 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
-    const { notifyHandler } = AppContext();
+    const { setNotify } = AppContext();
 
     useEffect(() => {
         const windowWidth = window.innerWidth;
@@ -44,9 +44,9 @@ export default function Login() {
         },
         validationSchema: loginSchema,
         onSubmit: values => {
-            login(values).then(res => {
-                if (!res.status) {
-                    notifyHandler(true, res.type, res.message);
+            login(values).then(({ status, type, message }) => {
+                if (!status) {
+                    setNotify({ open: true, type, message });
                     formik.setSubmitting(false);
                     return;
                 }
