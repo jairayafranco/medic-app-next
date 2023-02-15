@@ -108,7 +108,7 @@ export default function AccountMenu() {
                             return;
                         }
                         clearSessionStorageData();
-                        router.replace('/login');
+                        window.location.reload();
                     });
                 }}>
                     <ListItemIcon>
