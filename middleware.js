@@ -8,20 +8,12 @@ export async function middleware(request) {
 
     const result = await validateToken(token);
 
-    if (result && url === '/') {
+    if (result && ['/', '/login'].includes(url)) {
         return redirect('/panel');
     }
 
-    if (!result && url === '/') {
+    if (!result && (url === '/' || url.startsWith('/panel'))) {
         return redirect('/login');
-    }
-
-    if (!result && url.startsWith('/panel')) {
-        return redirect('/login');
-    }
-
-    if (result && url === '/login') {
-        return redirect('/panel');
     }
 
     if (!result && url.startsWith('/api')) {
