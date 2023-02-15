@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid';
 import { useEffect } from 'react'
 import { anamnesisSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
-import { saveSessionStorageData, getSessionStorageData, moduleCompleted } from '../../helpers/helpers';
+import { saveSessionStorageData, getSessionStorageData, moduleCompleted, formatInitialValues } from '../../helpers/helpers';
 import { anamnesisFields } from '../../data/inputs';
 
 export default function Anamnesis() {
@@ -19,9 +19,7 @@ export default function Anamnesis() {
     }, [])
 
     const formik = useUpdateNew({
-        initialValues: {
-            ...anamnesisFields.reduce((acc, { property }) => ({ ...acc, [property]: "" }), {}),
-        },
+        initialValues: formatInitialValues(anamnesisFields),
         schema: anamnesisSchema,
     }, (data) => {
         saveSessionStorageData("anamnesis", data);
@@ -56,7 +54,8 @@ export default function Anamnesis() {
                 variant="outlined"
                 style={{ width: '78%' }}
                 multiline
-                rows={2}
+                minRows={2}
+                maxRows={5}
                 type="text"
                 value={formik.values.motivoConsulta}
                 onChange={formik.handleChange}

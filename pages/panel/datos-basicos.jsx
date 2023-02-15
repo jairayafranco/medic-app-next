@@ -12,7 +12,7 @@ import Dialog from '../../components/Dialog';
 import Confirm from '../../components/Confirm';
 import PacientePicture from '../../components/PacientePicture';
 import Box from '@mui/material/Box';
-import { saveSessionStorageData, getSessionStorageData, clearSessionStorageData, availableSessionStorageData } from '../../helpers/helpers';
+import { saveSessionStorageData, getSessionStorageData, clearSessionStorageData, availableSessionStorageData, formatInitialValues, clearUserSVHistory } from '../../helpers/helpers';
 import { datosBasicosFields } from '../../data/inputs';
 
 export default function DatosBasicos() {
@@ -26,9 +26,7 @@ export default function DatosBasicos() {
     }, []);
 
     const formik = useCreate({
-        initialValues: {
-            ...datosBasicosFields.reduce((acc, { property }) => ({ ...acc, [property]: '' }), {})
-        },
+        initialValues: formatInitialValues(datosBasicosFields),
         schema: datosBasicosSchema,
     }, (data) => saveSessionStorageData("datosBasicos", data));
 
@@ -51,6 +49,12 @@ export default function DatosBasicos() {
         useUpdate(formikValues, () => {
             saveSessionStorageData("datosBasicos", formikValues);
         });
+    }
+
+    const handleClearForm = () => {
+        formik.resetForm();
+        clearSessionStorageData();
+        clearUserSVHistory();
     }
 
     return (
@@ -120,7 +124,7 @@ export default function DatosBasicos() {
                             buttonAction={handleSearchPaciente}
                         />
                         <Button disabled={!availableSessionStorageData()} onClick={handleUpdatePaciente}>Actualizar</Button>
-                        <Button onClick={() => { formik.resetForm(), clearSessionStorageData() }}>Limpiar</Button>
+                        <Button onClick={handleClearForm}>Limpiar</Button>
                         <Confirm
                             buttonTitle="Eliminar"
                             title="Eliminar Paciente"

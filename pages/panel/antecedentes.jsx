@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid';
 import { useEffect } from 'react'
 import { antecedentesSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
-import { saveSessionStorageData, getSessionStorageData, moduleCompleted } from '../../helpers/helpers';
+import { saveSessionStorageData, getSessionStorageData, moduleCompleted, formatInitialValues } from '../../helpers/helpers';
 import { antecedentesFields } from '../../data/inputs';
 
 export default function Antecedentes() {
@@ -19,9 +19,7 @@ export default function Antecedentes() {
     }, []);
 
     const formik = useUpdateNew({
-        initialValues: {
-            ...antecedentesFields.reduce((acc, { property }) => ({ ...acc, [property]: "" }), {}),
-        },
+        initialValues: formatInitialValues(antecedentesFields),
         schema: antecedentesSchema,
     }, (data) => saveSessionStorageData("antecedentes", data));
 

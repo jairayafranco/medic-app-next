@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid';
 import { useEffect } from 'react'
 import { examenFisicoSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
-import { saveSessionStorageData, getSessionStorageData, moduleCompleted, getObjectsDifference } from '../../helpers/helpers';
+import { saveSessionStorageData, getSessionStorageData, moduleCompleted, formatInitialValues } from '../../helpers/helpers';
 import FullScreenModal from '../../components/FullScreenModal';
 import BarthelTable from '../../components/TestBarthel';
 import { examenFisicoFields } from '../../data/inputs';
@@ -28,9 +28,7 @@ export default function ExamenFisico() {
     }, []);
 
     const formik = useUpdateNew({
-        initialValues: {
-            ...examenFisicoFields.reduce((acc, curr) => ({ ...acc, [curr.property]: '' }), {}),
-        },
+        initialValues: formatInitialValues(examenFisicoFields),
         schema: examenFisicoSchema,
         moreData: { barthel: barthelResults },
     }, (data) => {

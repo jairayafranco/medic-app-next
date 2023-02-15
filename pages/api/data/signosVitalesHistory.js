@@ -20,14 +20,14 @@ export default function signosVitalesHistory(req, res) {
         const data = req.body;
         if (!data) return res.status(400).json({ status: false, message: 'Datos requeridos' });
 
-        const history = {
+        const newHistoryRegister = {
             "id": Date.now(),
             "fecha": new Date().toLocaleString(),
             ...data
         };
 
-        db.insertOne(history).then(() => {
-            return res.status(200).json({ status: true, message: 'Signos vitales creados correctamente' });
+        db.insertOne(newHistoryRegister).then(() => {
+            return res.status(200).json({ status: true, message: 'Signos vitales creados correctamente', newHistoryRegister });
         }).catch(() => {
             return res.status(400).json({ error: true, message: 'Error al crear los signos vitales' });
         });

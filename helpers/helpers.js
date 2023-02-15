@@ -1,18 +1,16 @@
 import _ from "lodash";
-
 import {
     IMC,
     getTensionArterialMedia,
-    getPesoMaximo, getPesoMinimo,
+    getPesoMaximo,
+    getPesoMinimo,
     interpretacionIMC,
     funcionRenalClasificacion,
     funcionRenalEstadio
 } from "../math/formulas";
 
 const routes = ["datos-basicos", "anamnesis", "antecedentes", "signos-vitales", "funcion-renal", "examen-fisico"]
-
 export const validFields = ["datosBasicos", "anamnesis", "antecedentes", "signosVitales", "funcionRenal", "examenFisico"];
-
 export const routesToModules = validFields.map((name, index) => ({ name, route: routes[index] }));
 
 export const saveSessionStorageData = (field, data) => {
@@ -49,6 +47,19 @@ export const clearSessionStorageData = () => {
 export const availableSessionStorageData = () => {
     const storage = window.sessionStorage.getItem("userData");
     return !!storage;
+}
+
+export const saveUserSVHistory = (history) => {
+    window.sessionStorage.setItem("userSVHistory", JSON.stringify(history));
+}
+
+export const getUserSVHistory = () => {
+    const history = window.sessionStorage.getItem("userSVHistory");
+    return JSON.parse(history);
+}
+
+export const clearUserSVHistory = () => {
+    window.sessionStorage.removeItem("userSVHistory");
 }
 
 export const getObjectsDifference = (userData, formikValues) => {
@@ -149,4 +160,17 @@ export const handleFRInputValues = (formik, campo) => {
     }
 
     return formik.values[campo.property];
+}
+
+export const formatInitialValues = (inputs) => {
+    return inputs.reduce((acc, curr) => {
+        if (curr.fields) {
+            curr.fields.forEach(field => {
+                acc[field.property] = "";
+            });
+        } else {
+            acc[curr.property] = "";
+        }
+        return acc;
+    }, {});
 }

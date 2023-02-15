@@ -7,7 +7,16 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { useEffect, useState } from 'react'
 import { signosVitalesSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
-import { saveSessionStorageData, getSessionStorageData, moduleCompleted, signosVitalesColorSchema, handleSVInputValues } from '../../helpers/helpers';
+import {
+    saveSessionStorageData,
+    getSessionStorageData,
+    moduleCompleted,
+    signosVitalesColorSchema,
+    handleSVInputValues,
+    formatInitialValues,
+    saveUserSVHistory,
+    getUserSVHistory,
+} from '../../helpers/helpers';
 import { getSignosVitalesHistory, saveSignosVitalesHistory } from '../../api/axiosApi';
 import FullScreenModal from '../../components/FullScreenModal';
 import DataTable from '../../components/DataTable';
@@ -22,22 +31,31 @@ export default function SignosVitales() {
         if (data) {
             formik.setValues(data);
         }
-        getSignosVitalesHistory().then(res => setHistory(res?.history))
+
+        const getSVHistory = getUserSVHistory();
+        if (!getSVHistory) {
+            getSignosVitalesHistory().then(({ history }) => {
+                setHistory(history);
+                saveUserSVHistory(history);
+            });
+        } else {
+            setHistory(getSVHistory);
+        }
     }, []);
 
     const formik = useUpdateNew({
-        initialValues: {
-            ...signosVitalesFields.reduce((acc, curr) => {
-                curr.fields.forEach(field => {
-                    acc[field.property] = "";
-                });
-                return acc;
-            }, {})
-        },
+        initialValues: formatInitialValues(signosVitalesFields),
         schema: signosVitalesSchema,
     }, (data) => {
         saveSessionStorageData("signosVitales", data);
-        saveSignosVitalesHistory(data).then(() => getSignosVitalesHistory().then(res => setHistory(res?.history)));
+        saveSignosVitalesHistory(data).then(({ newHistoryRegister }) => {
+            setHistory(prev => {
+                const prevHistory = [...prev];
+                prevHistory.push(newHistoryRegister);
+                saveUserSVHistory(prevHistory);
+                return prevHistory;
+            });
+        });
     });
 
     return (

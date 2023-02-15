@@ -6,7 +6,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { useEffect } from 'react'
 import { funcionRenalSchema } from '../../schemas/schemas';
 import { AppContext } from '../../context/AppContext';
-import { saveSessionStorageData, getSessionStorageData, moduleCompleted, calculateAge, handleFRInputValues, funcionRenalColorSchema } from '../../helpers/helpers';
+import { saveSessionStorageData, getSessionStorageData, moduleCompleted, calculateAge, handleFRInputValues, funcionRenalColorSchema, formatInitialValues } from '../../helpers/helpers';
 import { funcionRenalFields } from '../../data/inputs';
 
 export default function FuncionRenal() {
@@ -32,14 +32,7 @@ export default function FuncionRenal() {
     }, []);
 
     const formik = useUpdateNew({
-        initialValues: {
-            ...funcionRenalFields.reduce((acc, curr) => {
-                curr.fields.forEach(field => {
-                    acc[field.property] = '';
-                });
-                return acc;
-            }, {})
-        },
+        initialValues: formatInitialValues(funcionRenalFields),
         schema: funcionRenalSchema,
     }, (data) => {
         saveSessionStorageData('funcionRenal', data);
