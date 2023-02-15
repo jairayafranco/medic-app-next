@@ -10,7 +10,7 @@ import { saveSessionStorageData, getSessionStorageData, moduleCompleted, calcula
 import { funcionRenalFields } from '../../data/inputs';
 
 export default function FuncionRenal() {
-    const { useUpdateNew } = AppContext();
+    const { updateModule } = AppContext();
 
     useEffect(() => {
         const data = getSessionStorageData('funcionRenal');
@@ -31,7 +31,7 @@ export default function FuncionRenal() {
         }
     }, []);
 
-    const formik = useUpdateNew({
+    const formik = updateModule({
         initialValues: formatInitialValues(funcionRenalFields),
         schema: funcionRenalSchema,
     }, (data) => {

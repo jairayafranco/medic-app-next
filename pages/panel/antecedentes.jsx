@@ -9,7 +9,7 @@ import { saveSessionStorageData, getSessionStorageData, moduleCompleted, formatI
 import { antecedentesFields } from '../../data/inputs';
 
 export default function Antecedentes() {
-    const { useUpdateNew } = AppContext();
+    const { updateModule } = AppContext();
 
     useEffect(() => {
         const data = getSessionStorageData("antecedentes");
@@ -18,7 +18,7 @@ export default function Antecedentes() {
         }
     }, []);
 
-    const formik = useUpdateNew({
+    const formik = updateModule({
         initialValues: formatInitialValues(antecedentesFields),
         schema: antecedentesSchema,
     }, (data) => saveSessionStorageData("antecedentes", data));

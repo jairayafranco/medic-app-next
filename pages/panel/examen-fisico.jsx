@@ -11,7 +11,7 @@ import BarthelTable from '../../components/TestBarthel';
 import { examenFisicoFields } from '../../data/inputs';
 
 export default function ExamenFisico() {
-    const { useUpdateNew, barthelResults, setBarthelResults } = AppContext();
+    const { updateModule, barthelResults, setBarthelResults } = AppContext();
 
     useEffect(() => {
         const data = getSessionStorageData('examenFisico');
@@ -27,7 +27,7 @@ export default function ExamenFisico() {
         }
     }, []);
 
-    const formik = useUpdateNew({
+    const formik = updateModule({
         initialValues: formatInitialValues(examenFisicoFields),
         schema: examenFisicoSchema,
         moreData: { barthel: barthelResults },

@@ -12,11 +12,11 @@ import Dialog from '../../components/Dialog';
 import Confirm from '../../components/Confirm';
 import PacientePicture from '../../components/PacientePicture';
 import Box from '@mui/material/Box';
-import { saveSessionStorageData, getSessionStorageData, clearSessionStorageData, availableSessionStorageData, formatInitialValues, clearUserSVHistory } from '../../helpers/helpers';
+import { saveSessionStorageData, getSessionStorageData, clearSessionStorageData, availableSessionStorageData, formatInitialValues } from '../../helpers/helpers';
 import { datosBasicosFields } from '../../data/inputs';
 
 export default function DatosBasicos() {
-    const { useSearch, useCreate, useDelete, useUpdate } = AppContext();
+    const { findPaciente, createNewForm, removePaciente, modifyPaciente } = AppContext();
 
     useEffect(() => {
         const data = getSessionStorageData("datosBasicos");
@@ -25,27 +25,27 @@ export default function DatosBasicos() {
         }
     }, []);
 
-    const formik = useCreate({
+    const formik = createNewForm({
         initialValues: formatInitialValues(datosBasicosFields),
         schema: datosBasicosSchema,
     }, (data) => saveSessionStorageData("datosBasicos", data));
 
     const handleSearchPaciente = (id) => {
-        useSearch(id, (data) => {
+        findPaciente(id, (data) => {
             formik.setValues(data.paciente.datosBasicos);
             saveSessionStorageData("", data.paciente);
         });
     }
 
     const handleDeletePaciente = () => {
-        useDelete(() => {
+        removePaciente(() => {
             handleClearForm();
         })
     }
 
     const handleUpdatePaciente = () => {
         const formikValues = formik.values;
-        useUpdate(formikValues, () => {
+        modifyPaciente(formikValues, () => {
             saveSessionStorageData("datosBasicos", formikValues);
         });
     }
@@ -53,7 +53,6 @@ export default function DatosBasicos() {
     const handleClearForm = () => {
         formik.resetForm();
         clearSessionStorageData();
-        clearUserSVHistory();
     }
 
     return (

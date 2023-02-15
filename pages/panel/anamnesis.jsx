@@ -9,7 +9,7 @@ import { saveSessionStorageData, getSessionStorageData, moduleCompleted, formatI
 import { anamnesisFields } from '../../data/inputs';
 
 export default function Anamnesis() {
-    const { useUpdateNew } = AppContext();
+    const { updateModule } = AppContext();
 
     useEffect(() => {
         const data = getSessionStorageData("anamnesis");
@@ -18,7 +18,7 @@ export default function Anamnesis() {
         }
     }, [])
 
-    const formik = useUpdateNew({
+    const formik = updateModule({
         initialValues: formatInitialValues(anamnesisFields),
         schema: anamnesisSchema,
     }, (data) => {

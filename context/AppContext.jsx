@@ -21,7 +21,7 @@ export const AppContextProvider = ({ children }) => {
         points: {}
     });
 
-    const useForm = ({ initialValues, schema }, callback) => {
+    const formikForm = ({ initialValues, schema }, callback) => {
         const formik = useFormik({
             initialValues: {
                 ...initialValues
@@ -34,26 +34,26 @@ export const AppContextProvider = ({ children }) => {
         return formik;
     }
 
-    const useCreate = ({ initialValues, schema }, callback) => {
-        const formik = useForm({ initialValues, schema }, (data) => {
+    const createNewForm = ({ initialValues, schema }, callback) => {
+        const formik = formikForm({ initialValues, schema }, (data) => {
             handlePetitions(createPaciente, data, () => callback(data));
         });
         return formik;
     }
 
-    const useUpdateNew = ({ initialValues, schema, moreData = {} }, callback) => {
-        const formik = useForm({ initialValues, schema }, (data) => {
+    const updateModule = ({ initialValues, schema, moreData = {} }, callback) => {
+        const formik = formikForm({ initialValues, schema }, (data) => {
             const dataToSend = { ...data, ...moreData };
             handlePetitions(updatePaciente, dataToSend, () => callback(dataToSend));
         });
         return formik;
     }
 
-    const useSearch = (id, callback) => handlePetitions(searchPaciente, id, callback);
+    const findPaciente = (id, callback) => handlePetitions(searchPaciente, id, callback);
 
-    const useDelete = (callback) => handlePetitions(deletePaciente, null, callback);
+    const removePaciente = (callback) => handlePetitions(deletePaciente, null, callback);
 
-    const useUpdate = (data, callback) => handlePetitions(updatePaciente, data, callback);
+    const modifyPaciente = (data, callback) => handlePetitions(updatePaciente, data, callback);
 
     function handlePetitions(method, data, callback) {
         setBackdrop(true);
@@ -72,7 +72,7 @@ export const AppContextProvider = ({ children }) => {
     }
 
     return (
-        <Context.Provider value={{ notify, setNotify, backdrop, barthelResults, setBarthelResults, useSearch, useCreate, useDelete, useUpdate, useUpdateNew }}>
+        <Context.Provider value={{ notify, setNotify, backdrop, barthelResults, setBarthelResults, findPaciente, createNewForm, removePaciente, modifyPaciente, updateModule }}>
             {children}
         </Context.Provider>
     );
