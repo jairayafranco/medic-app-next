@@ -14,36 +14,26 @@ import {
     signosVitalesColorSchema,
     handleSVInputValues,
     formatInitialValues,
-    saveUserSVHistory,
-    getUserSVHistory,
 } from '../../helpers/helpers';
-import { getSignosVitalesHistory, saveSignosVitalesHistory } from '../../api/axiosApi';
+import { saveSignosVitalesHistory } from '../../api/axiosApi';
 import FullScreenModal from '../../components/FullScreenModal';
 import DataTable from '../../components/DataTable';
 import { signosVitalesFields } from '../../data/inputs';
 
 export default function SignosVitales() {
-    const { useUpdateNew } = AppContext();
+    const { updateModule } = AppContext();
     const [history, setHistory] = useState([]);
 
     useEffect(() => {
         const data = getSessionStorageData("signosVitales");
+        const history = getSessionStorageData("signosVitalesHistory") || [];
         if (data) {
             formik.setValues(data);
-        }
-
-        const getSVHistory = getUserSVHistory();
-        if (!getSVHistory && data) {
-            getSignosVitalesHistory().then(({ history }) => {
-                setHistory(history);
-                saveUserSVHistory(history);
-            });
-        } else {
-            setHistory(getSVHistory);
+            setHistory(history);
         }
     }, []);
 
-    const formik = useUpdateNew({
+    const formik = updateModule({
         initialValues: formatInitialValues(signosVitalesFields),
         schema: signosVitalesSchema,
     }, (data) => {
@@ -52,7 +42,7 @@ export default function SignosVitales() {
             setHistory(prev => {
                 const prevHistory = [...prev];
                 prevHistory.push(newHistoryRegister);
-                saveUserSVHistory(prevHistory);
+                saveSessionStorageData("signosVitalesHistory", prevHistory);
                 return prevHistory;
             });
         });
@@ -96,9 +86,9 @@ export default function SignosVitales() {
                 <Button variant="contained" type="submit" disabled={!moduleCompleted("antecedentes")}>Guardar</Button>
                 <FullScreenModal buttonName='historial' title='Historial Signos Vitales'>
                     <DataTable
-                        columns={[{ headerName: 'Fecha', field: 'fecha', width: 180 }, signosVitalesFields.map((item) => {
+                        columns={[{ headerName: 'Fecha', field: 'fecha', width: 205 }, signosVitalesFields.map((item) => {
                             return item.fields.map((field) => {
-                                return { headerName: field.name, field: field.property, width: 130 }
+                                return { headerName: field.name, field: field.property, width: field.name.length * 10 }
                             })
                         }).flat()].flat()}
                         rows={history}

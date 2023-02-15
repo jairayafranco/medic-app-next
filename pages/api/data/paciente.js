@@ -1,4 +1,5 @@
 import conn from '../../../config/db_config';
+import _ from 'lodash';
 
 export default function pacienteHandler(req, res) {
     const db = conn.collection('pacientes');
@@ -8,13 +9,28 @@ export default function pacienteHandler(req, res) {
         const { id } = req.query;
         if (!id) return handleException({ code: 400, message: 'Identificacion requerida', status: false, type: 'warning' });
 
-        db.findOne({ "datosBasicos.idUsuario": Number(id) }, { projection: { _id: 0 } })
-            .then((paciente) => {
-                if (!paciente) return handleException({ code: 404, message: 'Paciente no encontrado', status: false, type: 'warning' });
-                return res.status(200).json({ status: true, paciente });
-            }).catch(() => {
-                return handleException({ code: 500, message: 'Error al obtener el paciente', status: false, type: 'error' });
-            });
+        db.aggregate([
+            {
+                $lookup: {
+                    from: 'signosVitalesHistory',
+                    localField: 'datosBasicos.idUsuario',
+                    foreignField: 'idUsuario',
+                    as: 'signosVitalesHistory',
+                    pipeline: [
+                        { $project: { idUsuario: 0, _id: 0 } },
+                    ]
+                }
+            },
+            { $project: { _id: 0, } },
+            { $match: { "datosBasicos.idUsuario": Number(id) } },
+        ]).toArray().then(([paciente]) => {
+            if (!paciente) return handleException({ code: 404, message: 'Paciente no encontrado', status: false, type: 'warning' });
+            const orderedHistory = _.sortBy(paciente.signosVitalesHistory, ['fecha']);
+            paciente.signosVitalesHistory = orderedHistory;
+            return res.status(200).json({ status: true, paciente });
+        }).catch(() => {
+            return handleException({ code: 500, message: 'Error al obtener el paciente', status: false, type: 'error' });
+        });
     }
 
     if (req.method === "POST") {
