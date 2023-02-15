@@ -39,8 +39,7 @@ export default function DatosBasicos() {
 
     const handleDeletePaciente = () => {
         useDelete(() => {
-            clearSessionStorageData();
-            formik.resetForm();
+            handleClearForm();
         })
     }
 

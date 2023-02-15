@@ -33,7 +33,7 @@ export default function SignosVitales() {
         }
 
         const getSVHistory = getUserSVHistory();
-        if (!getSVHistory) {
+        if (!getSVHistory && data) {
             getSignosVitalesHistory().then(({ history }) => {
                 setHistory(history);
                 saveUserSVHistory(history);
