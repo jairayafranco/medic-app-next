@@ -70,3 +70,5 @@ export const getLoginImage = async () => {
 }
 
 export const getUserProfile = () => handlePetitions({ method: 'get', route: "settings/profile", customError: "Error al obtener el perfil del usuario" });
+
+export const getUltimosPacientes = () => handlePetitions({ method: 'get', route: "data/ultimosPacientes", customError: "Error al obtener los últimos pacientes" });
