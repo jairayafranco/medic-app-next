@@ -38,7 +38,8 @@ export default function DatosBasicos() {
     }
 
     const handleDeletePaciente = () => {
-        removePaciente(() => {
+        const id = getSessionStorageData("datosBasicos")?.idUsuario;
+        removePaciente(id, () => {
             handleClearForm();
         })
     }

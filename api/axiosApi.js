@@ -35,7 +35,6 @@ export const updatePaciente = async (newFormikValues) => {
     const currentUserData = getSessionStorageData(name);
 
     if (_.isNull(currentUserData)) return { status: false, message: "No se encontraron los datos", type: "error" };
-    // if (_.isUndefined(currentUserData)) return { status: false, message: "El modulo no existe", type: "error" };
 
     const updatedValues = !!currentUserData ? getObjectsDifference(currentUserData, newFormikValues) : newFormikValues;
     if (_.isEmpty(updatedValues)) return { status: false, message: "No hay datos para actualizar", type: "warning" };
@@ -48,22 +47,9 @@ export const updatePaciente = async (newFormikValues) => {
     return handlePetitions({ method: opt, data: updatedValues, route, customError: "Error al actualizar el paciente" });
 }
 
-export async function deletePaciente() {
-    const id = getSessionStorageData("datosBasicos")?.idUsuario;
+export async function deletePaciente(id) {
     if (!id) return handleError("No se encontró el id del paciente");
-
     return handlePetitions({ method: 'delete', route: `data/paciente?id=${id}`, customError: "Error al eliminar el paciente" });
-}
-
-export async function getSignosVitalesHistory() {
-    const paciente = getSessionStorageData("datosBasicos");
-    if (paciente) {
-        return handlePetitions({
-            method: 'get',
-            route: `data/signosVitalesHistory?id=${paciente.idUsuario}`,
-            customError: "Error al obtener la historia de signos vitales"
-        });
-    }
 }
 
 export const saveSignosVitalesHistory = (data) => {

@@ -51,7 +51,7 @@ export const AppContextProvider = ({ children }) => {
 
     const findPaciente = (id, callback) => handlePetitions(searchPaciente, id, callback);
 
-    const removePaciente = (callback) => handlePetitions(deletePaciente, null, callback);
+    const removePaciente = (id, callback) => handlePetitions(deletePaciente, id, callback);
 
     const modifyPaciente = (data, callback) => handlePetitions(updatePaciente, data, callback);
 
@@ -72,7 +72,7 @@ export const AppContextProvider = ({ children }) => {
     }
 
     return (
-        <Context.Provider value={{ notify, setNotify, backdrop, barthelResults, setBarthelResults, findPaciente, createNewForm, removePaciente, modifyPaciente, updateModule }}>
+        <Context.Provider value={{ notify, setNotify, backdrop, setBackdrop, barthelResults, setBarthelResults, findPaciente, createNewForm, removePaciente, modifyPaciente, updateModule }}>
             {children}
         </Context.Provider>
     );
