@@ -35,9 +35,9 @@ export default function Home() {
               />
             </Typography>
             <Typography align='center' component="h1" variant="h6" color="primary" gutterBottom>
-              Calle 08 #10-65 Barrio Pueblo Nuevo<br />
+              Calle 8 #10-65 Barrio Pueblo Nuevo<br />
               samuelaya@live.com<br />
-              Teléfono 3118609660
+              Teléfono: 3118609660
             </Typography>
           </Paper>
         </Grid>

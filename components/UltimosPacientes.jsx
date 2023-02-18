@@ -11,7 +11,7 @@ export default function UltimosPacientes() {
     const [rows, setRows] = useState([]);
 
     useEffect(() => {
-        getUltimosPacientes().then(res => setRows(res.pacientes));
+        getUltimosPacientes().then(res => setRows(res.pacientes || []));
     }, []);
 
     return (
