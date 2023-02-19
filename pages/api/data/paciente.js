@@ -3,34 +3,27 @@ import _ from 'lodash';
 
 export default function pacienteHandler(req, res) {
     const db = conn.collection('pacientes');
+    const dbSV = conn.collection('signosVitalesHistory');
     const handleException = ({ code, message, status, type }) => res.status(code).json({ status, message, type })
 
     if (req.method === "GET") {
         const { id } = req.query;
         if (!id) return handleException({ code: 400, message: 'Identificacion requerida', status: false, type: 'warning' });
 
-        db.aggregate([
-            {
-                $lookup: {
-                    from: 'signosVitalesHistory',
-                    localField: 'datosBasicos.idUsuario',
-                    foreignField: 'idUsuario',
-                    as: 'signosVitalesHistory',
-                    pipeline: [
-                        { $project: { idUsuario: 0, _id: 0 } },
-                    ]
-                }
-            },
-            { $project: { _id: 0, } },
-            { $match: { "datosBasicos.idUsuario": Number(id) } },
-        ]).toArray().then(([paciente]) => {
-            if (!paciente) return handleException({ code: 404, message: 'Paciente no encontrado', status: false, type: 'warning' });
-            const orderedHistory = _.sortBy(paciente.signosVitalesHistory, ['fecha']);
-            paciente.signosVitalesHistory = orderedHistory;
-            return res.status(200).json({ status: true, paciente });
-        }).catch(() => {
-            return handleException({ code: 500, message: 'Error al obtener el paciente', status: false, type: 'error' });
-        });
+        db.findOne({ "datosBasicos.idUsuario": Number(id) }, { projection: { _id: 0 } })
+            .then((paciente) => {
+                if (!paciente) return handleException({ code: 404, message: 'Paciente no encontrado', status: false, type: 'warning' });
+                dbSV.find({ idUsuario: Number(id) }, { projection: { _id: 0, idUsuario: 0 } }).toArray()
+                    .then((signosVitalesHistory) => {
+                        const orderedHistory = _.sortBy(signosVitalesHistory, ['fecha'], ['desc']);
+                        paciente.signosVitalesHistory = orderedHistory;
+                        return res.status(200).json({ status: true, paciente });
+                    }).catch(() => {
+                        return handleException({ code: 500, message: 'Error al obtener el paciente', status: false, type: 'error' });
+                    });
+            }).catch(() => {
+                return handleException({ code: 500, message: 'Error al obtener el paciente', status: false, type: 'error' });
+            });
     }
 
     if (req.method === "POST") {
@@ -39,7 +32,6 @@ export default function pacienteHandler(req, res) {
 
         db.findOne({ "datosBasicos.idUsuario": data.idUsuario }).then((paciente) => {
             if (paciente) return handleException({ code: 400, status: false, message: 'El paciente ya existe', type: 'warning' });
-
             db.insertOne({ datosBasicos: data })
                 .then(() => {
                     return res.status(200).json({ status: true, message: 'Paciente creado correctamente', type: 'success' });

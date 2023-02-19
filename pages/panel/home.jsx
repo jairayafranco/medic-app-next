@@ -4,7 +4,6 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Image from 'next/image';
 import Logo from '../../public/logo.png';
-import UltimosPacientes from '../../components/UltimosPacientes';
 
 export default function Home() {
   return (
@@ -78,12 +77,6 @@ export default function Home() {
               </Typography>
             </Paper>
           </Grid>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Paper elevation={6} sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-            <UltimosPacientes />
-          </Paper>
         </Grid>
 
       </Grid>
