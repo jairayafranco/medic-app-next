@@ -19,7 +19,7 @@ export default function pacienteHandler(req, res) {
                         paciente.signosVitalesHistory = orderedHistory;
                         return res.status(200).json({ status: true, paciente });
                     }).catch(() => {
-                        return handleException({ code: 500, message: 'Error al obtener el paciente', status: false, type: 'error' });
+                        return handleException({ code: 500, message: 'Error al obtener el historial de signos vitales del paciente', status: false, type: 'error' });
                     });
             }).catch(() => {
                 return handleException({ code: 500, message: 'Error al obtener el paciente', status: false, type: 'error' });
