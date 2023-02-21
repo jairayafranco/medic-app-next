@@ -13,6 +13,7 @@ import { AppContextProvider } from "../context/AppContext";
 import Notify from "../components/Snackbar";
 import Loader from "../components/Backdrop";
 import { AnimatePresence, motion } from "framer-motion";
+import { esES } from '@mui/x-data-grid';
 
 export default function MyApp({ Component, pageProps }) {
     const router = useRouter();
@@ -35,7 +36,7 @@ export default function MyApp({ Component, pageProps }) {
                 palette: {
                     mode,
                 },
-            }),
+            }, esES),
         [mode],
     );
 

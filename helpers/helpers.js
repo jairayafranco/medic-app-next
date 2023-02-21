@@ -9,8 +9,18 @@ import {
     funcionRenalEstadio
 } from "../math/formulas";
 
-const routes = ["datos-basicos", "anamnesis", "antecedentes", "signos-vitales", "funcion-renal", "examen-fisico"]
-export const validFields = ["datosBasicos", "anamnesis", "antecedentes", "signosVitales", "signosVitalesHistory", "funcionRenal", "examenFisico"];
+const routes = ["datos-basicos", "anamnesis", "antecedentes", "signos-vitales", "funcion-renal", "examen-fisico", "impresion-diagnostica", "formulacion"]
+export const validFields = [
+    "datosBasicos",
+    "anamnesis",
+    "antecedentes",
+    "signosVitales",
+    "signosVitalesHistory",
+    "funcionRenal",
+    "examenFisico",
+    "impresionDiagnostica",
+    "formulacion",
+];
 export const routesToModules = validFields.map((name, index) => ({ name, route: routes[index] }));
 
 export const saveSessionStorageData = (field, data) => {
