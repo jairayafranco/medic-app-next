@@ -126,6 +126,7 @@ export default function Formulacion() {
                         ]}
                         rows={allValues[tipoProcedimiento]}
                         isCheckboxSelection={false}
+                        disableSelectionOnClick={true}
                     />
                     <Button variant="contained" sx={{ mt: 1 }} onClick={() => console.log(allValues[tipoProcedimiento])}>Guardar {tipoProcedimiento}</Button>
                 </Box>
