@@ -254,3 +254,10 @@ export const examenFisicoFields = [
     { name: "Extremidades", property: "extremidades" },
     { name: "Neurologico", property: "neurologico" },
 ];
+
+export const formulacionFields = [
+    { name: "Consecutivo", property: "consecutivo", type: "text", readOnly: true },
+    { name: "Servicio", property: "servicio", type: "text", readOnly: true },
+    { name: "Cantidad", property: "cantidad", type: "number" },
+    { name: "Descripcion", property: "descripcionManual", type: "text" },
+]
