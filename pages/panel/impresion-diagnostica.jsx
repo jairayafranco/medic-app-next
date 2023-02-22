@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { useEffect, useState } from 'react'
 import { AppContext } from '../../context/AppContext';
-import { saveSessionStorageData, getSessionStorageData } from '../../helpers/helpers';
+import { saveSessionStorageData, getSessionStorageData, formatTableRows } from '../../helpers/helpers';
 import { idae } from '../../data/idae'
 import FullScreenModal from '../../components/FullScreenModal';
 import Table from '../../components/Table';
@@ -23,16 +23,7 @@ export default function ImpresionDiagnostica() {
         }
     }, []);
 
-    const tableRows = () => {
-        return idae.map((item, index) => {
-            const [codigo, descripcion] = Object.entries(item)[0];
-            return {
-                id: index + 1,
-                codigo,
-                descripcion
-            }
-        });
-    }
+    const tableRows = () => formatTableRows(idae);
 
     const tableColumns = [
         { field: 'codigo', headerName: 'Codigo CIE-10', width: 150 },
@@ -95,7 +86,7 @@ export default function ImpresionDiagnostica() {
             <Button variant="contained" sx={{ ml: 0.5 }} onClick={handleSave} disabled={!getSessionStorageData("datosBasicos")}>
                 Guardar
             </Button>
-            <Button variant="contained" color="secondary" sx={{ ml: 0.5 }} onClick={handleClear}>
+            <Button variant="contained" color="secondary" sx={{ m: 0.5 }} onClick={handleClear}>
                 Limpiar
             </Button>
             <TextField
@@ -127,6 +118,7 @@ export default function ImpresionDiagnostica() {
                         )
                     }]}
                     isCheckboxSelection={false}
+                    disableSelectionOnClick={true}
                 />
             </Box>
         </>

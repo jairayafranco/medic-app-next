@@ -171,3 +171,14 @@ export const formatInitialValues = (inputs) => {
         return acc;
     }, {});
 }
+
+export const formatTableRows = (data) => {
+    return data.map((item, index) => {
+        const [codigo, descripcion] = Object.entries(item)[0];
+        return {
+            id: index + 1,
+            codigo,
+            descripcion
+        }
+    });
+}

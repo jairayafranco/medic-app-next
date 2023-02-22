@@ -5,6 +5,7 @@ export default function Table({
     rows = [],
     columns = [],
     isCheckboxSelection = true,
+    disableSelectionOnClick = false,
     getRowsData
 }) {
     const [selectionModel, setSelectionModel] = useState([]);
@@ -18,7 +19,7 @@ export default function Table({
         <div style={{ height: '100%', width: '100%' }}>
             <DataGrid
                 checkboxSelection={isCheckboxSelection}
-                disableSelectionOnClick={!isCheckboxSelection}
+                disableSelectionOnClick={disableSelectionOnClick}
                 onSelectionModelChange={(newSelectionModel) => {
                     setSelectionModel(newSelectionModel);
                     getSelectedRows(newSelectionModel);
