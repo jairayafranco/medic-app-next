@@ -4,7 +4,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import _ from 'lodash';
+import { lodash as _ } from '../lib/lodash';
 
 export default function RadioButtonGroup({ title, options, onChange }) {
     return (

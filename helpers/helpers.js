@@ -1,4 +1,4 @@
-import _ from "lodash";
+import { lodash as _ } from "../lib/lodash";
 import {
     IMC,
     getTensionArterialMedia,

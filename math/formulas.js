@@ -1,4 +1,4 @@
-import _ from "lodash";
+import { lodash as _ } from "../lib/lodash";
 
 export const IMC = (peso, talla) => Math.trunc(parseInt(peso) / ((parseInt(talla) / 100) * (parseInt(talla) / 100))) || "";
 

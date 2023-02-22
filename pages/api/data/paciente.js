@@ -1,5 +1,5 @@
 import conn from '../../../config/db_config';
-import _ from 'lodash';
+import { lodash as _ } from '../../../lib/lodash';
 
 export default function pacienteHandler(req, res) {
     const db = conn.collection('pacientes');

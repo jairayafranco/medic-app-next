@@ -10,7 +10,7 @@ import TextField from '@mui/material/TextField';
 import { questions } from '../data/barthelQuestions';
 import { useFormik } from 'formik';
 import { AppContext } from '../context/AppContext';
-import _ from 'lodash';
+import { lodash as _ } from '../lib/lodash';
 
 export default function BarthelTable() {
     const { barthelResults, setBarthelResults } = AppContext();

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import _ from 'lodash';
+import { lodash as _ } from '../lib/lodash';
 import { getObjectsDifference, getSessionStorageData, routesToModules } from '../helpers/helpers';
 
 const api = axios.create({
