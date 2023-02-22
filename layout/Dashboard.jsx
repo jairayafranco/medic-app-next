@@ -24,6 +24,7 @@ import BloodtypeIcon from '@mui/icons-material/Bloodtype';
 import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered'
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import HomeIcon from '@mui/icons-material/Home';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
@@ -111,7 +112,7 @@ export default function Dashboard({ children, changeTheme, theme }) {
 
     const icons = [<PersonIcon />, <FeaturedPlayListIcon />, <FolderSharedIcon />,
     <MedicalServicesIcon />, <BloodtypeIcon />, <AccessibilityNewIcon />,
-    <AssessmentIcon />, <FormatListNumberedIcon />];
+    <AssessmentIcon />, <FormatListNumberedIcon />, <AccountBalanceWalletIcon />];
 
     const routes = [
         { name: 'Datos Básicos', route: '/panel/datos-basicos', active: 0 },
@@ -122,6 +123,7 @@ export default function Dashboard({ children, changeTheme, theme }) {
         { name: 'Examen Físico', route: '/panel/examen-fisico', active: 5 },
         { name: 'Impresión Diagnóstica - Análisis', route: '/panel/impresion-diagnostica', active: 6 },
         { name: 'Formulación', route: '/panel/formulacion', active: 7 },
+        { name: 'Facturación', route: '/panel/facturacion', active: 8 },
     ];
 
     useEffect(() => {
@@ -187,7 +189,7 @@ export default function Dashboard({ children, changeTheme, theme }) {
                 </DrawerHeader>
                 <Divider />
                 <List>
-                    {['DI', 'ARS', 'ANT', 'SV', 'TFEF', 'EF', 'IDA', 'FORM'].map((text, index) => (
+                    {['DI', 'ARS', 'ANT', 'SV', 'TFEF', 'EF', 'IDA', 'FORM', 'FACT'].map((text, index) => (
                         <ListItem
                             key={text}
                             disablePadding

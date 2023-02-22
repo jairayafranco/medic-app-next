@@ -9,7 +9,7 @@ import {
     funcionRenalEstadio
 } from "../math/formulas";
 
-const routes = ["datos-basicos", "anamnesis", "antecedentes", "signos-vitales", "funcion-renal", "examen-fisico", "impresion-diagnostica", "formulacion"]
+const routes = ["datos-basicos", "anamnesis", "antecedentes", "signos-vitales", "funcion-renal", "examen-fisico", "impresion-diagnostica", "formulacion", "facturacion"]
 export const validFields = [
     "datosBasicos",
     "anamnesis",
@@ -20,6 +20,7 @@ export const validFields = [
     "examenFisico",
     "impresionDiagnostica",
     "formulacion",
+    "facturacion"
 ];
 export const routesToModules = validFields.map((name, index) => ({ name, route: routes[index] }));
 

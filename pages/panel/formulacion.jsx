@@ -40,7 +40,6 @@ export default function Formulacion() {
         initialValues: formatInitialValues(formulacionFields),
         validationSchema: formulacionSchema,
         onSubmit: (values) => {
-            console.log(">>>", values);
             setAllValues((prev) => {
                 return {
                     ...prev,
