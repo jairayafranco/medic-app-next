@@ -16,7 +16,7 @@ async function handlePetitions({ method, data = [], route, customError }) {
         const response = await api[method](route, data);
         return response?.data;
     } catch (exception) {
-        console.error(exception);
+        console.error("AxiosApiError >>>",exception);
         return exception.response?.data || handleError(customError);
     }
 }
@@ -47,6 +47,11 @@ export const updatePaciente = async (newFormikValues) => {
     return handlePetitions({ method: opt, data: updatedValues, route, customError: "Error al actualizar el paciente" });
 }
 
+export async function updateImpresionDiagnostica(id, data) {
+    if (!id) return handleError("No se encontró el id del paciente");
+    return handlePetitions({ method: 'put', data, route: `data/paciente?id=${id}&opt=impresionDiagnostica`, customError: "Error al actualizar el paciente" });
+}
+
 export async function deletePaciente(id) {
     if (!id) return handleError("No se encontró el id del paciente");
     return handlePetitions({ method: 'delete', route: `data/paciente?id=${id}`, customError: "Error al eliminar el paciente" });
@@ -70,3 +75,4 @@ export const getLoginImage = async () => {
 }
 
 export const getUserProfile = () => handlePetitions({ method: 'get', route: "settings/profile", customError: "Error al obtener el perfil del usuario" });
+

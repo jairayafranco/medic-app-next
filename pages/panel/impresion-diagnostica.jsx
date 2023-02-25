@@ -7,21 +7,49 @@ import { saveSessionStorageData, getSessionStorageData, formatTableRows } from '
 import { idae } from '../../data/idae'
 import FullScreenModal from '../../components/FullScreenModal';
 import Table from '../../components/Table';
-import axios from 'axios';
+import { updateImpresionDiagnostica } from '../../api/axiosApi';
+import { useFormik } from 'formik';
+import { impresionDiagnosticaSchema } from '../../schemas/schemas';
 
 export default function ImpresionDiagnostica() {
     const { setNotify, setBackdrop } = AppContext();
     const [selection, setSelection] = useState([]);
-    const [analisis, setAnalisis] = useState('');
-    const [analisisError, setAnalisisError] = useState(false);
 
     useEffect(() => {
         const data = getSessionStorageData("impresionDiagnostica");
         if (data) {
             setSelection(data.impresionDiagnostica);
-            setAnalisis(data.analisis);
+            formik.setFieldValue("analisis", data.analisis);
         }
     }, []);
+
+    const formik = useFormik({
+        initialValues: {
+            analisis: "",
+        },
+        validationSchema: impresionDiagnosticaSchema,
+        onSubmit: (values) => {
+            if (!selection.length) {
+                setNotify({ open: true, message: "No hay datos para guardar", type: "warning" });
+                return;
+            }
+
+            const { idUsuario } = getSessionStorageData("datosBasicos");
+            const data = {
+                ...values,
+                impresionDiagnostica: selection
+            }
+
+            setBackdrop(true);
+            updateImpresionDiagnostica(idUsuario, data)
+                .then((res) => {
+                    setNotify({ open: true, message: res.message, type: res.type });
+                    if (!res.status) return;
+                    saveSessionStorageData("impresionDiagnostica", data);
+                    setBackdrop(false)
+                });
+        }
+    });
 
     const tableRows = () => formatTableRows(idae);
 
@@ -37,41 +65,8 @@ export default function ImpresionDiagnostica() {
         });
     }
 
-    const handleSave = () => {
-        if (!selection.length) {
-            setNotify({ open: true, message: "No hay datos para guardar", type: "warning" });
-            return;
-        }
-
-        if (!analisis) {
-            setAnalisisError(true);
-            return;
-        }
-
-        const { idUsuario } = getSessionStorageData("datosBasicos");
-        const data = {
-            analisis,
-            impresionDiagnostica: selection
-        }
-        setBackdrop(true);
-        axios.put(`/api/data/paciente?id=${idUsuario}&opt=impresionDiagnostica`, data)
-            .then(() => {
-                saveSessionStorageData("impresionDiagnostica", data);
-                setNotify({ open: true, message: "Paciente actualizado", type: "success" });
-            })
-            .catch((error) => {
-                console.error(error);
-                setNotify({ open: true, message: "No se pudo guardar la impresion diagnostica", type: "error" });
-            }).finally(() => setBackdrop(false));
-    }
-
-    const handleClear = () => {
-        setSelection([]);
-        setAnalisis('');
-    }
-
     return (
-        <>
+        <form onSubmit={formik.handleSubmit}>
             <FullScreenModal
                 buttonName="Buscar codigo CIE-10"
                 title="Buscar codigo CIE-10"
@@ -83,22 +78,20 @@ export default function ImpresionDiagnostica() {
                     getRowsData={handleData}
                 />
             </FullScreenModal>
-            <Button variant="contained" sx={{ ml: 0.5 }} onClick={handleSave} disabled={!getSessionStorageData("datosBasicos")}>
+            <Button variant="contained" sx={{ ml: 0.5 }} type="submit" disabled={!getSessionStorageData("datosBasicos")}>
                 Guardar
             </Button>
-            <Button variant="contained" color="secondary" sx={{ m: 0.5 }} onClick={handleClear}>
-                Limpiar
-            </Button>
             <TextField
+                name="analisis"
                 label="Analisis"
                 multiline
                 rows={2}
                 fullWidth
                 sx={{ mt: 2 }}
-                value={analisis}
-                onChange={(e) => setAnalisis(e.target.value)}
-                error={analisisError}
-                helperText={analisisError && "El campo es obligatorio"}
+                value={formik.values.analisis}
+                onChange={formik.handleChange}
+                error={formik.touched.analisis && Boolean(formik.errors.analisis)}
+                helperText={formik.touched.analisis && formik.errors.analisis}
             />
             <Box sx={{ mt: 1, height: 700 }}>
                 <Table
@@ -121,6 +114,6 @@ export default function ImpresionDiagnostica() {
                     disableSelectionOnClick={true}
                 />
             </Box>
-        </>
+        </form>
     );
 }

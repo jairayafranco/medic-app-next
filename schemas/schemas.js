@@ -84,6 +84,10 @@ export const examenFisicoSchema = yup.object({
     neurologico: yup.string().trim().required("Neurologico requerido"),
 });
 
+export const impresionDiagnosticaSchema = yup.object({
+    analisis: yup.string().trim().required("Diagnostico requerido"),
+});
+
 export const formulacionSchema = yup.object({
     cantidad: yup.number().required("Cantidad requerida"),
     descripcionManual: yup.string().trim().required("Descripcion requerida"),
