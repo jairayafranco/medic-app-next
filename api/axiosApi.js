@@ -16,7 +16,7 @@ async function handlePetitions({ method, data = [], route, customError }) {
         const response = await api[method](route, data);
         return response?.data;
     } catch (exception) {
-        console.error("AxiosApiError >>>",exception);
+        console.error("AxiosApiError >>>", exception);
         return exception.response?.data || handleError(customError);
     }
 }
@@ -50,6 +50,11 @@ export const updatePaciente = async (newFormikValues) => {
 export async function updateImpresionDiagnostica(id, data) {
     if (!id) return handleError("No se encontró el id del paciente");
     return handlePetitions({ method: 'put', data, route: `data/paciente?id=${id}&opt=impresionDiagnostica`, customError: "Error al actualizar el paciente" });
+}
+
+export async function updateFormulacion(id, data) {
+    if (!id) return handleError("No se encontró el id del paciente");
+    return handlePetitions({ method: 'patch', data, route: `data/paciente?id=${id}&opt=formulacion`, customError: "Error al actualizar el paciente" });
 }
 
 export async function deletePaciente(id) {

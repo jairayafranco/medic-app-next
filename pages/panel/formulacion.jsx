@@ -2,7 +2,6 @@ import { useFormik } from "formik";
 import { useState, useEffect } from "react";
 import { formulacionSchema } from "../../schemas/schemas";
 import { formulacionFields } from "../../data/inputs";
-import { formatTableRows } from "../../helpers/helpers";
 import RadioButtonGroup from "../../components/RadioButtonGroup";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -10,11 +9,13 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import FullScreenModal from "../../components/FullScreenModal";
 import Table from "../../components/Table";
-import { formatInitialValues } from "../../helpers/helpers";
+import { formatInitialValues, formatTableRows, getSessionStorageData, moduleCompleted, saveSessionStorageData } from "../../helpers/helpers";
 import { procedimientos } from "../../data/procedimientos";
 import { medicamentos } from "../../data/medicamentos";
 import { laboratorios } from "../../data/laboratorios";
 import { insumos } from "../../data/insumos";
+import { AppContext } from "../../context/AppContext";
+import { updateFormulacion } from "../../api/axiosApi";
 
 export default function Formulacion() {
     const [tipoProcedimiento, setTipoProcedimiento] = useState("procedimientos");
@@ -25,7 +26,17 @@ export default function Formulacion() {
         insumos: []
     });
 
+    const { setNotify, setBackdrop } = AppContext();
+
     useEffect(() => formik.resetForm(), [tipoProcedimiento]);
+
+    useEffect(() => {
+        const data = getSessionStorageData("formulacion");
+        if (data) {
+            setAllValues(data);
+        }
+    }, []);
+
 
     const setRowsData = (name) => {
         return {
@@ -56,8 +67,23 @@ export default function Formulacion() {
         formik.setFieldValue("consecutivo", codigo);
         formik.setFieldValue("servicio", descripcion);
 
-        //unmount the component FullScreenModal
+        //close the component FullScreenModal
         document.querySelector("div[role='dialog'] > header > div > button").click();
+    }
+
+    const handleSave = () => {
+        const { idUsuario } = getSessionStorageData("datosBasicos");
+        setBackdrop(true);
+        updateFormulacion(idUsuario, allValues)
+            .then((res) => {
+                setNotify({
+                    open: true,
+                    message: res.status ? "Formulacion guardada con exito" : "Error al guardar la formulacion",
+                    type: res.type
+                });
+                if (!res.status) return;
+                saveSessionStorageData("formulacion", allValues);
+            }).finally(() => setBackdrop(false));
     }
 
     return (
@@ -128,7 +154,7 @@ export default function Formulacion() {
                         isCheckboxSelection={false}
                         disableSelectionOnClick={true}
                     />
-                    <Button variant="contained" sx={{ mt: 1 }} onClick={() => console.log(allValues[tipoProcedimiento])}>Guardar {tipoProcedimiento}</Button>
+                    <Button disabled={!moduleCompleted("datosBasicos")} variant="contained" sx={{ mt: 1 }} onClick={handleSave}>Guardar {tipoProcedimiento}</Button>
                 </Box>
             </Box>
         </>
