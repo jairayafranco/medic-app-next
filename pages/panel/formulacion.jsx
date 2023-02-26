@@ -72,6 +72,12 @@ export default function Formulacion() {
     }
 
     const handleSave = () => {
+        const checkValues = allValues[tipoProcedimiento].length;
+        if (!checkValues) {
+            setNotify({ open: true, message: "No hay datos para guardar", type: "warning" });
+            return;
+        }
+
         const { idUsuario } = getSessionStorageData("datosBasicos");
         setBackdrop(true);
         updateFormulacion(idUsuario, allValues)
@@ -148,7 +154,30 @@ export default function Formulacion() {
                             { field: 'consecutivo', headerName: 'Consecutivo', width: 150 },
                             { field: 'servicio', headerName: 'Servicio', width: 550 },
                             { field: 'cantidad', headerName: 'Cantidad', width: 150 },
-                            { field: 'descripcionManual', headerName: 'Descripcion', width: 300 },
+                            { field: 'descripcionManual', headerName: 'Descripcion', width: 700 },
+                            {
+                                field: 'Borrar',
+                                headerName: '',
+                                width: 100,
+                                renderCell: (params) => (
+                                    <Button
+                                        variant="contained"
+                                        color="error"
+                                        size="small"
+                                        onClick={() => {
+                                            setAllValues((prev) => {
+                                                const newData = prev[tipoProcedimiento].filter((item) => item.id !== params.row.id);
+                                                return {
+                                                    ...prev,
+                                                    [tipoProcedimiento]: newData
+                                                }
+                                            });
+                                        }}
+                                    >
+                                        Remover
+                                    </Button>
+                                )
+                            }
                         ]}
                         rows={allValues[tipoProcedimiento]}
                         isCheckboxSelection={false}
