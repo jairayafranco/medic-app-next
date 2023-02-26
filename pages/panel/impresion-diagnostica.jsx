@@ -46,8 +46,7 @@ export default function ImpresionDiagnostica() {
                     setNotify({ open: true, message: res.message, type: res.type });
                     if (!res.status) return;
                     saveSessionStorageData("impresionDiagnostica", data);
-                    setBackdrop(false)
-                });
+                }).finally(() => setBackdrop(false));
         }
     });
 
