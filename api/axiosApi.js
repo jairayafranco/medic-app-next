@@ -57,6 +57,11 @@ export async function updateFormulacion(id, data) {
     return handlePetitions({ method: 'patch', data, route: `data/paciente?id=${id}&opt=formulacion`, customError: "Error al actualizar el paciente" });
 }
 
+export const updateFacturacion = async (id, data) => {
+    if (!id) return handleError("No se encontró el id del paciente");
+    return handlePetitions({ method: 'put', data, route: `data/paciente?id=${id}&opt=facturacion`, customError: "Error al actualizar el paciente" });
+}
+
 export async function deletePaciente(id) {
     if (!id) return handleError("No se encontró el id del paciente");
     return handlePetitions({ method: 'delete', route: `data/paciente?id=${id}`, customError: "Error al eliminar el paciente" });

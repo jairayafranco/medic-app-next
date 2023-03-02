@@ -41,6 +41,12 @@ export const saveSessionStorageData = (field, data) => {
     window.sessionStorage.setItem("userData", JSON.stringify({ ...storageData, [field]: data }));
 }
 
+
+/**
+ * 
+ * @param {*} field The field to get from the session storage 
+ * @returns {Object} The specific field from the session storage, or null if there is no data. If the field is not specified, it returns the whole object
+ */
 export const getSessionStorageData = (field) => {
     const storage = window.sessionStorage.getItem("userData");
     if (!storage) return null;
@@ -55,16 +61,34 @@ export const clearSessionStorageData = () => {
     window.sessionStorage.removeItem("userData");
 }
 
+
+/**
+ * 
+ * @returns {Boolean} True if there is data in the session storage, false otherwise
+ */
 export const availableSessionStorageData = () => {
     const storage = window.sessionStorage.getItem("userData");
     return !!storage;
 }
 
+
+/**
+ * 
+ * @param {*} userData The current user data
+ * @param {*} formikValues The formik values
+ * @returns {Object} The difference between the two objects
+ */
 export const getObjectsDifference = (userData, formikValues) => {
     const updatedValues = _.differenceWith(_.toPairs(formikValues), _.toPairs(userData), _.isEqual);
     return _.fromPairs(updatedValues);
 }
 
+
+/**
+ * 
+ * @param {*} module The module name
+ * @returns {Boolean} True if the module is completed, false otherwise
+ */
 export const moduleCompleted = (module) => {
     const userData = getSessionStorageData();
     if (!userData) return false;
@@ -73,6 +97,12 @@ export const moduleCompleted = (module) => {
     return !!userData[module];
 }
 
+
+/**
+ * 
+ * @param {*} birthday The birthday date 
+ * @returns {Number} The age of the person
+ */
 export function calculateAge(birthday) {
     const birthDate = new Date(birthday).toLocaleDateString();
     const birthday_arr = birthDate.split("/");
@@ -81,6 +111,7 @@ export function calculateAge(birthday) {
     const ageDate = new Date(ageDifMs);
     return Math.abs(ageDate.getUTCFullYear() - 1970);
 }
+
 
 export const signosVitalesColorSchema = (campo, formik) => {
     const valuesFromFields = formik.values;
@@ -106,6 +137,7 @@ export const signosVitalesColorSchema = (campo, formik) => {
     }
 }
 
+
 export const handleSVInputValues = (formik, campo) => {
     const { tensionArterialDiastolica, tensionArterialSistolica, peso, talla } = formik.values;
 
@@ -127,6 +159,7 @@ export const handleSVInputValues = (formik, campo) => {
     return formik.values[campo.property];
 }
 
+
 export const funcionRenalColorSchema = (formik, campo) => {
     const { tfgCorregida, estadio } = formik.values;
     const alert = "#FFC000";
@@ -144,6 +177,7 @@ export const funcionRenalColorSchema = (formik, campo) => {
     }
 }
 
+
 export const handleFRInputValues = (formik, campo) => {
     const { tfgCorregida } = formik.values;
 
@@ -160,6 +194,12 @@ export const handleFRInputValues = (formik, campo) => {
     return formik.values[campo.property];
 }
 
+
+/**
+ * 
+ * @param {*} inputs Array of objects to be formatted
+ * @returns {object} Return the object formatted in the format: { [name]: '' }
+ */
 export const formatInitialValues = (inputs) => {
     return inputs.reduce((acc, curr) => {
         if (curr.fields) {
@@ -173,6 +213,12 @@ export const formatInitialValues = (inputs) => {
     }, {});
 }
 
+
+/**
+ * 
+ * @param {*} data Array of objects to be formatted
+ * @returns Array of objects formatted in the format: { id: 1, codigo: '123', descripcion: 'description' }
+ */
 export const formatTableRows = (data) => {
     return data.map((item, index) => {
         const [codigo, descripcion] = Object.entries(item)[0];
@@ -182,4 +228,31 @@ export const formatTableRows = (data) => {
             descripcion
         }
     });
+}
+
+
+/**
+ * 
+ * @param {*} valor  Value to be formatted
+ * @returns {string} Return the value in the format: '$ 1.000.000' (e.g. $ 1.000.000)
+ */
+export const formatToCurrency = (valor) => {
+    return new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP',
+        minimumFractionDigits: 0,
+    }).format(valor);
+}
+
+
+/**
+ *
+ * @returns {string} Return the date in the format: 'day month year' (e.g. 12 de enero de 2021)
+ */
+export const getFormattedDate = () => {
+    return new Intl.DateTimeFormat('es-CO', {
+        year: 'numeric',
+        month: 'long',
+        day: '2-digit',
+    }).format(new Date());
 }

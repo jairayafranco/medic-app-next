@@ -260,4 +260,12 @@ export const formulacionFields = [
     { name: "Servicio", property: "servicio", type: "text", readOnly: true },
     { name: "Cantidad", property: "cantidad", type: "number" },
     { name: "Descripcion", property: "descripcionManual", type: "text" },
-]
+];
+
+export const facturacionFields = [
+    { name: "Identificacion", property: "idUsuario", type: "text", readOnly: true },
+    { name: "Nombres y Apellidos", property: "nombreUsuario", type: "text", readOnly: true },
+    { name: "Fecha de Atencion", property: "fechaAtencion", type: "text", readOnly: true },
+    { name: "Tipo de Consulta", property: "tipoConsulta", type: "text", readOnly: true },
+    { name: "Valor Facturado", property: "valor", type: "text" },
+];

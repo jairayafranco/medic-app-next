@@ -92,3 +92,7 @@ export const formulacionSchema = yup.object({
     cantidad: yup.number().required("Cantidad requerida"),
     descripcionManual: yup.string().trim().required("Descripcion requerida"),
 });
+
+export const facturacionSchema = yup.object({
+    valor: yup.number().required("Valor requerido"),
+});
