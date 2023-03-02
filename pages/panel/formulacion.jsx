@@ -183,7 +183,7 @@ export default function Formulacion() {
                         isCheckboxSelection={false}
                         disableSelectionOnClick={true}
                     />
-                    <Button disabled={!moduleCompleted("datosBasicos")} variant="contained" sx={{ mt: 1 }} onClick={handleSave}>Guardar {tipoProcedimiento}</Button>
+                    <Button disabled={!moduleCompleted("datosBasicos")} variant="contained" sx={{ my: 1.5 }} onClick={handleSave}>Guardar {tipoProcedimiento}</Button>
                 </Box>
             </Box>
         </>
