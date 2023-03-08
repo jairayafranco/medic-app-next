@@ -18,7 +18,7 @@ import { AppContext } from '../context/AppContext';
 import { updatePaciente } from '../api/axiosApi';
 
 export default function PacientePicture() {
-    const { notifyHandler, backdropHandler } = AppContext();
+    const { setNotify, setBackdrop } = AppContext();
     const webcamRef = useRef(null);
     const [image, setImage] = useState(null);
     const paciente = getSessionStorageData("datosBasicos");
@@ -41,51 +41,47 @@ export default function PacientePicture() {
 
     const handleSaveImage = () => {
         if (!image) return;
-        if (!paciente?.idUsuario) return notifyHandler(true, "warning", "No se ha seleccionado un paciente");
+        if (!paciente?.idUsuario) return setNotify({ open: true, type: "warning", message: "No se ha seleccionado un paciente" });
 
-        backdropHandler(true);
+        setBackdrop(true);
         uploadImage("pacientes", { name: paciente.idUsuario, file: image })
             .then(url => {
+                if (!url) return setNotify({ open: true, type: "error", message: "Error al guardar la imagen" });
                 updatePaciente({ ...paciente, foto: url }).then(res => {
                     if (!res.status) {
-                        notifyHandler(true, res.type, res.message);
+                        setNotify({ open: true, type: res.type, message: res.message });
                         return;
                     }
 
-                    notifyHandler(true, res.type, "Imagen guardada");
+                    setNotify({ open: true, type: res.type, message: "Imagen guardada" });
                     saveSessionStorageData("datosBasicos", { ...paciente, foto: url });
-                }).finally(() => {
-                    backdropHandler(false);
-                    setImage(null);
-                })
-            }).catch(err => {
-                notifyHandler(true, "error", "Error al subir la imagen");
-                console.log("error", err);
-            });
+                });
+            })
+        setBackdrop(false);
+        setImage(null);
     }
 
-    const handleDeleteImage = () => {
-        if (!paciente?.foto) return notifyHandler(true, "warning", "El paciente no tiene una imagen asignada");
+    // const test = handleImageFirebase("pacientes", { name: paciente.idUsuario, file: image });
 
-        backdropHandler(true);
+    const handleDeleteImage = () => {
+        if (!paciente?.foto) return setNotify({ open: true, type: "warning", message: "El paciente no tiene una imagen asignada" });
+
+        setBackdrop(true);
         deleteImage("pacientes", paciente.idUsuario)
-            .then(() => {
+            .then((res) => {
+                if (!res) return setNotify({ open: true, type: "error", message: "Error al eliminar la imagen" });
                 updatePaciente({ ...paciente, foto: null }).then(res => {
                     if (!res.status) {
-                        notifyHandler(true, res.type, res.message);
+                        setNotify({ open: true, type: res.type, message: res.message });
                         return;
                     }
 
-                    notifyHandler(true, res.type, "Imagen eliminada");
+                    setNotify({ open: true, type: res.type, message: "Imagen eliminada" });
                     saveSessionStorageData("datosBasicos", { ...paciente, foto: null });
-                }).finally(() => {
-                    backdropHandler(false);
-                    setImage(null);
-                })
-            }).catch(err => {
-                notifyHandler(true, "error", "Error al eliminar la imagen");
-                console.log("error", err);
+                });
             })
+        setBackdrop(false);
+        setImage(null);
     }
 
     return (
@@ -128,12 +124,12 @@ export default function PacientePicture() {
                     </Button>
                 </Tooltip>
                 <Tooltip title="Guardar" placement="bottom">
-                    <Button component="label" color="success" variant="contained" onClick={handleSaveImage} disabled={!image}>
+                    <Button component="label" color="success" onClick={handleSaveImage} disabled={!image}>
                         <CheckIcon />
                     </Button>
                 </Tooltip>
                 <Tooltip title="Cancelar" placement="bottom">
-                    <Button component="label" color="warning" variant="contained" onClick={() => setImage(null)} disabled={!image}>
+                    <Button component="label" color="warning" onClick={() => setImage(null)} disabled={!image}>
                         <ClearIcon />
                     </Button>
                 </Tooltip>

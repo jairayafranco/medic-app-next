@@ -14,12 +14,22 @@ const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 
 export const uploadImage = async (folder, image) => {
-    const storageRef = ref(storage, `${folder}/${image.name}`);
-    const uploadTask = await uploadString(storageRef, image.file, "data_url");
-    return getDownloadURL(uploadTask.ref);
+    try {
+        const storageRef = ref(storage, `${folder}/${image.name}`);
+        const uploadTask = await uploadString(storageRef, image.file, "data_url");
+        return getDownloadURL(uploadTask.ref);
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
 };
 
 export const deleteImage = async (folder, id) => {
-    const storageRef = ref(storage, `${folder}/${id}`);
-    return await deleteObject(storageRef);
+    try {
+        const storageRef = ref(storage, `${folder}/${id}`);
+        return await deleteObject(storageRef);
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
 };
