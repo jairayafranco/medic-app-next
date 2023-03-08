@@ -14,6 +14,9 @@ import PacientePicture from '../../components/PacientePicture';
 import Box from '@mui/material/Box';
 import { saveSessionStorageData, getSessionStorageData, clearSessionStorageData, availableSessionStorageData, formatInitialValues } from '../../helpers/helpers';
 import { datosBasicosFields } from '../../data/inputs';
+import FullScreenModal from '../../components/FullScreenModal';
+import CertificadoSalud from '../../components/CertificadoSalud';
+import CertificadoVisual from '../../components/CertificadoVisual';
 
 export default function DatosBasicos() {
     const { findPaciente, createNewForm, removePaciente, modifyPaciente } = AppContext();
@@ -107,6 +110,25 @@ export default function DatosBasicos() {
                             }
                         </Grid>
                     ))}
+                    {
+                        <Grid item sx={{ display: 'flex', gap: 1, alignItems: 'center', mt: 1 }}>
+                            <FullScreenModal
+                                title="Certificado de Salud"
+                                buttonName="Ir a Certificado de Salud"
+                                color="primary"
+                            >
+                                <CertificadoSalud />
+                            </FullScreenModal>
+
+                            <FullScreenModal
+                                title="Certificado Visual"
+                                buttonName="Ir a Certificado Visual"
+                                color="primary"
+                            >
+                                <CertificadoVisual />
+                            </FullScreenModal>
+                        </Grid>
+                    }
                 </Grid>
                 <ButtonGroup
                     id={styles.buttonsContainer}
@@ -134,6 +156,7 @@ export default function DatosBasicos() {
                         />
                     </Grid>
                 </ButtonGroup>
+
             </Box>
         </Box>
     );
