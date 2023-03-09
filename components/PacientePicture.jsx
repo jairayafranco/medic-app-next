@@ -39,49 +39,41 @@ export default function PacientePicture() {
         }
     }
 
-    const handleSaveImage = () => {
-        if (!image) return;
-        if (!paciente?.idUsuario) return setNotify({ open: true, type: "warning", message: "No se ha seleccionado un paciente" });
+    const handleFirebaseImage = async ({ method, data }) => {
+        if (method === "upload" && !paciente?.idUsuario) return setNotify({ open: true, type: "warning", message: "No se ha seleccionado un paciente" });
+
+        const options = {
+            upload: {
+                method: () => uploadImage("pacientes", data),
+                messages: {
+                    success: "Imagen guardada correctamente",
+                    error: "Error al guardar la imagen"
+                }
+            },
+            delete: {
+                method: () => deleteImage("pacientes", data),
+                messages: {
+                    success: "Imagen eliminada correctamente",
+                    error: "Error al eliminar la imagen"
+                }
+            }
+        }[method];
+
+        if (!options) throw new Error("No se ha especificado un método válido");
 
         setBackdrop(true);
-        uploadImage("pacientes", { name: paciente.idUsuario, file: image })
-            .then(url => {
-                if (!url) return setNotify({ open: true, type: "error", message: "Error al guardar la imagen" });
-                updatePaciente({ ...paciente, foto: url }).then(res => {
-                    if (!res.status) {
-                        setNotify({ open: true, type: res.type, message: res.message });
-                        return;
-                    }
-
-                    setNotify({ open: true, type: res.type, message: "Imagen guardada" });
-                    saveSessionStorageData("datosBasicos", { ...paciente, foto: url });
-                });
-            })
-        setBackdrop(false);
-        setImage(null);
-    }
-
-    // const test = handleImageFirebase("pacientes", { name: paciente.idUsuario, file: image });
-
-    const handleDeleteImage = () => {
-        if (!paciente?.foto) return setNotify({ open: true, type: "warning", message: "El paciente no tiene una imagen asignada" });
-
-        setBackdrop(true);
-        deleteImage("pacientes", paciente.idUsuario)
-            .then((res) => {
-                if (!res) return setNotify({ open: true, type: "error", message: "Error al eliminar la imagen" });
-                updatePaciente({ ...paciente, foto: null }).then(res => {
-                    if (!res.status) {
-                        setNotify({ open: true, type: res.type, message: res.message });
-                        return;
-                    }
-
-                    setNotify({ open: true, type: res.type, message: "Imagen eliminada" });
-                    saveSessionStorageData("datosBasicos", { ...paciente, foto: null });
-                });
-            })
-        setBackdrop(false);
-        setImage(null);
+        try {
+            const uploadDeleteFirebaseImage = await options.method();
+            await updatePaciente({ ...paciente, foto: uploadDeleteFirebaseImage === undefined ? null : uploadDeleteFirebaseImage });
+            setNotify({ open: true, type: "success", message: options.messages.success });
+            saveSessionStorageData("datosBasicos", { ...paciente, foto: uploadDeleteFirebaseImage || null });
+        } catch (error) {
+            console.log(error);
+            setNotify({ open: true, type: "error", message: options.messages.error });
+        } finally {
+            setBackdrop(false);
+            setImage(null);
+        }
     }
 
     return (
@@ -124,7 +116,7 @@ export default function PacientePicture() {
                     </Button>
                 </Tooltip>
                 <Tooltip title="Guardar" placement="bottom">
-                    <Button component="label" color="success" onClick={handleSaveImage} disabled={!image}>
+                    <Button component="label" color="success" onClick={() => handleFirebaseImage({ method: "upload", data: { name: paciente?.idUsuario, file: image } })} disabled={!image}>
                         <CheckIcon />
                     </Button>
                 </Tooltip>
@@ -141,7 +133,7 @@ export default function PacientePicture() {
                     }
                     title="Eliminar Imagen"
                     content="¿Está seguro que desea eliminar la imagen?"
-                    buttonAction={handleDeleteImage}
+                    buttonAction={() => handleFirebaseImage({ method: "delete", data: paciente?.idUsuario })}
                     buttonColor="error"
                     buttonComponentType="label"
                     disabled={!paciente?.foto}

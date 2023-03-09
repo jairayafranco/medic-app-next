@@ -19,7 +19,7 @@ export const uploadImage = async (folder, image) => {
         const uploadTask = await uploadString(storageRef, image.file, "data_url");
         return getDownloadURL(uploadTask.ref);
     } catch (error) {
-        console.error(error);
+        console.error("upload firebase image error: ", error);
         return null;
     }
 };
@@ -29,7 +29,7 @@ export const deleteImage = async (folder, id) => {
         const storageRef = ref(storage, `${folder}/${id}`);
         return await deleteObject(storageRef);
     } catch (error) {
-        console.error(error);
+        console.error("delete firebase image error: ", error);
         return null;
     }
 };
