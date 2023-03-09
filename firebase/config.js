@@ -27,7 +27,7 @@ export const uploadImage = async (folder, image) => {
 export const deleteImage = async (folder, id) => {
     try {
         const storageRef = ref(storage, `${folder}/${id}`);
-        return await deleteObject(storageRef);
+        return await deleteObject(storageRef) || null;
     } catch (error) {
         console.error("delete firebase image error: ", error);
         return null;

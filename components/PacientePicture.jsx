@@ -64,7 +64,7 @@ export default function PacientePicture() {
         setBackdrop(true);
         try {
             const uploadDeleteFirebaseImage = await options.method();
-            await updatePaciente({ ...paciente, foto: uploadDeleteFirebaseImage === undefined ? null : uploadDeleteFirebaseImage });
+            await updatePaciente({ ...paciente, foto: uploadDeleteFirebaseImage });
             setNotify({ open: true, type: "success", message: options.messages.success });
             saveSessionStorageData("datosBasicos", { ...paciente, foto: uploadDeleteFirebaseImage || null });
         } catch (error) {
