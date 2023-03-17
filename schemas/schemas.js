@@ -96,3 +96,13 @@ export const formulacionSchema = yup.object({
 export const facturacionSchema = yup.object({
     valor: yup.number().required("Valor requerido"),
 });
+
+export const certificadoVisualSchema = yup.object({
+    ojoDerechoAgudezaVisual: yup.string().trim().required("Agudeza Visual Ojo Derecho requerido"),
+    ojoIzquierdoAgudezaVisual: yup.string().trim().required("Agudeza Visual Ojo Izquierdo requerido"),
+    ojoDerechoReconoceColores: yup.string().trim().required("Reconoce Colores Ojo Derecho requerido"),
+    ojoIzquierdoReconoceColores: yup.string().trim().required("Reconoce Colores Ojo Izquierdo requerido"),
+    ojoDerechoReconoceFormas: yup.string().trim().required("Reconoce Formas Ojo Derecho requerido"),
+    ojoIzquierdoReconoceFormas: yup.string().trim().required("Reconoce Formas Ojo Izquierdo requerido"),
+    conclusion: yup.string().trim().required("Conclusion requerido"),
+});

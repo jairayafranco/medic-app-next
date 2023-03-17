@@ -3,15 +3,23 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import { certificadoVisualFields } from '../data/inputs';
-import { formatInitialValues, availableSessionStorageData } from '../helpers/helpers';
+import { formatInitialValues, availableSessionStorageData, getSessionStorageData } from '../helpers/helpers';
 import { useFormik } from 'formik';
 import Typography from '@mui/material/Typography';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import CertificadoVisualPDF from './pdfs/CertificadoVisualPDF';
+import { certificadoVisualSchema } from '../schemas/schemas';
 
 export default function CertificadoVisual() {
+    const nombrePaciente = getSessionStorageData("datosBasicos")?.nombreUsuario;
+
     const formik = useFormik({
-        initialValues: { ...formatInitialValues(certificadoVisualFields), conslusion: "" },
-        onSubmit: (values) => {
+        initialValues: { ...formatInitialValues(certificadoVisualFields), conclusion: "" },
+        validationSchema: certificadoVisualSchema,
+        onSubmit: async (values) => {
             console.log(values);
+            document.querySelector('a[download]').click();
+            // formik.resetForm();
         }
     });
 
@@ -36,6 +44,8 @@ export default function CertificadoVisual() {
                                             size="small"
                                             value={formik.values[campo.property]}
                                             onChange={formik.handleChange}
+                                            error={formik.touched[campo.property] && Boolean(formik.errors[campo.property])}
+                                            helperText={formik.touched[campo.property] && formik.errors[campo.property]}
                                         />
                                     </Grid>
                                 ))}
@@ -54,10 +64,22 @@ export default function CertificadoVisual() {
                 rows={2}
                 value={formik.values.conclusion}
                 onChange={formik.handleChange}
+                error={formik.touched.conclusion && Boolean(formik.errors.conclusion)}
+                helperText={formik.touched.conclusion && formik.errors.conclusion}
             />
-            <Button type="submit" variant="contained" color="primary" disabled={!availableSessionStorageData("datosBasicos")}>
+            <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={!availableSessionStorageData("datosBasicos")}
+            >
                 Imprimir Certificado Visual
             </Button>
+            <div style={{ display: 'none' }}>
+                <PDFDownloadLink document={<CertificadoVisualPDF {...formik.values} />} fileName={`CertificadoVisual - ${nombrePaciente}.pdf`}>
+                    {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
+                </PDFDownloadLink>
+            </div>
         </form>
     );
 }
