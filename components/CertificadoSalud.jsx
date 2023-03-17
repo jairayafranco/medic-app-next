@@ -3,15 +3,22 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import { certificadoSaludFields } from '../data/inputs';
-import { formatInitialValues, availableSessionStorageData } from '../helpers/helpers';
+import { formatInitialValues, availableSessionStorageData, getSessionStorageData } from '../helpers/helpers';
 import { useFormik } from 'formik';
 import Typography from '@mui/material/Typography';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import CertificadoSaludPDF from './pdfs/CertificadoSaludPDF';
+import { certificadoSaludSchema } from '../schemas/schemas';
 
 export default function CertificadoSalud() {
+    const nombrePaciente = getSessionStorageData("datosBasicos")?.nombreUsuario;
+
     const formik = useFormik({
         initialValues: formatInitialValues(certificadoSaludFields),
+        validationSchema: certificadoSaludSchema,
         onSubmit: (values) => {
-            console.log(values);
+            document.querySelector('a[download]').click();
+            formik.resetForm();
         }
     });
 
@@ -38,6 +45,8 @@ export default function CertificadoSalud() {
                                             rows={2}
                                             value={formik.values[campo.property]}
                                             onChange={formik.handleChange}
+                                            error={formik.touched[campo.property] && Boolean(formik.errors[campo.property])}
+                                            helperText={formik.touched[campo.property] && formik.errors[campo.property]}
                                         />
                                     </Grid>
                                 ))}
@@ -48,6 +57,11 @@ export default function CertificadoSalud() {
             <Button type="submit" variant="contained" color="primary" disabled={!availableSessionStorageData("datosBasicos")}>
                 Imprimir Certificado Medico
             </Button>
+            <div style={{ display: 'none' }}>
+                <PDFDownloadLink document={<CertificadoSaludPDF {...formik.values} />} fileName={`CertificadoSalud - ${nombrePaciente}.pdf`}>
+                    {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
+                </PDFDownloadLink>
+            </div>
         </form>
     );
 }

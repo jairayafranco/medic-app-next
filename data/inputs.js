@@ -281,21 +281,21 @@ export const certificadoSaludFields = [
         group: 2, title: "Revision Visual", fields: [
             { name: "Vision Ojo Derecho", property: "visionOjoDerecho", type: "text" },
             { name: "Vision Ojo Izquierdo", property: "visionOjoIzquierdo", type: "text" },
-            { name: "Recomendacion", property: "recomendacion", type: "text", multiline: true },
+            { name: "Recomendacion", property: "recomendacionVisual", type: "text", multiline: true },
         ]
     },
     {
         group: 3, title: "Revision Auditiva", fields: [
             { name: "Audicion Oido Derecho", property: "audicionOidoDerecho", type: "text" },
             { name: "Audicion Oido Izquierdo", property: "audicionOidoIzquierdo", type: "text" },
-            { name: "Recomendacion", property: "recomendacion", type: "text", multiline: true },
+            { name: "Recomendacion", property: "recomendacionAuditiva", type: "text", multiline: true },
         ]
     },
     {
         group: 4, title: "Revision Dental", fields: [
             { name: "Piezas Dentarias", property: "piezasDentarias", type: "text" },
             { name: "Presencia de Caries", property: "presenciaCaries", type: "text" },
-            { name: "Recomendaciones", property: "recomendaciones", type: "text", multiline: true },
+            { name: "Recomendaciones", property: "recomendacionesDental", type: "text", multiline: true },
         ]
     },
     {
@@ -304,7 +304,7 @@ export const certificadoSaludFields = [
             { name: "Puede Convivir Y Compartir Con Otros Niños?", property: "convivirCompartir", type: "text" },
             { name: "Presenta Huellas De Maltrato O Violencia?", property: "maltratoViolencia", type: "text" },
             { name: "Presenta Huellas De Abandono O Negligencia?", property: "abandonoNegligencia", type: "text" },
-            { name: "Recomendacion", property: "recomendacion", type: "text", multiline: true }
+            { name: "Recomendacion", property: "recomendacionGeneral", type: "text", multiline: true }
         ]
     }
 ];

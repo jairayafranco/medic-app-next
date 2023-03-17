@@ -106,3 +106,22 @@ export const certificadoVisualSchema = yup.object({
     ojoIzquierdoReconoceFormas: yup.string().trim().required("Reconoce Formas Ojo Izquierdo requerido"),
     conclusion: yup.string().trim().required("Conclusion requerido"),
 });
+
+export const certificadoSaludSchema = yup.object({
+    abandonoNegligencia: yup.string().trim().required("Abandono/Negligencia requerido"),
+    audicionOidoDerecho: yup.string().trim().required("Audicion Oido Derecho requerido"),
+    audicionOidoIzquierdo: yup.string().trim().required("Audicion Oido Izquierdo requerido"),
+    convivirCompartir: yup.string().trim().required("Convivir/Compartir requerido"),
+    discapacidadLimitacionFisica: yup.string().trim().required("Discapacidad/Limitacion Fisica requerido"),
+    maltratoViolencia: yup.string().trim().required("Maltrato/Violencia requerido"),
+    peso: yup.string().trim().required("Peso requerido"),
+    piezasDentarias: yup.string().trim().required("Piezas Dentarias requerido"),
+    presenciaCaries: yup.string().trim().required("Presencia de Caries requerido"),
+    recomendacionAuditiva: yup.string().trim().required("Recomendacion Auditiva requerido"),
+    recomendacionGeneral: yup.string().trim().required("Recomendacion General requerido"),
+    recomendacionVisual: yup.string().trim().required("Recomendacion Visual requerido"),
+    recomendacionesDental: yup.string().trim().required("Recomendaciones Dental requerido"),
+    talla: yup.string().trim().required("Talla requerido"),
+    visionOjoDerecho: yup.string().trim().required("Vision Ojo Derecho requerido"),
+    visionOjoIzquierdo: yup.string().trim().required("Vision Ojo Izquierdo requerido"),
+});
