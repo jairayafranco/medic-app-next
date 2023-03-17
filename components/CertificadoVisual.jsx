@@ -16,10 +16,9 @@ export default function CertificadoVisual() {
     const formik = useFormik({
         initialValues: { ...formatInitialValues(certificadoVisualFields), conclusion: "" },
         validationSchema: certificadoVisualSchema,
-        onSubmit: async (values) => {
-            console.log(values);
+        onSubmit: (values) => {
             document.querySelector('a[download]').click();
-            // formik.resetForm();
+            formik.resetForm();
         }
     });
 

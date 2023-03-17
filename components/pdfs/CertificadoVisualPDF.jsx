@@ -28,7 +28,7 @@ const CertificadoVisualPDF = ({ ...props }) => {
         ojoIzquierdoReconoceColores: props.ojoIzquierdoReconoceColores,
         conclusion: props.conclusion,
     }
-    
+
     return (
         <Document>
             <Page size="A3" style={commonStyles.page}>
@@ -107,13 +107,13 @@ const CertificadoVisualPDF = ({ ...props }) => {
 
                     <View style={commonStyles.tableRow}>
                         <View style={[cvStyles.bodyTableCol, { width: '65%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>{data.nombres}</Text>
+                            <Text style={commonStyles.tableCell}>{data.nombres}</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '15%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>{data.genero}</Text>
+                            <Text style={commonStyles.tableCell}>{data.genero}</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '20%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>{data.fechaNacimiento}</Text>
+                            <Text style={commonStyles.tableCell}>{data.fechaNacimiento}</Text>
                         </View>
                     </View>
 
@@ -134,16 +134,16 @@ const CertificadoVisualPDF = ({ ...props }) => {
 
                     <View style={commonStyles.tableRow}>
                         <View style={[cvStyles.bodyTableCol, { width: '15%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>{data.edad}</Text>
+                            <Text style={commonStyles.tableCell}>{data.edad}</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '50%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>{data.direccion}</Text>
+                            <Text style={commonStyles.tableCell}>{data.direccion}</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '15%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>{data.contacto}</Text>
+                            <Text style={commonStyles.tableCell}>{data.contacto}</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '20%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>{data.tipoConsulta}</Text>
+                            <Text style={commonStyles.tableCell}>{data.tipoConsulta}</Text>
                         </View>
                     </View>
 
@@ -258,8 +258,12 @@ const CertificadoVisualPDF = ({ ...props }) => {
                                 </View>
                             </View>
 
-                            <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>
-                                CONCLUSION: {data.conclusion}<Text></Text>
+                            <Text style={{
+                                marginTop: 5,
+                                marginBottom: 5,
+                                fontSize: 9,
+                            }}>
+                                CONCLUSION: <Text style={{ fontSize: 11 }}>{data.conclusion}</Text>
                             </Text>
 
                         </View>
