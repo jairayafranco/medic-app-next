@@ -58,7 +58,7 @@ export default function DatosBasicos() {
         formik.resetForm();
         clearSessionStorageData();
     }
-
+    
     return (
         <Box className={styles.mainContainer}>
             <PacientePicture />
@@ -67,7 +67,7 @@ export default function DatosBasicos() {
                     {datosBasicosFields.map(({ name, property, type, options }, index) => (
                         <Grid item xs={12} md={5} key={index}>
                             {
-                                ![4, 5, 12].includes(index) && (
+                                !["Genero", "Fecha de Nacimiento", "Tipo de Consulta"].includes(name) && (
                                     <TextField
                                         autoComplete='off'
                                         id={property}
@@ -85,7 +85,7 @@ export default function DatosBasicos() {
                                 )
                             }
                             {
-                                index === 5 && (
+                                name === "Fecha de Nacimiento" && (
                                     <DateSelector
                                         label={name}
                                         name={property}
@@ -97,7 +97,7 @@ export default function DatosBasicos() {
                                 )
                             }
                             {
-                                [4, 12].includes(index) && (
+                                ["Genero", "Tipo de Consulta"].includes(name) && (
                                     <Selector
                                         title={name}
                                         value={formik.values[property]}
