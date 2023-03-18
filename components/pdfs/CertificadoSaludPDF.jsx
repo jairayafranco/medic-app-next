@@ -12,30 +12,30 @@ const CertificadoSaludPDF = ({ ...props }) => {
         idUsuario: user.idUsuario,
         fecha: new Date().toLocaleString(),
         idMedico: user.idMedico,
-        nombreMedico: user.nombreMedico,
-        nombres: user.nombreUsuario,
-        genero: user.genero,
+        nombreMedico: user.nombreMedico.toUpperCase(),
+        nombres: user.nombreUsuario.toUpperCase(),
+        genero: user.genero.toUpperCase(),
         fechaNacimiento: new Date(user.fechaNacimiento).toLocaleDateString(),
         edad: calculateAge(user.fechaNacimiento),
-        direccion: user.direccion,
+        direccion: user.direccion.toUpperCase(),
         contacto: user.contacto,
-        tipoConsulta: user.tipoConsulta,
+        tipoConsulta: user.tipoConsulta.toUpperCase(),
         peso: props.peso,
         talla: props.talla,
         visionOjoDerecho: props.visionOjoDerecho,
         visionOjoIzquierdo: props.visionOjoIzquierdo,
-        recomendacionVisual: props.recomendacionVisual,
+        recomendacionVisual: props.recomendacionVisual?.toUpperCase(),
         audicionOidoDerecho: props.audicionOidoDerecho,
         audicionOidoIzquierdo: props.audicionOidoIzquierdo,
-        recomendacionAuditiva: props.recomendacionAuditiva,
+        recomendacionAuditiva: props.recomendacionAuditiva?.toUpperCase(),
         piezasDentarias: props.piezasDentarias,
         presenciaCaries: props.presenciaCaries,
-        recomendacionesDental: props.recomendacionesDental,
-        discapacidadLimitacionFisica: props.discapacidadLimitacionFisica,
-        convivirCompartir: props.convivirCompartir,
-        maltratoViolencia: props.maltratoViolencia,
-        abandonoNegligencia: props.abandonoNegligencia,
-        recomendacionGeneral: props.recomendacionGeneral,
+        recomendacionesDental: props.recomendacionesDental?.toUpperCase(),
+        discapacidadLimitacionFisica: props.discapacidadLimitacionFisica?.toUpperCase(),
+        convivirCompartir: props.convivirCompartir?.toUpperCase(),
+        maltratoViolencia: props.maltratoViolencia?.toUpperCase(),
+        abandonoNegligencia: props.abandonoNegligencia?.toUpperCase(),
+        recomendacionGeneral: props.recomendacionGeneral?.toUpperCase(),
     }
 
     return (
@@ -68,10 +68,10 @@ const CertificadoSaludPDF = ({ ...props }) => {
                         <View style={[commonStyles.tableCol, cvStyles.grayCell]}>
                             <Text style={[commonStyles.tableCell, cvStyles.cabeceraText]}>FECHA Y HORA DE ATENCION</Text>
                         </View>
-                        <View style={[commonStyles.tableCol, cvStyles.grayCell]}>
+                        <View style={[commonStyles.tableCol, cvStyles.grayCell, { width: '20%' }]}>
                             <Text style={[commonStyles.tableCell, cvStyles.cabeceraText]}>IDENTIFICACION DEL MEDICO</Text>
                         </View>
-                        <View style={[commonStyles.tableCol, cvStyles.grayCell]}>
+                        <View style={[commonStyles.tableCol, cvStyles.grayCell, { width: '30%' }]}>
                             <Text style={[commonStyles.tableCell, cvStyles.cabeceraText]}>NOMBRE DEL MEDICO QUE ATIENDE</Text>
                         </View>
                     </View>
@@ -83,10 +83,10 @@ const CertificadoSaludPDF = ({ ...props }) => {
                         <View style={commonStyles.tableCol}>
                             <Text style={commonStyles.tableCell}>{data.fecha}</Text>
                         </View>
-                        <View style={commonStyles.tableCol}>
+                        <View style={[commonStyles.tableCol, { width: '20%' }]}>
                             <Text style={commonStyles.tableCell}>{data.idMedico}</Text>
                         </View>
-                        <View style={commonStyles.tableCol}>
+                        <View style={[commonStyles.tableCol, { width: '30%' }]}>
                             <Text style={commonStyles.tableCell}>{data.nombreMedico}</Text>
                         </View>
                     </View>

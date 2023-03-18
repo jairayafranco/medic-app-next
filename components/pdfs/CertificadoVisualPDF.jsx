@@ -12,21 +12,21 @@ const CertificadoVisualPDF = ({ ...props }) => {
         idUsuario: user?.idUsuario,
         fecha: new Date().toLocaleString(),
         idMedico: user.idMedico,
-        nombreMedico: user.nombreMedico,
-        nombres: user.nombreUsuario,
-        genero: user.genero,
+        nombreMedico: user.nombreMedico.toUpperCase(),
+        nombres: user.nombreUsuario.toUpperCase(),
+        genero: user.genero.toUpperCase(),
         fechaNacimiento: new Date(user.fechaNacimiento).toLocaleDateString(),
         edad: calculateAge(user.fechaNacimiento),
-        direccion: user.direccion,
+        direccion: user.direccion.toUpperCase(),
         contacto: user.contacto,
-        tipoConsulta: user.tipoConsulta,
+        tipoConsulta: user.tipoConsulta.toUpperCase(),
         ojoDerechoAgudezaVisual: props.ojoDerechoAgudezaVisual,
         ojoIzquierdoAgudezaVisual: props.ojoIzquierdoAgudezaVisual,
         ojoDerechoReconoceFormas: props.ojoDerechoReconoceFormas,
         ojoIzquierdoReconoceFormas: props.ojoIzquierdoReconoceFormas,
         ojoDerechoReconoceColores: props.ojoDerechoReconoceColores,
         ojoIzquierdoReconoceColores: props.ojoIzquierdoReconoceColores,
-        conclusion: props.conclusion,
+        conclusion: props.conclusion?.toUpperCase(),
     }
 
     return (
@@ -59,10 +59,10 @@ const CertificadoVisualPDF = ({ ...props }) => {
                         <View style={[commonStyles.tableCol, cvStyles.grayCell]}>
                             <Text style={[commonStyles.tableCell, cvStyles.cabeceraText]}>FECHA Y HORA DE ATENCION</Text>
                         </View>
-                        <View style={[commonStyles.tableCol, cvStyles.grayCell]}>
+                        <View style={[commonStyles.tableCol, cvStyles.grayCell, { width: '20%' }]}>
                             <Text style={[commonStyles.tableCell, cvStyles.cabeceraText]}>IDENTIFICACION DEL MEDICO</Text>
                         </View>
-                        <View style={[commonStyles.tableCol, cvStyles.grayCell]}>
+                        <View style={[commonStyles.tableCol, cvStyles.grayCell, { width: '30%' }]}>
                             <Text style={[commonStyles.tableCell, cvStyles.cabeceraText]}>NOMBRE DEL MEDICO QUE ATIENDE</Text>
                         </View>
                     </View>
@@ -74,10 +74,10 @@ const CertificadoVisualPDF = ({ ...props }) => {
                         <View style={commonStyles.tableCol}>
                             <Text style={commonStyles.tableCell}>{data.fecha}</Text>
                         </View>
-                        <View style={commonStyles.tableCol}>
+                        <View style={[commonStyles.tableCol, { width: '20%' }]}>
                             <Text style={commonStyles.tableCell}>{data.idMedico}</Text>
                         </View>
-                        <View style={commonStyles.tableCol}>
+                        <View style={[commonStyles.tableCol, { width: '30%' }]}>
                             <Text style={commonStyles.tableCell}>{data.nombreMedico}</Text>
                         </View>
                     </View>
