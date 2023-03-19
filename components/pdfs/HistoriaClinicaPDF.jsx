@@ -29,7 +29,7 @@ const HistoriaClinicaPDF = () => {
     const formatDate = (fecha) => {
         const date = new Date(fecha).toLocaleDateString();
         const [dia, mes, año] = date.split("/");
-        return `${dia.padStart(2, "0")}/${mes.padStart(2, "0")}/${año}`;
+        return `${dia?.padStart(2, "0")}/${mes?.padStart(2, "0")}/${año}`;
     }
 
     const getFullAge = (fecha) => {
