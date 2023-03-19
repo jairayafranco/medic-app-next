@@ -26,6 +26,21 @@ const HistoriaClinicaPDF = () => {
         });
     }
 
+    const formatDate = (fecha) => {
+        const date = new Date(fecha).toLocaleDateString();
+        const [dia, mes, año] = date.split("/");
+        return `${dia.padStart(2, "0")}/${mes.padStart(2, "0")}/${año}`;
+    }
+
+    const getFullAge = (fecha) => {
+        const [dia, mes, año] = new Date(fecha).toLocaleDateString().split("/");
+        const [diaActual, mesActual, añoActual] = new Date().toLocaleDateString().split("/");
+        const edad = añoActual - año;
+        const meses = mesActual - mes;
+        const dias = diaActual - dia;
+        return `${edad} A / ${meses} M / ${dias} D`;
+    }
+
     return (
         <Document>
             <Page size="A3" style={commonStyles.page}>
@@ -110,7 +125,7 @@ const HistoriaClinicaPDF = () => {
                             <Text style={commonStyles.tableCell}>{datosBasicos?.genero.toUpperCase()}</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '20%' }]}>
-                            <Text style={commonStyles.tableCell}>{new Date(datosBasicos?.fechaNacimiento).toLocaleDateString()}</Text>
+                            <Text style={commonStyles.tableCell}>{formatDate(datosBasicos?.fechaNacimiento)}</Text>
                         </View>
                     </View>
 
@@ -131,7 +146,7 @@ const HistoriaClinicaPDF = () => {
 
                     <View style={commonStyles.tableRow}>
                         <View style={[cvStyles.bodyTableCol, { width: '15%' }]}>
-                            <Text style={commonStyles.tableCell}>{calculateAge(datosBasicos?.fechaNacimiento)}</Text>
+                            <Text style={commonStyles.tableCell}>{getFullAge(datosBasicos?.fechaNacimiento)}</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '50%' }]}>
                             <Text style={commonStyles.tableCell}>{datosBasicos?.direccion.toUpperCase()}</Text>
