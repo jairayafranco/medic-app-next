@@ -9,8 +9,13 @@ import { lodash as _ } from '../../lib/lodash';
 import { signosVitalesFields } from '../../data/inputs';
 
 const HistoriaClinicaPDF = () => {
-    const { datosBasicos, anamnesis, antecedentes, signosVitales } = getSessionStorageData("");
+    const { datosBasicos, anamnesis, antecedentes, signosVitales, funcionRenal, examenFisico, impresionDiagnostica, formulacion } = getSessionStorageData("");
     const { motivoConsulta, enfermedadActual, ...anamnesisData } = anamnesis;
+    const { edad, sexo, peso, talla, ...funcionRenalData } = funcionRenal;
+    const { barthel, ...examenFisicoData } = examenFisico;
+    funcionRenalData["TFG CORREGIDA"] = funcionRenalData.tfgCorregida;
+    delete funcionRenalData.tfgCorregida;
+    const formulacionData = [formulacion.laboratorios, formulacion.medicamentos, formulacion.insumos, formulacion.procedimientos].flat();
 
     const newSignosVitales = {};
     signosVitalesFields.forEach((field) => {
@@ -317,7 +322,106 @@ const HistoriaClinicaPDF = () => {
 
                 </View>
 
-                {/* IMPRESIÓN DIAGNOSTICA */}
+                {/* FUNCION RENAL */}
+
+                <View>
+                    <View style={[cvStyles.bodyTitleContainer, cvStyles.grayCell]}>
+                        <Text style={cvStyles.bodyTitle}>FUNCION RENAL</Text>
+                    </View>
+                </View>
+
+                <View style={[commonStyles.table]}>
+
+                    {
+                        _.slice(_.map(funcionRenalData, (value, key) => {
+                            return (
+                                <View style={commonStyles.tableRow} key={key}>
+                                    <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '25%' }]}>
+                                        <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>{key.toUpperCase()}</Text>
+                                    </View>
+                                    <View style={[cvStyles.bodyTableCol, { width: '25%' }]}>
+                                        <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>{value}</Text>
+                                    </View>
+                                    <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '25%' }]}>
+                                        <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>{
+                                            _.slice(_.keys(funcionRenalData, key), 2, 4)[_.indexOf(_.keys(funcionRenalData, key), key)]?.toUpperCase()
+                                        }</Text>
+                                    </View>
+                                    <View style={[cvStyles.bodyTableCol, { width: '25%' }]}>
+                                        <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>{
+                                            _.slice(_.values(funcionRenalData, key), 2, 4)[_.indexOf(_.keys(funcionRenalData, key), key)]
+                                        }</Text>
+                                    </View>
+                                </View>
+                            )
+                        }), 0, 2)
+                    }
+
+                </View>
+
+                {/* EXAMEN FISICO */}
+
+                <View>
+                    <View style={[cvStyles.bodyTitleContainer, cvStyles.grayCell]}>
+                        <Text style={cvStyles.bodyTitle}>EXAMEN FISICO</Text>
+                    </View>
+                </View>
+
+                <View style={[commonStyles.table]}>
+
+                    {
+                        _.slice(_.map(examenFisicoData, (value, key) => {
+                            return (
+                                <View style={commonStyles.tableRow} key={key}>
+                                    <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '25%' }]}>
+                                        <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>{_.upperCase(key)}</Text>
+                                    </View>
+                                    <View style={[cvStyles.bodyTableCol, { width: '25%' }]}>
+                                        <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>{_.toUpper(value)}</Text>
+                                    </View>
+                                    <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '25%' }]}>
+                                        <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>{
+                                            _.slice(_.keys(examenFisicoData, key), 5, 10)[_.indexOf(_.keys(examenFisicoData, key), key)]?.toUpperCase()
+                                        }</Text>
+                                    </View>
+                                    <View style={[cvStyles.bodyTableCol, { width: '25%' }]}>
+                                        <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>{
+                                            _.slice(_.values(examenFisicoData, key), 5, 10)[_.indexOf(_.keys(examenFisicoData, key), key)]?.toUpperCase()
+                                        }</Text>
+                                    </View>
+                                </View>
+                            )
+                        }), 0, 5)
+                    }
+
+                </View>
+
+                {/* TEST BARTHEL */}
+
+                <View>
+                    <View style={[cvStyles.bodyTitleContainer, cvStyles.grayCell]}>
+                        <Text style={cvStyles.bodyTitle}>TEST DE BARTHEL: ACTIVIDADES BÁSICAS DE LA VIDA DIARIA</Text>
+                    </View>
+                </View>
+
+                <View style={[commonStyles.table]}>
+                    <View style={commonStyles.tableRow}>
+                        <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '25%' }]}>
+                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>PUNTAJE</Text>
+                        </View>
+                        <View style={[cvStyles.bodyTableCol, { width: '25%' }]}>
+                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>{_.get(barthel, 'puntuacion', 'NO APLICA')}</Text>
+                        </View>
+                        <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '25%' }]}>
+                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>NIVEL DE DEPENDENCIA</Text>
+                        </View>
+                        <View style={[cvStyles.bodyTableCol, { width: '25%' }]}>
+                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>{_.get(barthel, 'barthel', 'NO APLICA')}</Text>
+                        </View>
+                    </View>
+                </View>
+
+                {/* IMPRESION DIAGNOSTICA */}
 
                 <View>
                     <View style={[cvStyles.bodyTitleContainer, cvStyles.grayCell]}>
@@ -326,40 +430,20 @@ const HistoriaClinicaPDF = () => {
                 </View>
 
                 <View style={[commonStyles.table]}>
-
-                    <View style={commonStyles.tableRow}>
-                        <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '25%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>Z000</Text>
-                        </View>
-                        <View style={[cvStyles.bodyTableCol, { width: '25%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>EXAMEN MEDICO GENERAL </Text>
-                        </View>
-                        <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '25%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>Z027</Text>
-                        </View>
-                        <View style={[cvStyles.bodyTableCol, { width: '25%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>EXTENSION DE CERTIFICADO MEDICO</Text>
-                        </View>
-                    </View>
-
-                    <View style={commonStyles.tableRow}>
-                        <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '25%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>Z020</Text>
-                        </View>
-                        <View style={[cvStyles.bodyTableCol, { width: '25%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>EXAMEN PARA ADMISION A INSTITUCIONES EDUCATIVAS</Text>
-                        </View>
-                        <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '25%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>Z761</Text>
-                        </View>
-                        <View style={[cvStyles.bodyTableCol, { width: '25%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>
-                                CONSULTA PARA ATENCION Y SUPERVISION DE LA
-                                SALUD DEL NIÑO
-                            </Text>
-                        </View>
-                    </View>
-
+                    {
+                        _.map(impresionDiagnostica.impresionDiagnostica, (value, key) => {
+                            return (
+                                <View style={commonStyles.tableRow} key={key}>
+                                    <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '30%' }]}>
+                                        <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>{value.codigo}</Text>
+                                    </View>
+                                    <View style={[cvStyles.bodyTableCol, { width: '70%' }]}>
+                                        <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>{value.descripcion.toUpperCase()}</Text>
+                                    </View>
+                                </View>
+                            )
+                        })
+                    }
                 </View>
 
                 {/* PLAN DE MANEJO */}
@@ -375,45 +459,47 @@ const HistoriaClinicaPDF = () => {
                         <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '10%' }]}>
                             <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>CONSECUTIVO</Text>
                         </View>
-                        <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '40%' }]}>
+                        <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '47%' }]}>
                             <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>DESCRIPCION</Text>
                         </View>
-                        <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '10%' }]}>
+                        <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '8%' }]}>
                             <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>CANTIDAD</Text>
                         </View>
-                        <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '40%' }]}>
+                        <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '35%' }]}>
                             <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>OBSERVACION</Text>
                         </View>
                     </View>
 
-                    <View style={commonStyles.tableRow}>
-                        <View style={[cvStyles.bodyTableCol, { width: '10%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>P1060</Text>
-                        </View>
-                        <View style={[cvStyles.bodyTableCol, { width: '40%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>CERTIFICADO DE SALUD</Text>
-                        </View>
-                        <View style={[cvStyles.bodyTableCol, { width: '10%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>1</Text>
-                        </View>
-                        <View style={[cvStyles.bodyTableCol, { width: '40%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>prueba</Text>
-                        </View>
-                    </View>
+                    {
+                        _.map(formulacionData, (value, key) => {
+                            return (
+                                <View style={commonStyles.tableRow} key={key}>
+                                    <View style={[cvStyles.bodyTableCol, { width: '10%' }]}>
+                                        <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>{value.consecutivo}</Text>
+                                    </View>
+                                    <View style={[cvStyles.bodyTableCol, { width: '47%' }]}>
+                                        <Text style={[commonStyles.tableCell, cvStyles.bodyText, { textAlign: 'left', marginLeft: 1.2 }]}>
+                                            {value.servicio.toUpperCase()}
+                                        </Text>
+                                    </View>
+                                    <View style={[cvStyles.bodyTableCol, { width: '8%' }]}>
+                                        <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>{value.cantidad}</Text>
+                                    </View>
+                                    <View style={[cvStyles.bodyTableCol, { width: '35%' }]}>
+                                        <Text style={[commonStyles.tableCell, cvStyles.bodyText, { textAlign: 'left', marginLeft: 1.2 }]}>
+                                            {value.descripcionManual.toUpperCase()}
+                                        </Text>
+                                    </View>
+                                </View>
+                            )
+                        })
+                    }
 
                 </View>
 
                 {/* FIRMAS  */}
 
                 <Svg viewBox="0 0 220 100">
-                    <Rect x={0} y={5} width={110} height={40} style={{
-                        fill: 'white',
-                        stroke: 'black',
-                        strokeWidth: 0.2,
-                    }} />
-                    <Text x={3} y={10} style={{ fontSize: 3 }}>
-                        FIRMA DEL USUARIO
-                    </Text>
                     <Text x={120} y={10} style={{ fontSize: 3 }}>FIRMA DEL MEDICO O PERSONA RESPONSABLE</Text>
                     <Text x={120} y={30} style={{ fontSize: 3 }}>J.SAMUEL AYA CACERES</Text>
                     <Text x={120} y={35} style={{ fontSize: 3 }}>MEDICINA GENERAL</Text>

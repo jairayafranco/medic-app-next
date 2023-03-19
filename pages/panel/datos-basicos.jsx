@@ -17,6 +17,8 @@ import { datosBasicosFields } from '../../data/inputs';
 import FullScreenModal from '../../components/FullScreenModal';
 import CertificadoSalud from '../../components/CertificadoSalud';
 import CertificadoVisual from '../../components/CertificadoVisual';
+import HistoriaClinicaPDF from '../../components/pdfs/HistoriaClinicaPDF';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 
 export default function DatosBasicos() {
     const { findPaciente, createNewForm, removePaciente, modifyPaciente } = AppContext();
@@ -58,7 +60,7 @@ export default function DatosBasicos() {
         formik.resetForm();
         clearSessionStorageData();
     }
-    
+
     return (
         <Box className={styles.mainContainer}>
             <PacientePicture />
@@ -146,6 +148,14 @@ export default function DatosBasicos() {
                         />
                         <Button disabled={!availableSessionStorageData()} onClick={handleUpdatePaciente}>Actualizar</Button>
                         <Button onClick={handleClearForm}>Limpiar</Button>
+                        <Button disabled={!availableSessionStorageData()} onClick={() => {
+                            document.querySelector('a[download]').click();
+                        }}>Imprimir H.C</Button>
+                        <div style={{ display: 'none' }}>
+                            <PDFDownloadLink document={<HistoriaClinicaPDF />} fileName={`HistoriaClinica - ${getSessionStorageData("datosBasicos")?.nombreUsuario}.pdf`}>
+                                {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
+                            </PDFDownloadLink>
+                        </div>
                         <Confirm
                             buttonTitle="Eliminar"
                             title="Eliminar Paciente"
