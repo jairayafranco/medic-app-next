@@ -1,5 +1,5 @@
 import React from 'react';
-import { Page, Text, View, Document, Image, Rect, Svg } from '@react-pdf/renderer';
+import { Page, Text, View, Document, Image, Svg } from '@react-pdf/renderer';
 import Logo from '../../public/medic-logo.jpg';
 import Firma from '../../public/firma.png';
 import commonStyles from './styles/common';
@@ -9,20 +9,22 @@ import { lodash as _ } from '../../lib/lodash';
 import { signosVitalesFields } from '../../data/inputs';
 
 const HistoriaClinicaPDF = () => {
-    const { datosBasicos, anamnesis, antecedentes, signosVitales, funcionRenal, examenFisico, impresionDiagnostica, formulacion } = getSessionStorageData("");
-    const { motivoConsulta, enfermedadActual, ...anamnesisData } = anamnesis;
-    const { edad, sexo, peso, talla, ...funcionRenalData } = funcionRenal;
-    const { barthel, ...examenFisicoData } = examenFisico;
+    const { datosBasicos, anamnesis, antecedentes, signosVitales, funcionRenal, examenFisico, impresionDiagnostica, formulacion } = getSessionStorageData("") || {};
+    const { motivoConsulta, enfermedadActual, ...anamnesisData } = anamnesis || {};
+    const { edad, sexo, peso, talla, ...funcionRenalData } = funcionRenal || {};
+    const { barthel, ...examenFisicoData } = examenFisico || {};
     funcionRenalData["TFG CORREGIDA"] = funcionRenalData.tfgCorregida;
     delete funcionRenalData.tfgCorregida;
-    const formulacionData = [formulacion.laboratorios, formulacion.medicamentos, formulacion.insumos, formulacion.procedimientos].flat();
+    const formulacionData = [formulacion?.laboratorios, formulacion?.medicamentos, formulacion?.insumos, formulacion?.procedimientos].flat();
 
     const newSignosVitales = {};
-    signosVitalesFields.forEach((field) => {
-        field.fields.forEach((subField) => {
-            newSignosVitales[subField.name] = signosVitales[subField.property] + " " + (_.toUpper(subField.unit) || "");
+    if (signosVitales) {
+        signosVitalesFields.forEach((field) => {
+            field.fields.forEach((subField) => {
+                newSignosVitales[subField.name] = signosVitales[subField.property] + " " + (_.toUpper(subField.unit) || "");
+            });
         });
-    });
+    }
 
     return (
         <Document>
@@ -64,16 +66,16 @@ const HistoriaClinicaPDF = () => {
 
                     <View style={commonStyles.tableRow}>
                         <View style={commonStyles.tableCol}>
-                            <Text style={commonStyles.tableCell}>{datosBasicos.idUsuario}</Text>
+                            <Text style={commonStyles.tableCell}>{datosBasicos?.idUsuario}</Text>
                         </View>
                         <View style={commonStyles.tableCol}>
                             <Text style={commonStyles.tableCell}>{new Date().toLocaleString()}</Text>
                         </View>
                         <View style={[commonStyles.tableCol, { width: '20%' }]}>
-                            <Text style={commonStyles.tableCell}>{datosBasicos.idMedico}</Text>
+                            <Text style={commonStyles.tableCell}>{datosBasicos?.idMedico}</Text>
                         </View>
                         <View style={[commonStyles.tableCol, { width: '30%' }]}>
-                            <Text style={commonStyles.tableCell}>{datosBasicos.nombreMedico.toUpperCase()}</Text>
+                            <Text style={commonStyles.tableCell}>{datosBasicos?.nombreMedico.toUpperCase()}</Text>
                         </View>
                     </View>
                 </View>
@@ -102,13 +104,13 @@ const HistoriaClinicaPDF = () => {
 
                     <View style={commonStyles.tableRow}>
                         <View style={[cvStyles.bodyTableCol, { width: '65%' }]}>
-                            <Text style={commonStyles.tableCell}>{datosBasicos.nombreUsuario.toUpperCase()}</Text>
+                            <Text style={commonStyles.tableCell}>{datosBasicos?.nombreUsuario.toUpperCase()}</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '15%' }]}>
-                            <Text style={commonStyles.tableCell}>{datosBasicos.genero.toUpperCase()}</Text>
+                            <Text style={commonStyles.tableCell}>{datosBasicos?.genero.toUpperCase()}</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '20%' }]}>
-                            <Text style={commonStyles.tableCell}>{new Date(datosBasicos.fechaNacimiento).toLocaleDateString()}</Text>
+                            <Text style={commonStyles.tableCell}>{new Date(datosBasicos?.fechaNacimiento).toLocaleDateString()}</Text>
                         </View>
                     </View>
 
@@ -129,16 +131,16 @@ const HistoriaClinicaPDF = () => {
 
                     <View style={commonStyles.tableRow}>
                         <View style={[cvStyles.bodyTableCol, { width: '15%' }]}>
-                            <Text style={commonStyles.tableCell}>{calculateAge(datosBasicos.fechaNacimiento)}</Text>
+                            <Text style={commonStyles.tableCell}>{calculateAge(datosBasicos?.fechaNacimiento)}</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '50%' }]}>
-                            <Text style={commonStyles.tableCell}>{datosBasicos.direccion.toUpperCase()}</Text>
+                            <Text style={commonStyles.tableCell}>{datosBasicos?.direccion.toUpperCase()}</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '15%' }]}>
-                            <Text style={commonStyles.tableCell}>{datosBasicos.contacto}</Text>
+                            <Text style={commonStyles.tableCell}>{datosBasicos?.contacto}</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '20%' }]}>
-                            <Text style={commonStyles.tableCell}>{datosBasicos.eps.toUpperCase()}</Text>
+                            <Text style={commonStyles.tableCell}>{datosBasicos?.eps.toUpperCase()}</Text>
                         </View>
                     </View>
 
@@ -159,16 +161,16 @@ const HistoriaClinicaPDF = () => {
 
                     <View style={commonStyles.tableRow}>
                         <View style={[cvStyles.bodyTableCol, { width: '15%' }]}>
-                            <Text style={commonStyles.tableCell}>{datosBasicos.nivel}</Text>
+                            <Text style={commonStyles.tableCell}>{datosBasicos?.nivel}</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '50%' }]}>
-                            <Text style={commonStyles.tableCell}>{datosBasicos.nombreAcompanante.toUpperCase()}</Text>
+                            <Text style={commonStyles.tableCell}>{datosBasicos?.nombreAcompanante.toUpperCase()}</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '15%' }]}>
-                            <Text style={commonStyles.tableCell}>{datosBasicos.contactoAcompanante}</Text>
+                            <Text style={commonStyles.tableCell}>{datosBasicos?.contactoAcompanante}</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '20%' }]}>
-                            <Text style={commonStyles.tableCell}>{datosBasicos.tipoConsulta.toUpperCase()}</Text>
+                            <Text style={commonStyles.tableCell}>{datosBasicos?.tipoConsulta.toUpperCase()}</Text>
                         </View>
                     </View>
 
@@ -189,13 +191,13 @@ const HistoriaClinicaPDF = () => {
                             <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>MOTIVO CONSULTA</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '25%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>{anamnesis.motivoConsulta?.toUpperCase()}</Text>
+                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>{anamnesis?.motivoConsulta.toUpperCase()}</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '25%' }]}>
                             <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>ENF. ACTUAL</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '25%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>{anamnesis.enfermedadActual?.toUpperCase()}</Text>
+                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>{anamnesis?.enfermedadActual?.toUpperCase()}</Text>
                         </View>
                     </View>
 
@@ -431,14 +433,14 @@ const HistoriaClinicaPDF = () => {
 
                 <View style={[commonStyles.table]}>
                     {
-                        _.map(impresionDiagnostica.impresionDiagnostica, (value, key) => {
+                        _.map(impresionDiagnostica?.impresionDiagnostica, (value, key) => {
                             return (
                                 <View style={commonStyles.tableRow} key={key}>
                                     <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '30%' }]}>
-                                        <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>{value.codigo}</Text>
+                                        <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>{value?.codigo}</Text>
                                     </View>
                                     <View style={[cvStyles.bodyTableCol, { width: '70%' }]}>
-                                        <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>{value.descripcion.toUpperCase()}</Text>
+                                        <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>{value?.descripcion.toUpperCase()}</Text>
                                     </View>
                                 </View>
                             )
@@ -475,19 +477,19 @@ const HistoriaClinicaPDF = () => {
                             return (
                                 <View style={commonStyles.tableRow} key={key}>
                                     <View style={[cvStyles.bodyTableCol, { width: '10%' }]}>
-                                        <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>{value.consecutivo}</Text>
+                                        <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>{value?.consecutivo}</Text>
                                     </View>
                                     <View style={[cvStyles.bodyTableCol, { width: '47%' }]}>
                                         <Text style={[commonStyles.tableCell, cvStyles.bodyText, { textAlign: 'left', marginLeft: 1.2 }]}>
-                                            {value.servicio.toUpperCase()}
+                                            {value?.servicio.toUpperCase()}
                                         </Text>
                                     </View>
                                     <View style={[cvStyles.bodyTableCol, { width: '8%' }]}>
-                                        <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>{value.cantidad}</Text>
+                                        <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>{value?.cantidad}</Text>
                                     </View>
                                     <View style={[cvStyles.bodyTableCol, { width: '35%' }]}>
                                         <Text style={[commonStyles.tableCell, cvStyles.bodyText, { textAlign: 'left', marginLeft: 1.2 }]}>
-                                            {value.descripcionManual.toUpperCase()}
+                                            {value?.descripcionManual.toUpperCase()}
                                         </Text>
                                     </View>
                                 </View>
