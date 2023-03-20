@@ -35,10 +35,10 @@ const HistoriaClinicaPDF = () => {
     const getFullAge = (fecha) => {
         const [dia, mes, año] = new Date(fecha).toLocaleDateString().split("/");
         const [diaActual, mesActual, añoActual] = new Date().toLocaleDateString().split("/");
-        const edad = añoActual - año;
+        const edad = mesActual >= mes ? añoActual - año : (añoActual - año) - 1
         const meses = mesActual - mes;
         const dias = diaActual - dia;
-        return `${edad} A / ${meses} M / ${dias} D`;
+        return `${edad} A / ${Math.abs(meses)} M / ${Math.abs(dias)} D`;
     }
 
     return (
