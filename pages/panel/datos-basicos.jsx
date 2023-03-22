@@ -17,7 +17,7 @@ import { datosBasicosFields } from '../../data/inputs';
 import FullScreenModal from '../../components/FullScreenModal';
 import CertificadoSalud from '../../components/CertificadoSalud';
 import CertificadoVisual from '../../components/CertificadoVisual';
-import HistoriaClinicaPDF from '../../components/pdfs/HistoriaClinicaPDF';
+import HistoriaClinicaPDF from '../../pdfs/HistoriaClinicaPDF';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 
 export default function DatosBasicos() {
@@ -149,7 +149,7 @@ export default function DatosBasicos() {
                         <Button disabled={!availableSessionStorageData()} onClick={handleUpdatePaciente}>Actualizar</Button>
                         <Button onClick={handleClearForm}>Limpiar</Button>
                         <Button disabled={!availableSessionStorageData()} onClick={() => {
-                            document.querySelector('a[download]').click();
+                            document.querySelector(`a[download="HistoriaClinica - ${getSessionStorageData("datosBasicos")?.nombreUsuario}.pdf"]`).click();
                         }}>Imprimir H.C</Button>
                         <div style={{ display: 'none' }}>
                             <PDFDownloadLink document={<HistoriaClinicaPDF />} fileName={`HistoriaClinica - ${getSessionStorageData("datosBasicos")?.nombreUsuario}.pdf`}>
