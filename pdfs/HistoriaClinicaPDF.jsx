@@ -1,12 +1,12 @@
 import React from 'react';
 import { Page, Text, View, Document, Image, Svg } from '@react-pdf/renderer';
-import Logo from '../../public/medic-logo.jpg';
-import Firma from '../../public/firma.png';
+import Logo from '../public/medic-logo.jpg';
+import Firma from '../public/firma.png';
 import commonStyles from './styles/common';
 import cvStyles from './styles/certificadoVisual';
-import { getSessionStorageData, calculateAge } from '../../helpers/helpers';
-import { lodash as _ } from '../../lib/lodash';
-import { signosVitalesFields } from '../../data/inputs';
+import { getSessionStorageData } from '../helpers/helpers';
+import { lodash as _ } from '../lib/lodash';
+import { signosVitalesFields } from '../data/inputs';
 
 const HistoriaClinicaPDF = () => {
     const { datosBasicos, anamnesis, antecedentes, signosVitales, funcionRenal, examenFisico, impresionDiagnostica, formulacion } = getSessionStorageData("") || {};

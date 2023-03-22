@@ -7,7 +7,7 @@ import { formatInitialValues, availableSessionStorageData, getSessionStorageData
 import { useFormik } from 'formik';
 import Typography from '@mui/material/Typography';
 import { PDFDownloadLink } from '@react-pdf/renderer';
-import CertificadoVisualPDF from './pdfs/CertificadoVisualPDF';
+import CertificadoVisualPDF from '../pdfs/CertificadoVisualPDF';
 import { certificadoVisualSchema } from '../schemas/schemas';
 
 export default function CertificadoVisual() {
@@ -17,7 +17,7 @@ export default function CertificadoVisual() {
         initialValues: { ...formatInitialValues(certificadoVisualFields), conclusion: "" },
         validationSchema: certificadoVisualSchema,
         onSubmit: (values) => {
-            document.querySelector('a[download]').click();
+            document.querySelector(`a[download="CertificadoVisual - ${nombrePaciente}.pdf"]`).click();
             formik.resetForm();
         }
     });

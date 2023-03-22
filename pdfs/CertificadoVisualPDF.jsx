@@ -1,41 +1,32 @@
 import React from 'react';
 import { Page, Text, View, Document, Image, Rect, Svg } from '@react-pdf/renderer';
-import Logo from '../../public/medic-logo.jpg';
-import Firma from '../../public/firma.png';
+import Logo from '../public/medic-logo.jpg';
+import Firma from '../public/firma.png';
 import commonStyles from './styles/common';
 import cvStyles from './styles/certificadoVisual';
-import { getSessionStorageData, calculateAge } from '../../helpers/helpers';
+import { getSessionStorageData, calculateAge } from '../helpers/helpers';
 
-const CertificadoSaludPDF = ({ ...props }) => {
+const CertificadoVisualPDF = ({ ...props }) => {
     const user = getSessionStorageData("datosBasicos");
     const data = {
-        idUsuario: user.idUsuario,
+        idUsuario: user?.idUsuario,
         fecha: new Date().toLocaleString(),
-        idMedico: user.idMedico,
-        nombreMedico: user.nombreMedico.toUpperCase(),
-        nombres: user.nombreUsuario.toUpperCase(),
-        genero: user.genero.toUpperCase(),
-        fechaNacimiento: new Date(user.fechaNacimiento).toLocaleDateString(),
-        edad: calculateAge(user.fechaNacimiento),
-        direccion: user.direccion.toUpperCase(),
-        contacto: user.contacto,
-        tipoConsulta: user.tipoConsulta.toUpperCase(),
-        peso: props.peso,
-        talla: props.talla,
-        visionOjoDerecho: props.visionOjoDerecho,
-        visionOjoIzquierdo: props.visionOjoIzquierdo,
-        recomendacionVisual: props.recomendacionVisual?.toUpperCase(),
-        audicionOidoDerecho: props.audicionOidoDerecho,
-        audicionOidoIzquierdo: props.audicionOidoIzquierdo,
-        recomendacionAuditiva: props.recomendacionAuditiva?.toUpperCase(),
-        piezasDentarias: props.piezasDentarias,
-        presenciaCaries: props.presenciaCaries,
-        recomendacionesDental: props.recomendacionesDental?.toUpperCase(),
-        discapacidadLimitacionFisica: props.discapacidadLimitacionFisica?.toUpperCase(),
-        convivirCompartir: props.convivirCompartir?.toUpperCase(),
-        maltratoViolencia: props.maltratoViolencia?.toUpperCase(),
-        abandonoNegligencia: props.abandonoNegligencia?.toUpperCase(),
-        recomendacionGeneral: props.recomendacionGeneral?.toUpperCase(),
+        idMedico: user?.idMedico,
+        nombreMedico: user?.nombreMedico.toUpperCase(),
+        nombres: user?.nombreUsuario.toUpperCase(),
+        genero: user?.genero.toUpperCase(),
+        fechaNacimiento: new Date(user?.fechaNacimiento).toLocaleDateString(),
+        edad: calculateAge(user?.fechaNacimiento),
+        direccion: user?.direccion.toUpperCase(),
+        contacto: user?.contacto,
+        tipoConsulta: user?.tipoConsulta.toUpperCase(),
+        ojoDerechoAgudezaVisual: props?.ojoDerechoAgudezaVisual,
+        ojoIzquierdoAgudezaVisual: props?.ojoIzquierdoAgudezaVisual,
+        ojoDerechoReconoceFormas: props?.ojoDerechoReconoceFormas,
+        ojoIzquierdoReconoceFormas: props?.ojoIzquierdoReconoceFormas,
+        ojoDerechoReconoceColores: props?.ojoDerechoReconoceColores,
+        ojoIzquierdoReconoceColores: props?.ojoIzquierdoReconoceColores,
+        conclusion: props?.conclusion?.toUpperCase(),
     }
 
     return (
@@ -170,10 +161,10 @@ const CertificadoSaludPDF = ({ ...props }) => {
 
                     <View style={commonStyles.tableRow}>
                         <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '25%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>Z000</Text>
+                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>Z010</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '25%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>EXAMEN MEDICO GENERAL </Text>
+                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>EXAMEN DE OJOS Y DE LA VISION</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '25%' }]}>
                             <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>Z027</Text>
@@ -191,13 +182,10 @@ const CertificadoSaludPDF = ({ ...props }) => {
                             <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>EXAMEN PARA ADMISION A INSTITUCIONES EDUCATIVAS</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, cvStyles.grayCell, { width: '25%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>Z761</Text>
+                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}></Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '25%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}>
-                                CONSULTA PARA ATENCION Y SUPERVISION DE LA
-                                SALUD DEL NIÑO
-                            </Text>
+                            <Text style={[commonStyles.tableCell, cvStyles.bodySubTitle]}></Text>
                         </View>
                     </View>
 
@@ -229,79 +217,54 @@ const CertificadoSaludPDF = ({ ...props }) => {
 
                     <View style={commonStyles.tableRow}>
                         <View style={[cvStyles.bodyTableCol, { width: '10%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>P1060</Text>
+                            <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>P1062</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '40%' }]}>
-                            <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>CERTIFICADO DE SALUD</Text>
+                            <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>CERTIFICADO VISUAL (MAYORES DE 4 AÑOS) </Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '10%' }]}>
                             <Text style={[commonStyles.tableCell, cvStyles.bodyText]}>1</Text>
                         </View>
                         <View style={[cvStyles.bodyTableCol, { width: '40%' }]}>
 
+                            <View style={[commonStyles.tableCell, cvStyles.bodyText, {
+                                display: 'flex', justifyContent: 'flex-start', flexDirection: 'row'
+                            }]}
+                            >
+                                <Text>AGUDEZA VISUAL: </Text>
+                                <View style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <Text>*OJO DERECHO: {data.ojoDerechoAgudezaVisual}</Text>
+                                    <Text>*OJO IZQUIERDO: {data.ojoIzquierdoAgudezaVisual}</Text>
+                                </View>
+                            </View>
+
+                            <View style={[commonStyles.tableCell, cvStyles.bodyText, {
+                                display: 'flex', justifyContent: 'flex-start', flexDirection: 'row'
+                            }]}>
+                                <Text>RECONOCE COLORES: </Text>
+                                <View style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <Text>*OJO DERECHO: {data.ojoDerechoReconoceColores}</Text>
+                                    <Text>*OJO IZQUIERDO: {data.ojoIzquierdoReconoceColores}</Text>
+                                </View>
+                            </View>
+
+                            <View style={[commonStyles.tableCell, cvStyles.bodyText, {
+                                display: 'flex', justifyContent: 'flex-start', flexDirection: 'row'
+                            }]}>
+                                <Text>RECONOCE FORMAS: </Text>
+                                <View style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <Text>*OJO DERECHO: {data.ojoDerechoReconoceFormas}</Text>
+                                    <Text>*OJO IZQUIERDO: {data.ojoIzquierdoReconoceFormas}</Text>
+                                </View>
+                            </View>
+
                             <Text style={{
                                 marginTop: 5,
                                 marginBottom: 5,
                                 fontSize: 9,
                             }}>
-                                PESO: <Text style={{ fontSize: 10 }}>{data.peso} KG </Text>
-                                TALLA: <Text style={{ fontSize: 10 }}>{data.talla} CMS</Text>
+                                CONCLUSION: <Text style={{ fontSize: 11 }}>{data.conclusion}</Text>
                             </Text>
-
-                            <View style={[commonStyles.tableCell, cvStyles.bodyText, {
-                                display: 'flex', justifyContent: 'flex-start', flexDirection: 'row'
-                            }]}
-                            >
-                                <Text>REVISION VISUAL: </Text>
-                                <View style={{ display: 'flex', flexDirection: 'column' }}>
-                                    <Text>*VISION OJO DERECHO: {data.visionOjoDerecho}</Text>
-                                    <Text>*VISION OJO IZQUIERDO: {data.visionOjoIzquierdo}</Text>
-                                    <Text>*RECOMENDACION:</Text>
-                                    <Text>{data.recomendacionVisual}</Text>
-                                </View>
-                            </View>
-
-                            <View style={[commonStyles.tableCell, cvStyles.bodyText, {
-                                display: 'flex', justifyContent: 'flex-start', flexDirection: 'row'
-                            }]}>
-                                <Text>REVISION AUDITIVIA: </Text>
-                                <View style={{ display: 'flex', flexDirection: 'column' }}>
-                                    <Text>*AUDICION OIDO DERECHO: {data.audicionOidoDerecho}</Text>
-                                    <Text>*AUDICION OIDO IZQUIERDO: {data.audicionOidoIzquierdo}</Text>
-                                    <Text>*RECOMENDACION: </Text>
-                                    <Text>{data.recomendacionAuditiva}</Text>
-                                </View>
-                            </View>
-
-                            <View style={[commonStyles.tableCell, cvStyles.bodyText, {
-                                display: 'flex', justifyContent: 'flex-start', flexDirection: 'row'
-                            }]}>
-                                <Text>REVISION DENTAL: </Text>
-                                <View style={{ display: 'flex', flexDirection: 'column' }}>
-                                    <Text>*PIEZAS DENTARIAS: {data.piezasDentarias}</Text>
-                                    <Text>*PRESENCIA DE CARIES: {data.presenciaCaries}</Text>
-                                    <Text>*RECOMENDACION: </Text>
-                                    <Text>{data.recomendacionesDental}</Text>
-                                </View>
-                            </View>
-
-                            <View style={[commonStyles.tableCell, cvStyles.bodyText, {
-                                display: 'flex', justifyContent: 'flex-start', flexDirection: 'row'
-                            }]}>
-                                <Text>REVISION GENERAL: </Text>
-                                <View style={{ display: 'flex', flexDirection: 'column' }}>
-                                    <Text>*PRESENTA DISCAPACIDAD O LIMITACION FISICA?: </Text>
-                                    <Text>-{data.discapacidadLimitacionFisica}</Text>
-                                    <Text>*PUEDE CONVIVIR Y COMPARTIR CON OTROS NIÑOS? : </Text>
-                                    <Text>-{data.convivirCompartir}</Text>
-                                    <Text>*PRESENTA HUELLAS DE MALTRATO O VIOLENCIA?: </Text>
-                                    <Text>-{data.maltratoViolencia}</Text>
-                                    <Text>*PRESENTA HUELLAS DE ABANDONO O NEGLIGENCIA?: </Text>
-                                    <Text>-{data.abandonoNegligencia}</Text>
-                                    <Text>*RECOMENDACION: </Text>
-                                    <Text>-{data.recomendacionGeneral}</Text>
-                                </View>
-                            </View>
 
                         </View>
                     </View>
@@ -331,6 +294,6 @@ const CertificadoSaludPDF = ({ ...props }) => {
             </Page>
         </Document>
     );
-}
+};
 
-export default CertificadoSaludPDF;
+export default CertificadoVisualPDF;

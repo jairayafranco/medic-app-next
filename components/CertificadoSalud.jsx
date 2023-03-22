@@ -7,7 +7,7 @@ import { formatInitialValues, availableSessionStorageData, getSessionStorageData
 import { useFormik } from 'formik';
 import Typography from '@mui/material/Typography';
 import { PDFDownloadLink } from '@react-pdf/renderer';
-import CertificadoSaludPDF from './pdfs/CertificadoSaludPDF';
+import CertificadoSaludPDF from '../pdfs/CertificadoSaludPDF';
 import { certificadoSaludSchema } from '../schemas/schemas';
 
 export default function CertificadoSalud() {
@@ -17,7 +17,7 @@ export default function CertificadoSalud() {
         initialValues: formatInitialValues(certificadoSaludFields),
         validationSchema: certificadoSaludSchema,
         onSubmit: (values) => {
-            document.querySelector('a[download]').click();
+            document.querySelector(`a[download="CertificadoSalud - ${nombrePaciente}.pdf"]`).click();
             formik.resetForm();
         }
     });
