@@ -31,6 +31,8 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import AccountMenu from '../components/AccountMenu';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import Logo from '../public/logo.png';
+import Image from 'next/image';
 
 const drawerWidth = 200;
 
@@ -136,6 +138,7 @@ export default function Dashboard({ children, changeTheme, theme }) {
             <CssBaseline />
             <AppBar position="fixed" open={open}>
                 <Toolbar>
+
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
@@ -148,6 +151,7 @@ export default function Dashboard({ children, changeTheme, theme }) {
                     >
                         <MenuIcon />
                     </IconButton>
+
                     <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
                         {pageParams.title}
                     </Typography>
@@ -159,6 +163,25 @@ export default function Dashboard({ children, changeTheme, theme }) {
                             borderRadius: 1,
                         }}
                     >
+                        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
+                            <Image src={Logo} alt='Logo' width={40} height={40} style={{ borderRadius: 10 }} />
+                            <Typography
+                                variant="h6"
+                                noWrap
+                                component="div"
+                                sx={{
+                                    flexGrow: 1,
+                                    color: '#fff',
+                                    fontWeight: 'bold',
+                                    fontSize: '1.2rem',
+                                    marginRight: 2,
+                                    alignSelf: 'center',
+                                }}
+                            >
+                                Consultorio Medico D. Samuel Aya
+                            </Typography>
+                        </Box>
+
                         <Tooltip title='Menu Principal' placement='bottom'>
                             <IconButton onClick={() => {
                                 router.push('/panel')
@@ -168,6 +191,7 @@ export default function Dashboard({ children, changeTheme, theme }) {
                                 <HomeIcon sx={{ color: '#fff' }} />
                             </IconButton>
                         </Tooltip>
+
                         <Tooltip title={theme.palette.mode === 'dark' ? 'Modo Claro' : 'Modo Oscuro'} placement='bottom'>
                             <IconButton onClick={() => {
                                 changeTheme.toggleColorMode();
@@ -176,18 +200,23 @@ export default function Dashboard({ children, changeTheme, theme }) {
                                 {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
                             </IconButton>
                         </Tooltip>
+
                         <AccountMenu />
                     </Box>
 
                 </Toolbar>
             </AppBar>
+
             <Drawer variant="permanent" open={open}>
+
                 <DrawerHeader>
                     <IconButton onClick={handleDrawerClose}>
                         {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
                     </IconButton>
                 </DrawerHeader>
+
                 <Divider />
+
                 <List>
                     {['DI', 'ARS', 'ANT', 'SV', 'TFEF', 'EF', 'IDA', 'FORM', 'FACT'].map((text, index) => (
                         <ListItem
@@ -225,11 +254,14 @@ export default function Dashboard({ children, changeTheme, theme }) {
                         </ListItem>
                     ))}
                 </List>
+
             </Drawer>
+
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <DrawerHeader />
                 {children}
             </Box>
+
         </Box>
     );
 }
