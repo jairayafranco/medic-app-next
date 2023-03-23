@@ -11,6 +11,8 @@ import { questions } from '../data/barthelQuestions';
 import { useFormik } from 'formik';
 import { AppContext } from '../context/AppContext';
 import { lodash as _ } from '../lib/lodash';
+import Checkbox from '@mui/material/Checkbox';
+import Selector from './Selector';
 
 export default function BarthelTable() {
     const { barthelResults, setBarthelResults } = AppContext();
@@ -32,6 +34,7 @@ export default function BarthelTable() {
 
     const handlePoints = (e, itemPoints) => {
         const { name, value } = e.target;
+        formik.values[name] = value;
         const points = { ...barthelResults.points, [name]: Number(value) };
         const sumatoria = _.sum(_.values(points));
 
@@ -82,19 +85,10 @@ export default function BarthelTable() {
                                         {
                                             index === 0 &&
                                             <TableCell rowSpan={item.detail.length} align="center">
-                                                <TextField
-                                                    name={item.name}
-                                                    size='small'
-                                                    variant="standard"
-                                                    type="number"
+                                                <Selector
                                                     value={formik.values[item.name]}
-                                                    onChange={formik.handleChange}
-                                                    onBlur={(e) => handlePoints(e, item.points)}
-                                                    style={{ width: 50 }}
-                                                    inputProps={{
-                                                        style: { textAlign: 'center' }
-                                                    }}
-                                                    autoComplete='off'
+                                                    values={item.points}
+                                                    onChange={(value) => handlePoints({ target: { name: item.name, value } }, item.points)}
                                                 />
                                             </TableCell>
                                         }
