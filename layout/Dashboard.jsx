@@ -163,24 +163,28 @@ export default function Dashboard({ children, changeTheme, theme }) {
                             borderRadius: 1,
                         }}
                     >
-                        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
-                            <Image src={Logo} alt='Logo' width={40} height={40} style={{ borderRadius: 10 }} />
-                            <Typography
-                                variant="h6"
-                                noWrap
-                                component="div"
-                                sx={{
-                                    flexGrow: 1,
-                                    color: '#fff',
-                                    fontWeight: 'bold',
-                                    fontSize: '1.2rem',
-                                    marginRight: 2,
-                                    alignSelf: 'center',
-                                }}
-                            >
-                                Consultorio Medico D. Samuel Aya
-                            </Typography>
-                        </Box>
+                        {
+                            router.pathname !== '/panel' && (
+                                <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
+                                    <Image src={Logo} alt='Logo' width={40} height={40} style={{ borderRadius: 10 }} />
+                                    <Typography
+                                        variant="h6"
+                                        noWrap
+                                        component="div"
+                                        sx={{
+                                            flexGrow: 1,
+                                            color: '#fff',
+                                            fontWeight: 'bold',
+                                            fontSize: '1.2rem',
+                                            marginRight: 2,
+                                            alignSelf: 'center',
+                                        }}
+                                    >
+                                        Consultorio Medico D. Samuel Aya
+                                    </Typography>
+                                </Box>
+                            )
+                        }
 
                         <Tooltip title='Menu Principal' placement='bottom'>
                             <IconButton onClick={() => {
