@@ -66,20 +66,22 @@ export default function ImpresionDiagnostica() {
 
     return (
         <form onSubmit={formik.handleSubmit}>
-            <FullScreenModal
-                buttonName="Buscar codigo CIE-10"
-                title="Buscar codigo CIE-10"
-                color='success'
-            >
-                <Table
-                    rows={tableRows()}
-                    columns={tableColumns}
-                    getRowsData={handleData}
-                />
-            </FullScreenModal>
-            <Button variant="contained" sx={{ ml: 0.5 }} type="submit" disabled={!getSessionStorageData("datosBasicos")}>
-                Guardar
-            </Button>
+            <Box sx={{ display: { xs: 'block', } }}>
+                <FullScreenModal
+                    buttonName="Buscar codigo CIE-10"
+                    title="Buscar codigo CIE-10"
+                    color='success'
+                >
+                    <Table
+                        rows={tableRows()}
+                        columns={tableColumns}
+                        getRowsData={handleData}
+                    />
+                </FullScreenModal>
+                <Button variant="contained" sx={{ ml: 0.5, mt: { xs: 0.5 } }} type="submit" disabled={!getSessionStorageData("datosBasicos")}>
+                    Guardar
+                </Button>
+            </Box>
             <TextField
                 name="analisis"
                 label="Analisis"
