@@ -72,9 +72,6 @@ export default function Login() {
                             alignItems: 'center',
                         }}
                     >
-                        {/* <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
-                            <LockOutlinedIcon />
-                        </Avatar> */}
                         <Image src={Logo} alt='Logo' width={50} height={50} style={{ borderRadius: 10 }} />
                         <Typography component="h1" variant="h5" align="center">
                             Consultorio Medico Dr. J. Samuel Aya
