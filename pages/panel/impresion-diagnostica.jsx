@@ -78,7 +78,7 @@ export default function ImpresionDiagnostica() {
                         getRowsData={handleData}
                     />
                 </FullScreenModal>
-                <Button variant="contained" sx={{ ml: 0.5, mt: { xs: 0.5 } }} type="submit" disabled={!getSessionStorageData("datosBasicos")}>
+                <Button variant="contained" sx={{ ml: { xs: 0, md: 0.5 }, mt: { xs: 0.5, md: 0 } }} type="submit" disabled={!getSessionStorageData("datosBasicos")}>
                     Guardar
                 </Button>
             </Box>

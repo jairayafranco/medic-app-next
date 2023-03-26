@@ -14,6 +14,8 @@ import { loginSchema } from '../schemas/schemas';
 import { AppContext } from '../context/AppContext';
 import { useRouter } from 'next/router';
 import { login, getLoginImage } from '../api/axiosApi';
+import Image from 'next/image';
+import Logo from '../public/logo.png';
 
 export default function Login() {
     const [url, setUrl] = useState('');
@@ -70,11 +72,12 @@ export default function Login() {
                             alignItems: 'center',
                         }}
                     >
-                        <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
+                        {/* <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
                             <LockOutlinedIcon />
-                        </Avatar>
-                        <Typography component="h1" variant="h5">
-                            Ingresar
+                        </Avatar> */}
+                        <Image src={Logo} alt='Logo' width={50} height={50} style={{ borderRadius: 10 }} />
+                        <Typography component="h1" variant="h5" align="center">
+                            Consultorio Medico Dr. J. Samuel Aya
                         </Typography>
                         <Box component="form" noValidate autoComplete='off' onSubmit={formik.handleSubmit} sx={{ mt: 1 }}>
                             <TextField
