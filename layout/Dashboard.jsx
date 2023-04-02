@@ -30,9 +30,11 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import AccountMenu from '../components/AccountMenu';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Logo from '../public/logo.png';
 import Image from 'next/image';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { esES } from '@mui/x-data-grid';
 
 const drawerWidth = 200;
 
@@ -101,13 +103,30 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
 );
 
-export default function Dashboard({ children, changeTheme, theme }) {
+export default function Dashboard({ children }) {
+    const [mode, setMode] = useState('light');
     const [open, setOpen] = useState(false);
+    const DOMLoaded = useState(false); // This is a hack to prevent the theme from flashing on page load. It's not a perfect solution, but it's better than nothing.
     const [pageParams, setPageParams] = useState({
         title: '',
         active: null,
     });
     const router = useRouter();
+
+    const colorMode = useMemo(
+        () => ({
+            toggleColorMode: () => {
+                setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+            },
+        }),
+        [],
+    );
+
+    const themeMode = useMemo(
+        () =>
+            createTheme({ palette: { mode }, }, esES),
+        [mode],
+    );
 
     const handleDrawerOpen = () => setOpen(true);
     const handleDrawerClose = () => setOpen(false);
@@ -129,143 +148,153 @@ export default function Dashboard({ children, changeTheme, theme }) {
     ];
 
     useEffect(() => {
-        const { name, active } = routes.find(route => route.route === window.location.pathname) || {};
-        setPageParams({ title: name, active });
+        const { name: title, active } = routes.find(route => route.route === window.location.pathname) || {};
+        setPageParams({ title, active });
+
+        DOMLoaded[1](true);
+        const getTheme = localStorage.getItem('MUIThemeMode');
+        if (getTheme) {
+            setMode(getTheme);
+        }
     }, []);
 
     return (
-        <Box sx={{ display: 'flex' }}>
-            <CssBaseline />
-            <AppBar position="fixed" open={open}>
-                <Toolbar>
+        DOMLoaded[0] && (
+            <ThemeProvider theme={themeMode}>
+                <Box sx={{ display: 'flex' }}>
+                    <CssBaseline />
+                    <AppBar position="fixed" open={open}>
+                        <Toolbar>
 
-                    <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={handleDrawerOpen}
-                        edge="start"
-                        sx={{
-                            marginRight: 5,
-                            ...(open && { display: 'none' }),
-                        }}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-
-                    <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-                        {pageParams.title}
-                    </Typography>
-
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            color: 'text.primary',
-                            borderRadius: 1,
-                        }}
-                    >
-                        {
-                            router.pathname !== '/panel' && (
-                                <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
-                                    <Image src={Logo} alt='Logo' width={40} height={40} style={{ borderRadius: 10 }} />
-                                    <Typography
-                                        variant="h6"
-                                        noWrap
-                                        component="div"
-                                        sx={{
-                                            flexGrow: 1,
-                                            color: '#fff',
-                                            fontWeight: 'bold',
-                                            fontSize: '1.2rem',
-                                            marginRight: 2,
-                                            alignSelf: 'center',
-                                        }}
-                                    >
-                                        Consultorio Medico D. Samuel Aya
-                                    </Typography>
-                                </Box>
-                            )
-                        }
-
-                        <Tooltip title='Menu Principal' placement='bottom'>
-                            <IconButton onClick={() => {
-                                router.push('/panel')
-                                setPageParams({ title: '', active: null })
-                            }}
-                            >
-                                <HomeIcon sx={{ color: '#fff' }} />
-                            </IconButton>
-                        </Tooltip>
-
-                        <Tooltip title={theme.palette.mode === 'dark' ? 'Modo Claro' : 'Modo Oscuro'} placement='bottom'>
-                            <IconButton onClick={() => {
-                                changeTheme.toggleColorMode();
-                                localStorage.setItem('MUIThemeMode', theme.palette.mode === 'dark' ? 'light' : 'dark');
-                            }} sx={{ color: '#fff' }}>
-                                {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
-                            </IconButton>
-                        </Tooltip>
-
-                        <AccountMenu />
-                    </Box>
-
-                </Toolbar>
-            </AppBar>
-
-            <Drawer variant="permanent" open={open}>
-
-                <DrawerHeader>
-                    <IconButton onClick={handleDrawerClose}>
-                        {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-                    </IconButton>
-                </DrawerHeader>
-
-                <Divider />
-
-                <List>
-                    {['DI', 'ARS', 'ANT', 'SV', 'TFEF', 'EF', 'IDA', 'FORM', 'FACT'].map((text, index) => (
-                        <ListItem
-                            key={text}
-                            disablePadding
-                            sx={{ display: 'block' }}
-                            onClick={() => {
-                                setPageParams({ title: routes[index].name, active: routes[index].active });
-                                open && setOpen(false);
-                                router.push(routes[index].route);
-                            }}
-                            style={index === pageParams.active ? { backgroundColor: theme.palette.primary.main, borderRadius: 10 } : { borderRadius: 10 }}
-                        >
-                            <ListItemButton
+                            <IconButton
+                                color="inherit"
+                                aria-label="open drawer"
+                                onClick={handleDrawerOpen}
+                                edge="start"
                                 sx={{
-                                    minHeight: 48,
-                                    justifyContent: open ? 'initial' : 'center',
-                                    px: 2.5,
+                                    marginRight: 5,
+                                    ...(open && { display: 'none' }),
                                 }}
                             >
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 0,
-                                        mr: open ? 3 : 'auto',
-                                        justifyContent: 'center',
-                                        color: index === pageParams.active && 'white'
+                                <MenuIcon />
+                            </IconButton>
+
+                            <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+                                {pageParams.title}
+                            </Typography>
+
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    color: 'text.primary',
+                                    borderRadius: 1,
+                                }}
+                            >
+                                {
+                                    router.pathname !== '/panel' && (
+                                        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
+                                            <Image src={Logo} alt='Logo' width={40} height={40} style={{ borderRadius: 10 }} />
+                                            <Typography
+                                                variant="h6"
+                                                noWrap
+                                                component="div"
+                                                sx={{
+                                                    flexGrow: 1,
+                                                    color: '#fff',
+                                                    fontWeight: 'bold',
+                                                    fontSize: '1.2rem',
+                                                    marginRight: 2,
+                                                    alignSelf: 'center',
+                                                }}
+                                            >
+                                                Consultorio Medico D. Samuel Aya
+                                            </Typography>
+                                        </Box>
+                                    )
+                                }
+
+                                <Tooltip title='Menu Principal' placement='bottom'>
+                                    <IconButton onClick={() => {
+                                        router.push('/panel')
+                                        setPageParams({ title: '', active: null })
                                     }}
+                                    >
+                                        <HomeIcon sx={{ color: '#fff' }} />
+                                    </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title={themeMode.palette.mode === 'dark' ? 'Modo Claro' : 'Modo Oscuro'} placement='bottom'>
+                                    <IconButton onClick={() => {
+                                        colorMode.toggleColorMode();
+                                        localStorage.setItem('MUIThemeMode', themeMode.palette.mode === 'dark' ? 'light' : 'dark');
+                                    }} sx={{ color: '#fff' }}>
+                                        {themeMode.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+                                    </IconButton>
+                                </Tooltip>
+
+                                <AccountMenu />
+                            </Box>
+
+                        </Toolbar>
+                    </AppBar>
+
+                    <Drawer variant="permanent" open={open}>
+
+                        <DrawerHeader>
+                            <IconButton onClick={handleDrawerClose}>
+                                {themeMode.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                            </IconButton>
+                        </DrawerHeader>
+
+                        <Divider />
+
+                        <List>
+                            {['DI', 'ARS', 'ANT', 'SV', 'TFEF', 'EF', 'IDA', 'FORM', 'FACT'].map((text, index) => (
+                                <ListItem
+                                    key={text}
+                                    disablePadding
+                                    sx={{ display: 'block' }}
+                                    onClick={() => {
+                                        setPageParams({ title: routes[index].name, active: routes[index].active });
+                                        open && setOpen(false);
+                                        router.push(routes[index].route);
+                                    }}
+                                    style={index === pageParams.active ? { backgroundColor: themeMode.palette.primary.main, borderRadius: 10 } : { borderRadius: 10 }}
                                 >
-                                    <Tooltip title={routes[index].name.toUpperCase()} placement='right'>
-                                        {icons[index]}
-                                    </Tooltip>
-                                </ListItemIcon>
-                                <ListItemText secondary={text} sx={{ opacity: open ? 1 : 0 }} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
-                </List>
+                                    <ListItemButton
+                                        sx={{
+                                            minHeight: 48,
+                                            justifyContent: open ? 'initial' : 'center',
+                                            px: 2.5,
+                                        }}
+                                    >
+                                        <ListItemIcon
+                                            sx={{
+                                                minWidth: 0,
+                                                mr: open ? 3 : 'auto',
+                                                justifyContent: 'center',
+                                                color: index === pageParams.active && 'white'
+                                            }}
+                                        >
+                                            <Tooltip title={routes[index].name.toUpperCase()} placement='right'>
+                                                {icons[index]}
+                                            </Tooltip>
+                                        </ListItemIcon>
+                                        <ListItemText secondary={text} sx={{ opacity: open ? 1 : 0 }} />
+                                    </ListItemButton>
+                                </ListItem>
+                            ))}
+                        </List>
 
-            </Drawer>
+                    </Drawer>
 
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                <DrawerHeader />
-                {children}
-            </Box>
+                    <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                        <DrawerHeader />
+                        {children}
+                    </Box>
 
-        </Box>
+                </Box>
+            </ThemeProvider>
+        )
     );
 }
