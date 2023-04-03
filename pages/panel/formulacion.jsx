@@ -15,7 +15,7 @@ import { medicamentos } from "../../data/medicamentos";
 import { laboratorios } from "../../data/laboratorios";
 import { insumos } from "../../data/insumos";
 import { AppContext } from "../../context/AppContext";
-import { updateFormulacion } from "../../api/axiosApi";
+import { updateFormulacion } from "../../services/axiosApi";
 
 export default function Formulacion() {
     const [tipoProcedimiento, setTipoProcedimiento] = useState("procedimientos");

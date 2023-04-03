@@ -9,7 +9,7 @@ import { AppContext } from "../../context/AppContext";
 import { formatInitialValues, getSessionStorageData, moduleCompleted, formatToCurrency, getFormattedDate, saveSessionStorageData } from "../../helpers/helpers";
 import { facturacionSchema } from "../../schemas/schemas";
 import { NumericFormat } from 'react-number-format';
-import { updateFacturacion } from "../../api/axiosApi";
+import { updateFacturacion } from "../../services/axiosApi";
 import Table from "../../components/Table";
 
 const NumericFormatCustom = forwardRef(function NumericFormatCustom(

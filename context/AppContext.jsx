@@ -1,5 +1,5 @@
 import { useContext, createContext, useState } from "react";
-import { searchPaciente, createPaciente, updatePaciente, deletePaciente } from "../api/axiosApi";
+import { searchPaciente, createPaciente, updatePaciente, deletePaciente } from "../services/axiosApi";
 import { useFormik } from "formik";
 
 export const Context = createContext({});

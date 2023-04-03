@@ -12,7 +12,7 @@ import Logout from '@mui/icons-material/Logout';
 import UserAvatar from './UserAvatar';
 import { useRouter } from 'next/router';
 import { clearSessionStorageData } from '../helpers/helpers';
-import { getUserProfile, logout } from '../api/axiosApi';
+import { getUserProfile, logout } from '../services/axiosApi';
 
 export default function AccountMenu() {
     const [userName, setUserName] = useState('');

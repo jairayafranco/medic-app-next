@@ -13,7 +13,7 @@ import { useFormik } from 'formik';
 import { loginSchema } from '../schemas/schemas';
 import { AppContext } from '../context/AppContext';
 import { useRouter } from 'next/router';
-import { login, getLoginImage } from '../api/axiosApi';
+import { login, getLoginImage } from '../services/axiosApi';
 import Image from 'next/image';
 import Logo from '../public/logo.png';
 

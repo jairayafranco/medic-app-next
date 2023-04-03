@@ -15,7 +15,7 @@ import {
     handleSVInputValues,
     formatInitialValues,
 } from '../../helpers/helpers';
-import { saveSignosVitalesHistory } from '../../api/axiosApi';
+import { saveSignosVitalesHistory } from '../../services/axiosApi';
 import FullScreenModal from '../../components/FullScreenModal';
 import DataTable from '../../components/DataTable';
 import { signosVitalesFields } from '../../data/inputs';

@@ -15,7 +15,7 @@ import { useState, useRef } from 'react';
 import { uploadImage, deleteImage } from '../firebase/config';
 import { getSessionStorageData, saveSessionStorageData } from '../helpers/helpers';
 import { AppContext } from '../context/AppContext';
-import { updatePaciente } from '../api/axiosApi';
+import { updatePaciente } from '../services/axiosApi';
 
 export default function PacientePicture() {
     const { setNotify, setBackdrop } = AppContext();

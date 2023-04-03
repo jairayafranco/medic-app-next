@@ -7,7 +7,7 @@ import { saveSessionStorageData, getSessionStorageData, formatTableRows } from '
 import { idae } from '../../data/idae'
 import FullScreenModal from '../../components/FullScreenModal';
 import Table from '../../components/Table';
-import { updateImpresionDiagnostica } from '../../api/axiosApi';
+import { updateImpresionDiagnostica } from '../../services/axiosApi';
 import { useFormik } from 'formik';
 import { impresionDiagnosticaSchema } from '../../schemas/schemas';
 
