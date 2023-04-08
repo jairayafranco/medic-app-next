@@ -38,6 +38,7 @@ export default function DatosBasicos() {
     const pacienteMethods = async (method, data) => {
         setBackdrop(true);
 
+        const dataToSubmit = method === "update" ? { currentUserData: paciente.datosBasicos, newFormikValues: data } : data;
         const options = {
             create: createPaciente,
             update: updatePaciente,
@@ -45,7 +46,7 @@ export default function DatosBasicos() {
             search: searchPaciente
         }
 
-        const { status, type, message, paciente } = await options[method](data);
+        const { status, type, message, paciente: foundPaciente } = await options[method](dataToSubmit);
         setNotify({
             type,
             message,
@@ -56,11 +57,11 @@ export default function DatosBasicos() {
 
         const actions = {
             search: () => {
-                formik.setValues(paciente.datosBasicos);
-                setPaciente(paciente);
+                formik.setValues(foundPaciente.datosBasicos);
+                setPaciente(foundPaciente);
             },
-            create: () => setPaciente(paciente),
-            update: () => setPaciente(paciente),
+            create: () => setPaciente(foundPaciente),
+            update: () => setPaciente({ ...paciente, datosBasicos: dataToSubmit.newFormikValues }),
             delete: () => handleClearForm()
         };
 

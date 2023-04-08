@@ -29,20 +29,17 @@ export const createPaciente = (data) => handlePetitions({ method: 'post', data, 
 
 export const searchPaciente = (id) => handlePetitions({ method: 'get', route: `data/paciente?id=${id}`, customError: "Error al buscar el paciente" });
 
-export const updatePaciente = async (newFormikValues) => {
+export const updatePaciente = async ({ currentUserData, newFormikValues }) => {
     const ruta = window.location.pathname.split("/")[2];
     const { name } = routesToModules.find(({ route }) => route === ruta);
-    const currentUserData = getSessionStorageData(name);
 
-    if (_.isNull(currentUserData)) return { status: false, message: "No se encontraron los datos", type: "error" };
-
-    const updatedValues = !!currentUserData ? getObjectsDifference(currentUserData, newFormikValues) : newFormikValues;
+    const updatedValues = !_.isEmpty(currentUserData) ? getObjectsDifference(currentUserData, newFormikValues) : newFormikValues;
     if (_.isEmpty(updatedValues)) return { status: false, message: "No hay datos para actualizar", type: "warning" };
 
-    const { idUsuario } = getSessionStorageData("datosBasicos");
+    const { idUsuario } = currentUserData;
     if (!_.isNumber(idUsuario)) return { status: false, message: "No se encontró el id del paciente", type: "error" };
 
-    const opt = !!currentUserData ? "patch" : "put";
+    const opt = !_.isEmpty(currentUserData) ? "patch" : "put";
     const route = `data/paciente?id=${idUsuario}&opt=${name}`;
     return handlePetitions({ method: opt, data: updatedValues, route, customError: "Error al actualizar el paciente" });
 }
