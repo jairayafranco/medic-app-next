@@ -25,7 +25,7 @@ import { lodash as _ } from '../../lib/lodash';
 
 export default function DatosBasicos() {
     const { setNotify, setBackdrop } = useNotifyStore();
-    const { paciente, setPaciente } = usePacienteStore();
+    const { paciente, setPaciente, setPacienteModule } = usePacienteStore();
 
     const formik = useFormik({
         initialValues: paciente.datosBasicos || formatInitialValues(datosBasicosFields),
@@ -61,7 +61,7 @@ export default function DatosBasicos() {
                 setPaciente(foundPaciente);
             },
             create: () => setPaciente({ datosBasicos: dataToSubmit }),
-            update: () => setPaciente({ ...paciente, datosBasicos: dataToSubmit.newFormikValues }),
+            update: () => setPacienteModule("datosBasicos", dataToSubmit.newFormikValues),
             delete: () => handleClearForm()
         };
 
