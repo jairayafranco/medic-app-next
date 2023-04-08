@@ -5,8 +5,8 @@ const useNotifyStore = create((set) => ({
     type: '',
     message: '',
     backdrop: false,
-    setNotify: ({ type, message }) => {
-        set({ open: true, type, message });
+    setNotify: ({ open = true, type, message }) => {
+        set({ open, type, message });
     },
     setBackdrop: (backdrop) => {
         set({ backdrop });
