@@ -1,4 +1,4 @@
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import { useEffect, useState, useMemo } from 'react';
 import useThemeStore from '../store/useThemeStore';
 
