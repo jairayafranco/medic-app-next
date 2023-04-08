@@ -2,63 +2,74 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Grid from '@mui/material/Grid';
-import { useEffect } from 'react'
 import Selector from '../../components/Selector';
 import DateSelector from '../../components/DatePicker';
 import styles from '../../styles/datosBasicos.module.css'
 import { datosBasicosSchema } from '../../schemas/schemas';
-import { AppContext } from '../../context/AppContext';
 import Dialog from '../../components/Dialog';
 import Confirm from '../../components/Confirm';
 import PacientePicture from '../../components/PacientePicture';
 import Box from '@mui/material/Box';
-import { saveSessionStorageData, getSessionStorageData, clearSessionStorageData, availableSessionStorageData, formatInitialValues } from '../../helpers/helpers';
+import { availablePacienteData, formatInitialValues } from '../../helpers/helpers';
 import { datosBasicosFields } from '../../data/inputs';
+import { useFormik } from 'formik';
 import FullScreenModal from '../../components/FullScreenModal';
 import CertificadoSalud from '../../components/CertificadoSalud';
 import CertificadoVisual from '../../components/CertificadoVisual';
 import HistoriaClinicaPDF from '../../pdfs/HistoriaClinicaPDF';
 import { PDFDownloadLink } from '@react-pdf/renderer';
+import { searchPaciente, createPaciente, updatePaciente, deletePaciente } from '../../services/axiosApi';
+import useNotifyStore from '../../store/useNotifyStore';
+import usePacienteStore from '../../store/usePacienteStore';
+import { lodash as _ } from '../../lib/lodash';
 
 export default function DatosBasicos() {
-    const { findPaciente, createNewForm, removePaciente, modifyPaciente } = AppContext();
+    const { setNotify, setBackdrop } = useNotifyStore();
+    const { paciente, setPaciente } = usePacienteStore();
 
-    useEffect(() => {
-        const data = getSessionStorageData("datosBasicos");
-        if (data) {
-            formik.setValues(data);
+    const formik = useFormik({
+        initialValues: paciente.datosBasicos || formatInitialValues(datosBasicosFields),
+        validationSchema: datosBasicosSchema,
+        onSubmit: (data) => {
+            pacienteMethods("create", data);
+        },
+    });
+
+    const pacienteMethods = async (method, data) => {
+        setBackdrop(true);
+
+        const options = {
+            create: createPaciente,
+            update: updatePaciente,
+            delete: deletePaciente,
+            search: searchPaciente
         }
-    }, []);
 
-    const formik = createNewForm({
-        initialValues: formatInitialValues(datosBasicosFields),
-        schema: datosBasicosSchema,
-    }, (data) => saveSessionStorageData("datosBasicos", data));
-
-    const handleSearchPaciente = (id) => {
-        findPaciente(id, (data) => {
-            formik.setValues(data.paciente.datosBasicos);
-            saveSessionStorageData("", data.paciente);
+        const { status, type, message, paciente } = await options[method](data);
+        setNotify({
+            type,
+            message,
+            open: method === "search" && status ? false : true
         });
-    }
+        setBackdrop(false);
+        if (!status) return;
 
-    const handleDeletePaciente = () => {
-        const id = getSessionStorageData("datosBasicos")?.idUsuario;
-        removePaciente(id, () => {
-            handleClearForm();
-        })
-    }
+        const actions = {
+            search: () => {
+                formik.setValues(paciente.datosBasicos);
+                setPaciente(paciente);
+            },
+            create: () => setPaciente(paciente),
+            update: () => setPaciente(paciente),
+            delete: () => handleClearForm()
+        };
 
-    const handleUpdatePaciente = () => {
-        const formikValues = formik.values;
-        modifyPaciente(formikValues, () => {
-            saveSessionStorageData("datosBasicos", formikValues);
-        });
+        actions[method]();
     }
 
     const handleClearForm = () => {
-        formik.resetForm();
-        clearSessionStorageData();
+        formik.setValues(formatInitialValues(datosBasicosFields));
+        setPaciente({});
     }
 
     return (
@@ -138,31 +149,53 @@ export default function DatosBasicos() {
                     sx={{ mt: 3 }}
                 >
                     <Grid item className={styles.buttonGrid}>
-                        <Button onClick={formik.handleSubmit} disabled={availableSessionStorageData()}>Crear</Button>
+                        <Button onClick={formik.handleSubmit} disabled={!availablePacienteData()}>Crear</Button>
+
                         <Dialog
                             buttonTitle="Buscar"
                             title="Buscar Paciente"
                             label="Identificacion Paciente"
                             buttonActionTitle="Buscar"
-                            buttonAction={handleSearchPaciente}
+                            buttonAction={(id) => pacienteMethods("search", id)}
                         />
-                        <Button disabled={!availableSessionStorageData()} onClick={handleUpdatePaciente}>Actualizar</Button>
-                        <Button onClick={handleClearForm}>Limpiar</Button>
-                        <Button disabled={!availableSessionStorageData()} onClick={() => {
-                            document.querySelector(`a[download="HistoriaClinica - ${getSessionStorageData("datosBasicos")?.nombreUsuario}.pdf"]`).click();
-                        }}>Imprimir H.C</Button>
+
+                        <Button
+                            disabled={availablePacienteData()}
+                            onClick={() => pacienteMethods("update", formik.values)}
+                        >
+                            Actualizar
+                        </Button>
+
+                        <Button
+                            onClick={handleClearForm}
+                        >
+                            Limpiar
+                        </Button>
+
+                        <Button
+                            disabled={availablePacienteData()}
+                            onClick={() => {
+                                document.querySelector(`a[download="HistoriaClinica - ${paciente.datosBasicos?.nombreUsuario}.pdf"]`).click();
+                            }}
+                        >
+                            Imprimir H.C
+                        </Button>
                         <div style={{ display: 'none' }}>
-                            <PDFDownloadLink document={<HistoriaClinicaPDF />} fileName={`HistoriaClinica - ${getSessionStorageData("datosBasicos")?.nombreUsuario}.pdf`}>
+                            <PDFDownloadLink
+                                document={<HistoriaClinicaPDF />}
+                                fileName={`HistoriaClinica - ${paciente.datosBasicos?.nombreUsuario}.pdf`}
+                            >
                                 {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
                             </PDFDownloadLink>
                         </div>
+
                         <Confirm
                             buttonTitle="Eliminar"
                             title="Eliminar Paciente"
                             content="¿Esta seguro que desea eliminar este paciente?"
-                            buttonAction={handleDeletePaciente}
+                            buttonAction={() => pacienteMethods("delete", paciente?.idUsuario)}
                             buttonColor="error"
-                            disabled={!availableSessionStorageData()}
+                            disabled={availablePacienteData()}
                         />
                     </Grid>
                 </ButtonGroup>
