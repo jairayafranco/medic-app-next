@@ -1,4 +1,5 @@
 import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 import { useEffect, useState, useMemo } from 'react';
 import useThemeStore from '../store/useThemeStore';
 
@@ -15,6 +16,7 @@ export default function MUITheme({ children }) {
     return (
         DOMLoaded[0] && (
             <ThemeProvider theme={MUIThemeMode}>
+                <CssBaseline />
                 {children}
             </ThemeProvider>
         )
