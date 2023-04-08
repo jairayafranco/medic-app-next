@@ -60,7 +60,7 @@ export default function DatosBasicos() {
                 formik.setValues(foundPaciente.datosBasicos);
                 setPaciente(foundPaciente);
             },
-            create: () => setPaciente(foundPaciente),
+            create: () => setPaciente({ datosBasicos: dataToSubmit }),
             update: () => setPaciente({ ...paciente, datosBasicos: dataToSubmit.newFormikValues }),
             delete: () => handleClearForm()
         };
