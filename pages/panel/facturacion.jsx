@@ -5,12 +5,12 @@ import Box from "@mui/material/Box";
 import { facturacionFields } from "../../data/inputs";
 import { forwardRef, useEffect, useState } from "react";
 import { useFormik } from "formik";
-import { AppContext } from "../../context/AppContext";
 import { formatInitialValues, getSessionStorageData, moduleCompleted, formatToCurrency, getFormattedDate, saveSessionStorageData } from "../../helpers/helpers";
 import { facturacionSchema } from "../../schemas/schemas";
 import { NumericFormat } from 'react-number-format';
 import { updateFacturacion } from "../../services/axiosApi";
 import Table from "../../components/Table";
+import useNotifyStore from "../../store/useNotifyStore";
 
 const NumericFormatCustom = forwardRef(function NumericFormatCustom(
     props,
@@ -39,7 +39,7 @@ const NumericFormatCustom = forwardRef(function NumericFormatCustom(
 
 export default function Facturacion() {
     const [facturacion, setFacturacion] = useState(getSessionStorageData("facturacion") || []);
-    const { setNotify, setBackdrop } = AppContext();
+    const { setNotify, setBackdrop } = useNotifyStore();
 
     useEffect(() => {
         const data = getSessionStorageData("datosBasicos");
@@ -60,7 +60,7 @@ export default function Facturacion() {
             const fact = [...facturacion, values];
             updateFacturacion(idUsuario, fact)
                 .then(res => {
-                    setNotify({ open: true, message: res.message, type: res.type });
+                    setNotify({ message: res.message, type: res.type });
                     if (!res.status) return;
                     setFacturacion((prev) => {
                         return [...prev, values];

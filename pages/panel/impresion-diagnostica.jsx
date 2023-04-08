@@ -2,7 +2,6 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { useEffect, useState } from 'react'
-import { AppContext } from '../../context/AppContext';
 import { saveSessionStorageData, getSessionStorageData, formatTableRows } from '../../helpers/helpers';
 import { idae } from '../../data/idae'
 import FullScreenModal from '../../components/FullScreenModal';
@@ -10,9 +9,10 @@ import Table from '../../components/Table';
 import { updateImpresionDiagnostica } from '../../services/axiosApi';
 import { useFormik } from 'formik';
 import { impresionDiagnosticaSchema } from '../../schemas/schemas';
+import useNotifyStore from '../../store/useNotifyStore';
 
 export default function ImpresionDiagnostica() {
-    const { setNotify, setBackdrop } = AppContext();
+    const { setNotify, setBackdrop } = useNotifyStore();
     const [selection, setSelection] = useState([]);
 
     useEffect(() => {
@@ -30,7 +30,7 @@ export default function ImpresionDiagnostica() {
         validationSchema: impresionDiagnosticaSchema,
         onSubmit: (values) => {
             if (!selection.length) {
-                setNotify({ open: true, message: "No hay datos para guardar", type: "warning" });
+                setNotify({ message: "No hay datos para guardar", type: "warning" });
                 return;
             }
 
@@ -43,7 +43,7 @@ export default function ImpresionDiagnostica() {
             setBackdrop(true);
             updateImpresionDiagnostica(idUsuario, data)
                 .then((res) => {
-                    setNotify({ open: true, message: res.message, type: res.type });
+                    setNotify({ message: res.message, type: res.type });
                     if (!res.status) return;
                     saveSessionStorageData("impresionDiagnostica", data);
                 }).finally(() => setBackdrop(false));

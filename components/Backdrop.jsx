@@ -1,9 +1,9 @@
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import { AppContext } from '../context/AppContext';
+import useNotifyStore from '../store/useNotifyStore';
 
 export default function Loader() {
-    const { backdrop } = AppContext();
+    const { backdrop } = useNotifyStore();
 
     return (
         <div>

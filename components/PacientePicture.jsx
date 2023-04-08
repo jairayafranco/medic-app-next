@@ -14,11 +14,11 @@ import styles from '../styles/components/userPicture.module.css';
 import { useState, useRef } from 'react';
 import { uploadImage, deleteImage } from '../firebase/config';
 import { getSessionStorageData, saveSessionStorageData } from '../helpers/helpers';
-import { AppContext } from '../context/AppContext';
 import { updatePaciente } from '../services/axiosApi';
+import useNotifyStore from '../store/useNotifyStore';
 
 export default function PacientePicture() {
-    const { setNotify, setBackdrop } = AppContext();
+    const { setNotify, setBackdrop } = useNotifyStore();
     const webcamRef = useRef(null);
     const [image, setImage] = useState(null);
     const paciente = getSessionStorageData("datosBasicos");
@@ -40,7 +40,7 @@ export default function PacientePicture() {
     }
 
     const handleFirebaseImage = async ({ method, data }) => {
-        if (method === "upload" && !paciente?.idUsuario) return setNotify({ open: true, type: "warning", message: "No se ha seleccionado un paciente" });
+        if (method === "upload" && !paciente?.idUsuario) return setNotify({ type: "warning", message: "No se ha seleccionado un paciente" });
 
         const options = {
             upload: {
@@ -65,11 +65,11 @@ export default function PacientePicture() {
         try {
             const uploadDeleteFirebaseImage = await options.method();
             await updatePaciente({ ...paciente, foto: uploadDeleteFirebaseImage });
-            setNotify({ open: true, type: "success", message: options.messages.success });
+            setNotify({ type: "success", message: options.messages.success });
             saveSessionStorageData("datosBasicos", { ...paciente, foto: uploadDeleteFirebaseImage || null });
         } catch (error) {
             console.log(error);
-            setNotify({ open: true, type: "error", message: options.messages.error });
+            setNotify({ type: "error", message: options.messages.error });
         } finally {
             setBackdrop(false);
             setImage(null);

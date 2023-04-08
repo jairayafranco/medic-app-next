@@ -1,28 +1,24 @@
-import Avatar from '@mui/material/Avatar';
 import LoadingButton from '@mui/lab/LoadingButton';
-import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Spinner from '../components/Spinner';
 import { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import { loginSchema } from '../schemas/schemas';
-import { AppContext } from '../context/AppContext';
 import { useRouter } from 'next/router';
 import { login, getLoginImage } from '../services/axiosApi';
 import Image from 'next/image';
 import Logo from '../public/logo.png';
+import useNotifyStore from '../store/useNotifyStore';
 
 export default function Login() {
     const [url, setUrl] = useState('');
     const [loading, setLoading] = useState(false);
     const router = useRouter();
-
-    const { setNotify } = AppContext();
+    const { setNotify } = useNotifyStore();
 
     useEffect(() => {
         const windowWidth = window.innerWidth;
@@ -48,7 +44,7 @@ export default function Login() {
         onSubmit: values => {
             login(values).then(({ status, type, message }) => {
                 if (!status) {
-                    setNotify({ open: true, type, message });
+                    setNotify({ type, message });
                     formik.setSubmitting(false);
                     return;
                 }
@@ -56,12 +52,11 @@ export default function Login() {
                 router.push('/panel');
             });
         }
-    })
+    });
 
     return (
         <>
             <Grid container component="main" sx={{ height: '100vh' }}>
-                <CssBaseline />
                 <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
                     <Box
                         sx={{

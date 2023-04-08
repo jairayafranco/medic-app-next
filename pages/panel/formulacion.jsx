@@ -14,8 +14,8 @@ import { procedimientos } from "../../data/procedimientos";
 import { medicamentos } from "../../data/medicamentos";
 import { laboratorios } from "../../data/laboratorios";
 import { insumos } from "../../data/insumos";
-import { AppContext } from "../../context/AppContext";
 import { updateFormulacion } from "../../services/axiosApi";
+import useNotifyStore from "../../store/useNotifyStore";
 
 export default function Formulacion() {
     const [tipoProcedimiento, setTipoProcedimiento] = useState("procedimientos");
@@ -26,7 +26,7 @@ export default function Formulacion() {
         insumos: []
     });
 
-    const { setNotify, setBackdrop } = AppContext();
+    const { setNotify, setBackdrop } = useNotifyStore();
 
     useEffect(() => formik.resetForm(), [tipoProcedimiento]);
 
@@ -74,7 +74,7 @@ export default function Formulacion() {
     const handleSave = () => {
         const checkValues = allValues[tipoProcedimiento].length;
         if (!checkValues) {
-            setNotify({ open: true, message: "No hay datos para guardar", type: "warning" });
+            setNotify({ message: "No hay datos para guardar", type: "warning" });
             return;
         }
 
@@ -83,7 +83,6 @@ export default function Formulacion() {
         updateFormulacion(idUsuario, allValues)
             .then((res) => {
                 setNotify({
-                    open: true,
                     message: res.status ? "Formulacion guardada con exito" : "Error al guardar la formulacion",
                     type: res.type
                 });
