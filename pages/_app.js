@@ -13,10 +13,13 @@ import Notify from "../components/Snackbar";
 import Loader from "../components/Backdrop";
 import { AnimatePresence, motion } from "framer-motion";
 import MUITheme from "../theme/MUITheme";
+import { avoidCloseApp } from "../helpers/helpers";
 
 export default function MyApp({ Component, pageProps }) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    
+    if(typeof window !== 'undefined') avoidCloseApp();
 
     useEffect(() => {
         router.events.on('routeChangeStart', () => setLoading(true));

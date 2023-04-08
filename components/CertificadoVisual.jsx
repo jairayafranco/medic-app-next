@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import { certificadoVisualFields } from '../data/inputs';
-import { formatInitialValues, availableSessionStorageData, getSessionStorageData } from '../helpers/helpers';
+import { formatInitialValues, availablePacienteData, getSessionStorageData } from '../helpers/helpers';
 import { useFormik } from 'formik';
 import Typography from '@mui/material/Typography';
 import { PDFDownloadLink } from '@react-pdf/renderer';
@@ -70,7 +70,7 @@ export default function CertificadoVisual() {
                 type="submit"
                 variant="contained"
                 color="primary"
-                disabled={!availableSessionStorageData("datosBasicos")}
+                disabled={availablePacienteData()}
             >
                 Imprimir Certificado Visual
             </Button>

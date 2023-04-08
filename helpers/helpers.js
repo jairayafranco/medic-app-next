@@ -8,6 +8,7 @@ import {
     funcionRenalClasificacion,
     funcionRenalEstadio
 } from "../math/formulas";
+import usePacienteStore from "../store/usePacienteStore";
 
 const routes = ["datos-basicos", "anamnesis", "antecedentes", "signos-vitales", "funcion-renal", "examen-fisico", "impresion-diagnostica", "formulacion", "facturacion"]
 export const validFields = [
@@ -66,9 +67,9 @@ export const clearSessionStorageData = () => {
  * 
  * @returns {Boolean} True if there is data in the session storage, false otherwise
  */
-export const availableSessionStorageData = () => {
-    const storage = window.sessionStorage.getItem("userData");
-    return !!storage;
+export const availablePacienteData = () => {
+    const { paciente } = usePacienteStore();
+    return _.isEmpty(paciente);
 }
 
 
@@ -90,11 +91,11 @@ export const getObjectsDifference = (userData, formikValues) => {
  * @returns {Boolean} True if the module is completed, false otherwise
  */
 export const moduleCompleted = (module) => {
-    const userData = getSessionStorageData();
-    if (!userData) return false;
+    const { paciente } = usePacienteStore();
+    if (_.isEmpty(paciente)) return false;
     if (!module) return false;
 
-    return !!userData[module];
+    return _.has(paciente, module);
 }
 
 
@@ -256,3 +257,23 @@ export const getFormattedDate = () => {
         day: '2-digit',
     }).format(new Date());
 }
+
+/**
+ * @description Function to avoid close the app when the patient is selected
+ */
+export const avoidCloseApp = () => {
+    const { paciente } = usePacienteStore();
+
+    const confirmCloseHandler = (e) => {
+        // Cancelar el evento de cierre o recarga
+        e.preventDefault();
+        // Chrome requiere que se devuelva un valor en esta función
+        e.returnValue = "";
+    };
+
+    if (!_.isEmpty(paciente)) {
+        window.onbeforeunload = confirmCloseHandler;
+    } else {
+        window.onbeforeunload = null;
+    }
+};

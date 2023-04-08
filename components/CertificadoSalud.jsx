@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import { certificadoSaludFields } from '../data/inputs';
-import { formatInitialValues, availableSessionStorageData, getSessionStorageData } from '../helpers/helpers';
+import { formatInitialValues, availablePacienteData, getSessionStorageData } from '../helpers/helpers';
 import { useFormik } from 'formik';
 import Typography from '@mui/material/Typography';
 import { PDFDownloadLink } from '@react-pdf/renderer';
@@ -54,7 +54,7 @@ export default function CertificadoSalud() {
                     </Paper>
                 ))
             }
-            <Button type="submit" variant="contained" color="primary" disabled={!availableSessionStorageData("datosBasicos")}>
+            <Button type="submit" variant="contained" color="primary" disabled={availablePacienteData()}>
                 Imprimir Certificado Medico
             </Button>
             <div style={{ display: 'none' }}>
