@@ -2,27 +2,37 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Grid from '@mui/material/Grid';
-import { useEffect } from 'react'
 import { anamnesisSchema } from '../../schemas/schemas';
-import { AppContext } from '../../context/AppContext';
-import { saveSessionStorageData, getSessionStorageData, moduleCompleted, formatInitialValues } from '../../helpers/helpers';
+import { moduleCompleted, formatInitialValues } from '../../helpers/helpers';
 import { anamnesisFields } from '../../data/inputs';
+import { useFormik } from 'formik';
+import usePacienteStore from '../../store/usePacienteStore';
+import useNotifyStore from '../../store/useNotifyStore';
+import { updatePaciente } from '../../services/axiosApi';
 
 export default function Anamnesis() {
-    const { updateModule } = AppContext();
+    const { paciente, setPacienteModule } = usePacienteStore();
+    const { setNotify, setBackdrop } = useNotifyStore();
 
-    useEffect(() => {
-        const data = getSessionStorageData("anamnesis");
-        if (data) {
-            formik.setValues(data);
+    const formik = useFormik({
+        initialValues: paciente.anamnesis || formatInitialValues(anamnesisFields),
+        validationSchema: anamnesisSchema,
+        onSubmit: async (data) => {
+            setBackdrop(true);
+
+            const dataToSend = {
+                pacienteId: paciente.datosBasicos.idUsuario,
+                currentModuleData: paciente.anamnesis,
+                newFormikValues: data
+            }
+
+            const { status, type, message } = await updatePaciente(dataToSend);
+            setNotify({ type, message, });
+            setBackdrop(false);
+            if (!status) return;
+
+            setPacienteModule("anamnesis", data);
         }
-    }, [])
-
-    const formik = updateModule({
-        initialValues: formatInitialValues(anamnesisFields),
-        schema: anamnesisSchema,
-    }, (data) => {
-        saveSessionStorageData("anamnesis", data);
     });
 
     const handleNiega = () => {

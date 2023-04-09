@@ -38,7 +38,12 @@ export default function DatosBasicos() {
     const pacienteMethods = async (method, data) => {
         setBackdrop(true);
 
-        const dataToSubmit = method === "update" ? { currentUserData: paciente.datosBasicos, newFormikValues: data } : data;
+        const dataToSubmit = method === "update" ? {
+            pacienteId: paciente.datosBasicos.idUsuario,
+            currentModuleData: paciente.datosBasicos,
+            newFormikValues: data
+        } : data;
+
         const options = {
             create: createPaciente,
             update: updatePaciente,

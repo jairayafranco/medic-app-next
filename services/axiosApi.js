@@ -29,18 +29,16 @@ export const createPaciente = (data) => handlePetitions({ method: 'post', data, 
 
 export const searchPaciente = (id) => handlePetitions({ method: 'get', route: `data/paciente?id=${id}`, customError: "Error al buscar el paciente" });
 
-export const updatePaciente = async ({ currentUserData, newFormikValues }) => {
+export const updatePaciente = async ({ pacienteId, currentModuleData, newFormikValues }) => {
     const ruta = window.location.pathname.split("/")[2];
     const { name } = routesToModules.find(({ route }) => route === ruta);
+    if (!_.isNumber(pacienteId)) return { status: false, message: "No se encontró el id del paciente", type: "error" };
 
-    const updatedValues = !_.isEmpty(currentUserData) ? getObjectsDifference(currentUserData, newFormikValues) : newFormikValues;
+    const updatedValues = !_.isEmpty(currentModuleData) ? getObjectsDifference(currentModuleData, newFormikValues) : newFormikValues;
     if (_.isEmpty(updatedValues)) return { status: false, message: "No hay datos para actualizar", type: "warning" };
 
-    const { idUsuario } = currentUserData;
-    if (!_.isNumber(idUsuario)) return { status: false, message: "No se encontró el id del paciente", type: "error" };
-
-    const opt = !_.isEmpty(currentUserData) ? "patch" : "put";
-    const route = `data/paciente?id=${idUsuario}&opt=${name}`;
+    const opt = !_.isEmpty(currentModuleData) ? "patch" : "put";
+    const route = `data/paciente?id=${pacienteId}&opt=${name}`;
     return handlePetitions({ method: opt, data: updatedValues, route, customError: "Error al actualizar el paciente" });
 }
 
