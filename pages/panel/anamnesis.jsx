@@ -27,7 +27,7 @@ export default function Anamnesis() {
             }
 
             const { status, type, message } = await updatePaciente(dataToSend);
-            setNotify({ type, message, });
+            setNotify({ type, message });
             setBackdrop(false);
             if (!status) return;
 
@@ -36,11 +36,9 @@ export default function Anamnesis() {
     });
 
     const handleNiega = () => {
-        const values = formik.values;
-        const newValues = Object.keys(values).reduce((acc, key) => ({ ...acc, [key]: "Niega" }), {});
-        newValues.enfermedadActual = formik.values.enfermedadActual;
-        newValues.motivoConsulta = formik.values.motivoConsulta;
-        formik.setValues(newValues);
+        const { enfermedadActual, motivoConsulta, ...rest } = formik.values;
+        const newValues = Object.keys(rest).reduce((acc, key) => ({ ...acc, [key]: "Niega" }), {});
+        formik.setValues({ ...newValues, enfermedadActual, motivoConsulta });
     }
 
     return (
