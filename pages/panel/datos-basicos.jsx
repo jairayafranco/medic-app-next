@@ -74,6 +74,7 @@ export default function DatosBasicos() {
     }
 
     const handleClearForm = () => {
+        formik.resetForm();
         formik.setValues(formatInitialValues(datosBasicosFields));
         setPaciente({});
     }
