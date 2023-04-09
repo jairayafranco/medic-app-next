@@ -16,8 +16,10 @@ export default async function pacienteHandler(req, res) {
                 if (!paciente) return handleException({ code: 404, message: 'Paciente no encontrado', status: false, type: 'warning' });
                 dbSV.find({ idUsuario: Number(id) }, { projection: { _id: 0, idUsuario: 0 } }).toArray()
                     .then((signosVitalesHistory) => {
-                        const orderedHistory = _.sortBy(signosVitalesHistory, ['fecha'], ['desc']);
-                        paciente.signosVitalesHistory = orderedHistory;
+                        if (!_.isEmpty(signosVitalesHistory)) {
+                            const orderedHistory = _.sortBy(signosVitalesHistory, ['fecha'], ['desc']);
+                            paciente.signosVitalesHistory = orderedHistory;
+                        }
                         return res.status(200).json({ status: true, paciente });
                     }).catch(() => {
                         return handleException({ code: 500, message: 'Error al obtener el historial de signos vitales del paciente', status: false, type: 'error' });
