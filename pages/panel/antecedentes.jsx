@@ -2,26 +2,38 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Grid from '@mui/material/Grid';
-import { useEffect } from 'react'
 import { antecedentesSchema } from '../../schemas/schemas';
-import { AppContext } from '../../context/AppContext';
-import { saveSessionStorageData, getSessionStorageData, moduleCompleted, formatInitialValues } from '../../helpers/helpers';
+import { moduleCompleted, formatInitialValues } from '../../helpers/helpers';
 import { antecedentesFields } from '../../data/inputs';
+import useNotifyStore from '../../store/useNotifyStore';
+import usePacienteStore from '../../store/usePacienteStore';
+import { updatePaciente } from '../../services/axiosApi';
+import { useFormik } from 'formik';
 
 export default function Antecedentes() {
-    const { updateModule } = AppContext();
+    const { paciente, setPacienteModule } = usePacienteStore();
+    const { setNotify, setBackdrop } = useNotifyStore();
 
-    useEffect(() => {
-        const data = getSessionStorageData("antecedentes");
-        if (data) {
-            formik.setValues(data);
+    const formik = useFormik({
+        initialValues: paciente.antecedentes || formatInitialValues(antecedentesFields),
+        validationSchema: antecedentesSchema,
+        onSubmit: async (data) => {
+            setBackdrop(true);
+
+            const dataToSend = {
+                pacienteId: paciente.datosBasicos.idUsuario,
+                currentModuleData: paciente.antecedentes,
+                newFormikValues: data
+            }
+
+            const { status, type, message } = await updatePaciente(dataToSend);
+            setNotify({ type, message });
+            setBackdrop(false);
+            if (!status) return;
+
+            setPacienteModule("antecedentes", data);
         }
-    }, []);
-
-    const formik = updateModule({
-        initialValues: formatInitialValues(antecedentesFields),
-        schema: antecedentesSchema,
-    }, (data) => saveSessionStorageData("antecedentes", data));
+    });
 
     const handleNiega = () => {
         const values = formik.values;
