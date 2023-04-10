@@ -16,7 +16,6 @@ export const validFields = [
     "anamnesis",
     "antecedentes",
     "signosVitales",
-    "signosVitalesHistory",
     "funcionRenal",
     "examenFisico",
     "impresionDiagnostica",

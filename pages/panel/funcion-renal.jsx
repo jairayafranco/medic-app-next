@@ -41,34 +41,38 @@ export default function FuncionRenal() {
 
     return (
         <form style={{ display: 'flex', flexWrap: 'wrap', gap: "1.5em" }} onSubmit={formik.handleSubmit} autoComplete="off">
-            {funcionRenalFields.map((group, index) => (
-                <Container key={index} group={group.group}>
-                    {group.fields.map((campo, index) => (
-                        <Grid item xs={12} md={5} key={index}>
-                            <TextField
-                                id={campo.name}
-                                name={campo.property}
-                                label={campo.name}
-                                value={handleFRInputValues(formik, campo)}
-                                onChange={formik.handleChange}
-                                error={formik.touched[campo.property] && Boolean(formik.errors[campo.property])}
-                                helperText={formik.touched[campo.property] && formik.errors[campo.property]}
-                                InputProps={{
-                                    readOnly: campo.readOnly,
-                                    endAdornment: <InputAdornment position="end">{campo.unit}</InputAdornment>,
-                                }}
-                                size={campo.size}
-                                InputLabelProps={{
-                                    shrink: campo.shrink,
-                                }}
-                                style={{ width: '90%', backgroundColor: funcionRenalColorSchema(formik, campo) }}
-                                variant={campo.variant}
-                                type={campo.type}
-                            />
-                        </Grid>
-                    ))}
-                </Container>
-            ))}
+            {
+                funcionRenalFields.map((group, index) => (
+                    <Container key={index} group={group.group}>
+                        {
+                            group.fields.map((campo, index) => (
+                                <Grid item xs={12} md={5} key={index}>
+                                    <TextField
+                                        id={campo.name}
+                                        name={campo.property}
+                                        label={campo.name}
+                                        value={handleFRInputValues(formik, campo)}
+                                        onChange={formik.handleChange}
+                                        error={formik.touched[campo.property] && Boolean(formik.errors[campo.property])}
+                                        helperText={formik.touched[campo.property] && formik.errors[campo.property]}
+                                        InputProps={{
+                                            readOnly: campo.readOnly,
+                                            endAdornment: <InputAdornment position="end">{campo.unit}</InputAdornment>,
+                                        }}
+                                        size={campo.size}
+                                        InputLabelProps={{
+                                            shrink: campo.shrink,
+                                        }}
+                                        style={{ width: '90%', backgroundColor: funcionRenalColorSchema(formik, campo) }}
+                                        variant={campo.variant}
+                                        type={campo.type}
+                                    />
+                                </Grid>
+                            ))
+                        }
+                    </Container>
+                ))
+            }
             <Button variant="contained" color="primary" type="submit" disabled={!moduleCompleted("signosVitales")}>
                 Guardar
             </Button>
