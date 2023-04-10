@@ -5,37 +5,38 @@ import Paper from '@mui/material/Paper';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useEffect } from 'react'
 import { funcionRenalSchema } from '../../schemas/schemas';
-import { AppContext } from '../../context/AppContext';
-import { saveSessionStorageData, getSessionStorageData, moduleCompleted, calculateAge, handleFRInputValues, funcionRenalColorSchema, formatInitialValues } from '../../helpers/helpers';
+import { moduleCompleted, calculateAge, handleFRInputValues, funcionRenalColorSchema, formatInitialValues } from '../../helpers/helpers';
 import { funcionRenalFields } from '../../data/inputs';
+import useUpdate from '../../hooks/useUpdate';
+import usePacienteStore from '../../store/usePacienteStore';
+import { useFormik } from 'formik';
 
 export default function FuncionRenal() {
-    const { updateModule } = AppContext();
+    const { paciente } = usePacienteStore();
+    const updatePaciente = useUpdate();
 
     useEffect(() => {
-        const data = getSessionStorageData('funcionRenal');
-        if (data) {
-            formik.setValues(data);
-        } else {
-            const { datosBasicos, signosVitales } = getSessionStorageData("") || {};
+        const data = paciente.funcionRenal;
+        if (!data) {
+            const { datosBasicos, signosVitales } = paciente || {};
             if (datosBasicos && signosVitales) {
                 const { fechaNacimiento, genero, peso, talla } = { ...datosBasicos, ...signosVitales };
                 const edad = calculateAge(fechaNacimiento);
-
-                const fields = ['edad', 'sexo', 'peso', 'talla'];
-                const values = [edad, genero, peso, talla];
-                fields.forEach((field, index) => {
-                    formik.setFieldValue(field, values[index]);
+                const data = {
+                    fields: ['edad', 'sexo', 'peso', 'talla'],
+                    values: [edad, genero, peso, talla]
+                }
+                data.fields.forEach((field, index) => {
+                    formik.setFieldValue(field, data.values[index]);
                 });
             }
         }
     }, []);
 
-    const formik = updateModule({
-        initialValues: formatInitialValues(funcionRenalFields),
-        schema: funcionRenalSchema,
-    }, (data) => {
-        saveSessionStorageData('funcionRenal', data);
+    const formik = useFormik({
+        initialValues: paciente.funcionRenal || formatInitialValues(funcionRenalFields),
+        validationSchema: funcionRenalSchema,
+        onSubmit: (data) => updatePaciente({ module: "funcionRenal", data }),
     });
 
     return (
