@@ -1,8 +1,8 @@
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { useEffect, useState } from 'react'
-import { saveSessionStorageData, getSessionStorageData, formatTableRows } from '../../helpers/helpers';
+import { useState } from 'react'
+import { moduleCompleted, formatTableRows } from '../../helpers/helpers';
 import { idae } from '../../data/idae'
 import FullScreenModal from '../../components/FullScreenModal';
 import Table from '../../components/Table';
@@ -10,22 +10,16 @@ import { updateImpresionDiagnostica } from '../../services/axiosApi';
 import { useFormik } from 'formik';
 import { impresionDiagnosticaSchema } from '../../schemas/schemas';
 import useNotifyStore from '../../store/useNotifyStore';
+import usePacienteStore from '../../store/usePacienteStore';
 
 export default function ImpresionDiagnostica() {
+    const { paciente, setPacienteModule } = usePacienteStore();
     const { setNotify, setBackdrop } = useNotifyStore();
-    const [selection, setSelection] = useState([]);
-
-    useEffect(() => {
-        const data = getSessionStorageData("impresionDiagnostica");
-        if (data) {
-            setSelection(data.impresionDiagnostica);
-            formik.setFieldValue("analisis", data.analisis);
-        }
-    }, []);
+    const [selection, setSelection] = useState(paciente.impresionDiagnostica?.impresionDiagnostica || []);
 
     const formik = useFormik({
         initialValues: {
-            analisis: "",
+            analisis: paciente.impresionDiagnostica?.analisis || "",
         },
         validationSchema: impresionDiagnosticaSchema,
         onSubmit: (values) => {
@@ -34,7 +28,7 @@ export default function ImpresionDiagnostica() {
                 return;
             }
 
-            const { idUsuario } = getSessionStorageData("datosBasicos");
+            const { idUsuario } = paciente.datosBasicos;
             const data = {
                 ...values,
                 impresionDiagnostica: selection
@@ -45,7 +39,7 @@ export default function ImpresionDiagnostica() {
                 .then((res) => {
                     setNotify({ message: res.message, type: res.type });
                     if (!res.status) return;
-                    saveSessionStorageData("impresionDiagnostica", data);
+                    setPacienteModule("impresionDiagnostica", data);
                 }).finally(() => setBackdrop(false));
         }
     });
@@ -78,7 +72,7 @@ export default function ImpresionDiagnostica() {
                         getRowsData={handleData}
                     />
                 </FullScreenModal>
-                <Button variant="contained" sx={{ ml: { xs: 0, md: 0.5 }, mt: { xs: 0.5, md: 0 } }} type="submit" disabled={!getSessionStorageData("datosBasicos")}>
+                <Button variant="contained" sx={{ ml: { xs: 0, md: 0.5 }, mt: { xs: 0.5, md: 0 } }} type="submit" disabled={!moduleCompleted("datosBasicos")}>
                     Guardar
                 </Button>
             </Box>
