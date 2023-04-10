@@ -11,7 +11,6 @@ import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import UserAvatar from './UserAvatar';
 import { useRouter } from 'next/router';
-import { clearSessionStorageData } from '../helpers/helpers';
 import { getUserProfile, logout } from '../services/axiosApi';
 
 export default function AccountMenu() {
@@ -107,7 +106,6 @@ export default function AccountMenu() {
                             console.log(res);
                             return;
                         }
-                        clearSessionStorageData();
                         window.location.reload();
                     });
                 }}>
