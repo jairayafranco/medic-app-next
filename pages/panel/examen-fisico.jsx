@@ -2,37 +2,33 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Grid from '@mui/material/Grid';
-import { useEffect } from 'react'
 import { examenFisicoSchema } from '../../schemas/schemas';
-import { AppContext } from '../../context/AppContext';
-import { saveSessionStorageData, getSessionStorageData, moduleCompleted, formatInitialValues } from '../../helpers/helpers';
+import { moduleCompleted, formatInitialValues } from '../../helpers/helpers';
 import FullScreenModal from '../../components/FullScreenModal';
 import BarthelTable from '../../components/TestBarthel';
 import { examenFisicoFields } from '../../data/inputs';
+import usePacienteStore from '../../store/usePacienteStore';
+import useUpdate from '../../hooks/useUpdate';
+import { useFormik } from 'formik';
+import { useEffect } from 'react';
 
 export default function ExamenFisico() {
-    const { updateModule, barthelResults, setBarthelResults } = AppContext();
+    const { paciente, barthelResults, setBarthelResults } = usePacienteStore();
+    const updatePaciente = useUpdate();
 
     useEffect(() => {
-        const data = getSessionStorageData('examenFisico');
-        if (data) {
-            formik.setValues(data);
-            setBarthelResults(data.barthel);
-        } else {
-            setBarthelResults({
-                barthel: 'No aplica',
-                puntuacion: 'No Aplica',
-                points: {},
-            });
+        if (paciente.examenFisico?.barthel) {
+            setBarthelResults(paciente.examenFisico.barthel);
+        }
+        return () => {
+            setBarthelResults({ points: {}, barthel: 'No aplica', puntuacion: 'No aplica' });
         }
     }, []);
 
-    const formik = updateModule({
-        initialValues: formatInitialValues(examenFisicoFields),
-        schema: examenFisicoSchema,
-        moreData: { barthel: barthelResults },
-    }, (data) => {
-        saveSessionStorageData('examenFisico', data);
+    const formik = useFormik({
+        initialValues: paciente.examenFisico || formatInitialValues(examenFisicoFields),
+        validationSchema: examenFisicoSchema,
+        onSubmit: (values) => updatePaciente({ module: "examenFisico", data: { ...values, barthel: barthelResults } })
     });
 
     const handleNormal = () => {
@@ -44,22 +40,24 @@ export default function ExamenFisico() {
     return (
         <form style={{ display: 'flex', flexWrap: 'wrap', gap: "1.5em" }} onSubmit={formik.handleSubmit} autoComplete="off">
             <Grid container spacing={2}>
-                {examenFisicoFields.map((campo, index) => (
-                    <Grid item xs={12} md={5} key={index}>
-                        <TextField
-                            id={campo.name}
-                            name={campo.property}
-                            label={campo.name}
-                            value={formik.values[campo.property]}
-                            onChange={formik.handleChange}
-                            error={formik.touched[campo.property] && Boolean(formik.errors[campo.property])}
-                            helperText={formik.touched[campo.property] && formik.errors[campo.property]}
-                            type="text"
-                            variant="standard"
-                            style={{ width: '90%' }}
-                        />
-                    </Grid>
-                ))}
+                {
+                    examenFisicoFields.map((campo, index) => (
+                        <Grid item xs={12} md={5} key={index}>
+                            <TextField
+                                id={campo.name}
+                                name={campo.property}
+                                label={campo.name}
+                                value={formik.values[campo.property]}
+                                onChange={formik.handleChange}
+                                error={formik.touched[campo.property] && Boolean(formik.errors[campo.property])}
+                                helperText={formik.touched[campo.property] && formik.errors[campo.property]}
+                                type="text"
+                                variant="standard"
+                                style={{ width: '90%' }}
+                            />
+                        </Grid>
+                    ))
+                }
             </Grid>
             <Grid container justifyContent='space-between'>
                 <Grid item xs={12} md={6}>

@@ -6,16 +6,14 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import TextField from '@mui/material/TextField';
 import { questions } from '../data/barthelQuestions';
 import { useFormik } from 'formik';
-import { AppContext } from '../context/AppContext';
 import { lodash as _ } from '../lib/lodash';
-import Checkbox from '@mui/material/Checkbox';
 import Selector from './Selector';
+import usePacienteStore from '../store/usePacienteStore';
 
 export default function BarthelTable() {
-    const { barthelResults, setBarthelResults } = AppContext();
+    const { paciente, barthelResults, setBarthelResults } = usePacienteStore();
 
     const formik = useFormik({
         initialValues: {
@@ -25,11 +23,7 @@ export default function BarthelTable() {
 
     useEffect(() => {
         const points = barthelResults.points;
-        if (!_.isEmpty(points)) {
-            _.forEach(points, (value, key) => {
-                formik.setFieldValue(key, value);
-            });
-        }
+        formik.setValues(points);
     }, []);
 
     const handlePoints = (e, itemPoints) => {
@@ -69,34 +63,38 @@ export default function BarthelTable() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {questions.map((item, index) => (
-                        <Fragment key={index}>
-                            <TableRow>
-                                <TableCell style={{ width: '12%', textAlign: 'center' }} rowSpan={item.detail.length + 1}>
-                                    {item.name}
-                                </TableCell>
-                            </TableRow>
+                    {
+                        questions.map((item, index) => (
+                            <Fragment key={index}>
+                                <TableRow>
+                                    <TableCell style={{ width: '12%', textAlign: 'center' }} rowSpan={item.detail.length + 1}>
+                                        {item.name}
+                                    </TableCell>
+                                </TableRow>
 
-                            {item.detail.map((detail, index) => (
-                                <Fragment key={index}>
-                                    <TableRow>
-                                        <TableCell>{detail}</TableCell>
-                                        <TableCell align="center">{item.points[index]}</TableCell>
-                                        {
-                                            index === 0 &&
-                                            <TableCell rowSpan={item.detail.length} align="center">
-                                                <Selector
-                                                    value={formik.values[item.name]}
-                                                    values={item.points}
-                                                    onChange={(value) => handlePoints({ target: { name: item.name, value } }, item.points)}
-                                                />
-                                            </TableCell>
-                                        }
-                                    </TableRow>
-                                </Fragment>
-                            ))}
-                        </Fragment>
-                    ))}
+                                {
+                                    item.detail.map((detail, index) => (
+                                        <Fragment key={index}>
+                                            <TableRow>
+                                                <TableCell>{detail}</TableCell>
+                                                <TableCell align="center">{item.points[index]}</TableCell>
+                                                {
+                                                    index === 0 &&
+                                                    <TableCell rowSpan={item.detail.length} align="center">
+                                                        <Selector
+                                                            value={formik.values[item.name]}
+                                                            values={item.points}
+                                                            onChange={(value) => handlePoints({ target: { name: item.name, value } }, item.points)}
+                                                        />
+                                                    </TableCell>
+                                                }
+                                            </TableRow>
+                                        </Fragment>
+                                    ))
+                                }
+                            </Fragment>
+                        ))
+                    }
 
                     <TableRow>
                         <TableCell style={{ textAlign: 'right' }} colSpan={3}>
