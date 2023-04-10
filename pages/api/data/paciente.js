@@ -14,11 +14,10 @@ export default async function pacienteHandler(req, res) {
         db.findOne({ "datosBasicos.idUsuario": Number(id), estado: "ACTIVO" }, { projection: { _id: 0, estado: 0 } })
             .then((paciente) => {
                 if (!paciente) return handleException({ code: 404, message: 'Paciente no encontrado', status: false, type: 'warning' });
-                dbSV.find({ idUsuario: Number(id) }, { projection: { _id: 0, idUsuario: 0 } }).toArray()
+                dbSV.find({ idUsuario: Number(id) }, { projection: { _id: 0, idUsuario: 0 } }).sort({ fecha: -1 }).toArray()
                     .then((signosVitalesHistory) => {
                         if (!_.isEmpty(signosVitalesHistory)) {
-                            const orderedHistory = _.sortBy(signosVitalesHistory, ['fecha'], ['desc']);
-                            paciente.signosVitalesHistory = orderedHistory;
+                            paciente.signosVitalesHistory = signosVitalesHistory;
                         }
                         return res.status(200).json({ status: true, paciente });
                     }).catch(() => {
