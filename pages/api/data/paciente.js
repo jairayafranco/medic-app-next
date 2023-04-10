@@ -1,6 +1,5 @@
 import conn from '../../../config/db_config';
 import jwt from 'jsonwebtoken';
-import { lodash as _ } from '../../../lib/lodash';
 
 export default async function pacienteHandler(req, res) {
     const db = conn.collection('pacientes');
@@ -16,9 +15,7 @@ export default async function pacienteHandler(req, res) {
                 if (!paciente) return handleException({ code: 404, message: 'Paciente no encontrado', status: false, type: 'warning' });
                 dbSV.find({ idUsuario: Number(id) }, { projection: { _id: 0, idUsuario: 0 } }).sort({ fecha: -1 }).toArray()
                     .then((signosVitalesHistory) => {
-                        if (!_.isEmpty(signosVitalesHistory)) {
-                            paciente.signosVitalesHistory = signosVitalesHistory;
-                        }
+                        paciente.signosVitalesHistory = signosVitalesHistory;
                         return res.status(200).json({ status: true, paciente });
                     }).catch(() => {
                         return handleException({ code: 500, message: 'Error al obtener el historial de signos vitales del paciente', status: false, type: 'error' });

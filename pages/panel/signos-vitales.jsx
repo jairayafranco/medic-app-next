@@ -30,7 +30,9 @@ export default function SignosVitales() {
             updatePaciente({ module: "signosVitales", data });
             saveSignosVitalesHistory(paciente.datosBasicos.idUsuario, data).then(({ newHistoryRegister }) => {
                 const orderHistory = [...paciente.signosVitalesHistory];
-                orderHistory.unshift(newHistoryRegister);
+                orderHistory.length === 0
+                    ? orderHistory.push(newHistoryRegister)
+                    : orderHistory.unshift(newHistoryRegister);
                 setPacienteModule("signosVitalesHistory", orderHistory);
             }).catch(err => console.log(err));
         }
