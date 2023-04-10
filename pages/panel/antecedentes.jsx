@@ -5,34 +5,18 @@ import Grid from '@mui/material/Grid';
 import { antecedentesSchema } from '../../schemas/schemas';
 import { moduleCompleted, formatInitialValues } from '../../helpers/helpers';
 import { antecedentesFields } from '../../data/inputs';
-import useNotifyStore from '../../store/useNotifyStore';
 import usePacienteStore from '../../store/usePacienteStore';
-import { updatePaciente } from '../../services/axiosApi';
 import { useFormik } from 'formik';
+import useUpdate from '../../hooks/useUpdate';
 
 export default function Antecedentes() {
-    const { paciente, setPacienteModule } = usePacienteStore();
-    const { setNotify, setBackdrop } = useNotifyStore();
+    const { paciente } = usePacienteStore();
+    const updatePaciente = useUpdate();
 
     const formik = useFormik({
         initialValues: paciente.antecedentes || formatInitialValues(antecedentesFields),
         validationSchema: antecedentesSchema,
-        onSubmit: async (data) => {
-            setBackdrop(true);
-
-            const dataToSend = {
-                pacienteId: paciente.datosBasicos.idUsuario,
-                currentModuleData: paciente.antecedentes,
-                newFormikValues: data
-            }
-
-            const { status, type, message } = await updatePaciente(dataToSend);
-            setNotify({ type, message });
-            setBackdrop(false);
-            if (!status) return;
-
-            setPacienteModule("antecedentes", data);
-        }
+        onSubmit: (data) => updatePaciente({ module: "antecedentes", data })
     });
 
     const handleNiega = () => {

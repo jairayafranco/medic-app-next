@@ -7,32 +7,16 @@ import { moduleCompleted, formatInitialValues } from '../../helpers/helpers';
 import { anamnesisFields } from '../../data/inputs';
 import { useFormik } from 'formik';
 import usePacienteStore from '../../store/usePacienteStore';
-import useNotifyStore from '../../store/useNotifyStore';
-import { updatePaciente } from '../../services/axiosApi';
+import useUpdate from '../../hooks/useUpdate';
 
 export default function Anamnesis() {
-    const { paciente, setPacienteModule } = usePacienteStore();
-    const { setNotify, setBackdrop } = useNotifyStore();
+    const { paciente } = usePacienteStore();
+    const updatePaciente = useUpdate();
 
     const formik = useFormik({
         initialValues: paciente.anamnesis || formatInitialValues(anamnesisFields),
         validationSchema: anamnesisSchema,
-        onSubmit: async (data) => {
-            setBackdrop(true);
-
-            const dataToSend = {
-                pacienteId: paciente.datosBasicos.idUsuario,
-                currentModuleData: paciente.anamnesis,
-                newFormikValues: data
-            }
-
-            const { status, type, message } = await updatePaciente(dataToSend);
-            setNotify({ type, message });
-            setBackdrop(false);
-            if (!status) return;
-
-            setPacienteModule("anamnesis", data);
-        }
+        onSubmit: (data) => updatePaciente({ module: "anamnesis", data })
     });
 
     const handleNiega = () => {
