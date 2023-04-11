@@ -8,7 +8,6 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import '../styles/globals.css'
-import { AppContextProvider } from "../context/AppContext";
 import Notify from "../components/Snackbar";
 import Loader from "../components/Backdrop";
 import { AnimatePresence, motion } from "framer-motion";
@@ -18,8 +17,8 @@ import { avoidCloseApp } from "../helpers/helpers";
 export default function MyApp({ Component, pageProps }) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-    
-    if(typeof window !== 'undefined') avoidCloseApp();
+
+    if (typeof window !== 'undefined') avoidCloseApp();
 
     useEffect(() => {
         router.events.on('routeChangeStart', () => setLoading(true));
@@ -33,35 +32,33 @@ export default function MyApp({ Component, pageProps }) {
                 <title>MedicApp</title>
                 <meta name="viewport" content="initial-scale=1.0, width=device-width" />
             </Head>
-            <AppContextProvider>
-                <MUITheme>
-                    {
-                        ['/login', '/_error', '/'].includes(router.pathname)
-                            ? <Component {...pageProps} />
-                            : <Dashboard>
-                                {
-                                    loading
-                                        ? <Spinner minHeight="80vh" />
-                                        : (
-                                            <AnimatePresence mode="wait">
-                                                <motion.div
-                                                    key={router.route}
-                                                    initial={{ opacity: 0 }}
-                                                    animate={{ opacity: 1 }}
-                                                    exit={{ opacity: 0 }}
-                                                    transition={{ duration: 0.2 }}
-                                                >
-                                                    <Component {...pageProps} />
-                                                </motion.div>
-                                            </AnimatePresence>
-                                        )
-                                }
-                            </Dashboard>
-                    }
-                    <Loader />
-                    <Notify />
-                </MUITheme>
-            </AppContextProvider>
+            <MUITheme>
+                {
+                    ['/login', '/_error', '/'].includes(router.pathname)
+                        ? <Component {...pageProps} />
+                        : <Dashboard>
+                            {
+                                loading
+                                    ? <Spinner minHeight="80vh" />
+                                    : (
+                                        <AnimatePresence mode="wait">
+                                            <motion.div
+                                                key={router.route}
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                transition={{ duration: 0.2 }}
+                                            >
+                                                <Component {...pageProps} />
+                                            </motion.div>
+                                        </AnimatePresence>
+                                    )
+                            }
+                        </Dashboard>
+                }
+                <Loader />
+                <Notify />
+            </MUITheme>
         </>
     )
 }
