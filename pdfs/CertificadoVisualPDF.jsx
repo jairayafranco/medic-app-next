@@ -4,7 +4,7 @@ import Logo from '../public/medic-logo.jpg';
 import Firma from '../public/firma.png';
 import commonStyles from './styles/common';
 import cvStyles from './styles/certificadoVisual';
-import { getSessionStorageData, calculateAge } from '../helpers/helpers';
+import { calculateAge } from '../helpers/helpers';
 
 const CertificadoVisualPDF = ({ paciente, ...props }) => {
     const user = paciente.datosBasicos;
