@@ -13,15 +13,16 @@ import Confirm from './Confirm';
 import styles from '../styles/components/userPicture.module.css';
 import { useState, useRef } from 'react';
 import { uploadImage, deleteImage } from '../firebase/config';
-import { getSessionStorageData, saveSessionStorageData } from '../helpers/helpers';
-import { updatePaciente } from '../services/axiosApi';
+import { updatePacienteImage } from '../services/axiosApi';
 import useNotifyStore from '../store/useNotifyStore';
+import usePacienteStore from '../store/usePacienteStore';
 
 export default function PacientePicture() {
+    const { paciente: pacienteData, setPacienteModule } = usePacienteStore();
     const { setNotify, setBackdrop } = useNotifyStore();
     const webcamRef = useRef(null);
     const [image, setImage] = useState(null);
-    const paciente = getSessionStorageData("datosBasicos");
+    const paciente = pacienteData.datosBasicos;
 
     const handleUploadImage = (e) => {
         const imageSrc = webcamRef.current?.getScreenshot();
@@ -64,9 +65,9 @@ export default function PacientePicture() {
         setBackdrop(true);
         try {
             const uploadDeleteFirebaseImage = await options.method();
-            await updatePaciente({ ...paciente, foto: uploadDeleteFirebaseImage });
+            await updatePacienteImage(paciente.idUsuario, { foto: uploadDeleteFirebaseImage });
             setNotify({ type: "success", message: options.messages.success });
-            saveSessionStorageData("datosBasicos", { ...paciente, foto: uploadDeleteFirebaseImage || null });
+            setPacienteModule("datosBasicos", { ...paciente, foto: uploadDeleteFirebaseImage || null });
         } catch (error) {
             console.log(error);
             setNotify({ type: "error", message: options.messages.error });
