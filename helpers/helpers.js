@@ -24,43 +24,6 @@ export const validFields = [
 ];
 export const routesToModules = validFields.map((name, index) => ({ name, route: routes[index] }));
 
-export const saveSessionStorageData = (field, data) => {
-    const storage = window.sessionStorage.getItem("userData");
-
-    if (!field) {
-        window.sessionStorage.setItem("userData", JSON.stringify(data));
-        return;
-    }
-
-    if (!validFields.includes(field)) {
-        alert(`El campo ${field} no es válido`);
-        return;
-    }
-
-    const storageData = JSON.parse(storage);
-    window.sessionStorage.setItem("userData", JSON.stringify({ ...storageData, [field]: data }));
-}
-
-
-/**
- * 
- * @param {*} field The field to get from the session storage 
- * @returns {Object} The specific field from the session storage, or null if there is no data. If the field is not specified, it returns the whole object
- */
-export const getSessionStorageData = (field) => {
-    const storage = window.sessionStorage.getItem("userData");
-    if (!storage) return null;
-
-    const storageData = JSON.parse(storage);
-    if (!field) return storageData;
-
-    return storageData[field];
-}
-
-export const clearSessionStorageData = () => {
-    window.sessionStorage.removeItem("userData");
-}
-
 
 /**
  * 
