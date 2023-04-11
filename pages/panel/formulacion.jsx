@@ -9,34 +9,28 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import FullScreenModal from "../../components/FullScreenModal";
 import Table from "../../components/Table";
-import { formatInitialValues, formatTableRows, getSessionStorageData, moduleCompleted, saveSessionStorageData } from "../../helpers/helpers";
+import { formatInitialValues, formatTableRows, moduleCompleted } from "../../helpers/helpers";
 import { procedimientos } from "../../data/procedimientos";
 import { medicamentos } from "../../data/medicamentos";
 import { laboratorios } from "../../data/laboratorios";
 import { insumos } from "../../data/insumos";
 import { updateFormulacion } from "../../services/axiosApi";
 import useNotifyStore from "../../store/useNotifyStore";
+import usePacienteStore from "../../store/usePacienteStore";
 
 export default function Formulacion() {
+    const { paciente, setPacienteModule } = usePacienteStore();
+    const { setNotify, setBackdrop } = useNotifyStore();
+
     const [tipoProcedimiento, setTipoProcedimiento] = useState("procedimientos");
-    const [allValues, setAllValues] = useState({
+    const [allValues, setAllValues] = useState(paciente.formulacion || {
         procedimientos: [],
         medicamentos: [],
         laboratorios: [],
         insumos: []
     });
 
-    const { setNotify, setBackdrop } = useNotifyStore();
-
     useEffect(() => formik.resetForm(), [tipoProcedimiento]);
-
-    useEffect(() => {
-        const data = getSessionStorageData("formulacion");
-        if (data) {
-            setAllValues(data);
-        }
-    }, []);
-
 
     const setRowsData = (name) => {
         return {
@@ -78,7 +72,7 @@ export default function Formulacion() {
             return;
         }
 
-        const { idUsuario } = getSessionStorageData("datosBasicos");
+        const { idUsuario } = paciente.datosBasicos;
         setBackdrop(true);
         updateFormulacion(idUsuario, allValues)
             .then((res) => {
@@ -87,7 +81,7 @@ export default function Formulacion() {
                     type: res.type
                 });
                 if (!res.status) return;
-                saveSessionStorageData("formulacion", allValues);
+                setPacienteModule("formulacion", allValues);
             }).finally(() => setBackdrop(false));
     }
 

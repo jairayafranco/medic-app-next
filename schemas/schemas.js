@@ -91,6 +91,8 @@ export const impresionDiagnosticaSchema = yup.object({
 export const formulacionSchema = yup.object({
     cantidad: yup.number().required("Cantidad requerida"),
     descripcionManual: yup.string().trim().required("Descripcion requerida"),
+    consecutivo: yup.string().required("Consecutivo requerido"),
+    servicio: yup.string().trim().required("Servicio requerido"),
 });
 
 export const facturacionSchema = yup.object({
