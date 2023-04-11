@@ -4,10 +4,10 @@ import Logo from '../public/medic-logo.jpg';
 import Firma from '../public/firma.png';
 import commonStyles from './styles/common';
 import cvStyles from './styles/certificadoVisual';
-import { getSessionStorageData, calculateAge } from '../helpers/helpers';
+import { calculateAge } from '../helpers/helpers';
 
-const CertificadoSaludPDF = ({ ...props }) => {
-    const user = getSessionStorageData("datosBasicos");
+const CertificadoSaludPDF = ({ paciente, ...props }) => {
+    const user = paciente.datosBasicos;
     const data = {
         idUsuario: user?.idUsuario,
         fecha: new Date().toLocaleString(),

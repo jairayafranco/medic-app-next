@@ -4,12 +4,11 @@ import Logo from '../public/medic-logo.jpg';
 import Firma from '../public/firma.png';
 import commonStyles from './styles/common';
 import cvStyles from './styles/certificadoVisual';
-import { getSessionStorageData } from '../helpers/helpers';
 import { lodash as _ } from '../lib/lodash';
 import { signosVitalesFields } from '../data/inputs';
 
-const HistoriaClinicaPDF = () => {
-    const { datosBasicos, anamnesis, antecedentes, signosVitales, funcionRenal, examenFisico, impresionDiagnostica, formulacion } = getSessionStorageData("") || {};
+const HistoriaClinicaPDF = ({ paciente }) => {
+    const { datosBasicos, anamnesis, antecedentes, signosVitales, funcionRenal, examenFisico, impresionDiagnostica, formulacion } = paciente || {};
     const { motivoConsulta, enfermedadActual, ...anamnesisData } = anamnesis || {};
     const { edad, sexo, peso, talla, ...funcionRenalData } = funcionRenal || {};
     const { barthel, ...examenFisicoData } = examenFisico || {};

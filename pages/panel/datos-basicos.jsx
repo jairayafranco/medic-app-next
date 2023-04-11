@@ -189,7 +189,7 @@ export default function DatosBasicos() {
                         </Button>
                         <div style={{ display: 'none' }}>
                             <PDFDownloadLink
-                                document={<HistoriaClinicaPDF />}
+                                document={<HistoriaClinicaPDF paciente={paciente} />}
                                 fileName={`HistoriaClinica - ${paciente.datosBasicos?.nombreUsuario}.pdf`}
                             >
                                 {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}

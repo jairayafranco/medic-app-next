@@ -6,8 +6,8 @@ import commonStyles from './styles/common';
 import cvStyles from './styles/certificadoVisual';
 import { getSessionStorageData, calculateAge } from '../helpers/helpers';
 
-const CertificadoVisualPDF = ({ ...props }) => {
-    const user = getSessionStorageData("datosBasicos");
+const CertificadoVisualPDF = ({ paciente, ...props }) => {
+    const user = paciente.datosBasicos;
     const data = {
         idUsuario: user?.idUsuario,
         fecha: new Date().toLocaleString(),

@@ -3,20 +3,22 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import { certificadoVisualFields } from '../data/inputs';
-import { formatInitialValues, availablePacienteData, getSessionStorageData } from '../helpers/helpers';
+import { formatInitialValues, availablePacienteData } from '../helpers/helpers';
 import { useFormik } from 'formik';
 import Typography from '@mui/material/Typography';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import CertificadoVisualPDF from '../pdfs/CertificadoVisualPDF';
 import { certificadoVisualSchema } from '../schemas/schemas';
+import usePacienteStore from '../store/usePacienteStore';
 
 export default function CertificadoVisual() {
-    const nombrePaciente = getSessionStorageData("datosBasicos")?.nombreUsuario;
+    const { paciente } = usePacienteStore();
+    const nombrePaciente = paciente.datosBasicos?.nombreUsuario;
 
     const formik = useFormik({
         initialValues: { ...formatInitialValues(certificadoVisualFields), conclusion: "" },
         validationSchema: certificadoVisualSchema,
-        onSubmit: (values) => {
+        onSubmit: () => {
             document.querySelector(`a[download="CertificadoVisual - ${nombrePaciente}.pdf"]`).click();
             formik.resetForm();
         }
@@ -75,7 +77,7 @@ export default function CertificadoVisual() {
                 Imprimir Certificado Visual
             </Button>
             <div style={{ display: 'none' }}>
-                <PDFDownloadLink document={<CertificadoVisualPDF {...formik.values} />} fileName={`CertificadoVisual - ${nombrePaciente}.pdf`}>
+                <PDFDownloadLink document={<CertificadoVisualPDF paciente={paciente} {...formik.values} />} fileName={`CertificadoVisual - ${nombrePaciente}.pdf`}>
                     {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
                 </PDFDownloadLink>
             </div>
