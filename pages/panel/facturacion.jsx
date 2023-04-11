@@ -11,6 +11,7 @@ import { NumericFormat } from 'react-number-format';
 import { updateFacturacion } from "../../services/axiosApi";
 import Table from "../../components/Table";
 import useNotifyStore from "../../store/useNotifyStore";
+import usePacienteStore from "../../store/usePacienteStore";
 
 const NumericFormatCustom = forwardRef(function NumericFormatCustom(
     props,
@@ -38,11 +39,12 @@ const NumericFormatCustom = forwardRef(function NumericFormatCustom(
 });
 
 export default function Facturacion() {
-    const [facturacion, setFacturacion] = useState(getSessionStorageData("facturacion") || []);
+    const { paciente, setPacienteModule } = usePacienteStore();
+    const [facturacion, setFacturacion] = useState(paciente.facturacion || []);
     const { setNotify, setBackdrop } = useNotifyStore();
 
     useEffect(() => {
-        const data = getSessionStorageData("datosBasicos");
+        const data = paciente.datosBasicos;
         if (data) {
             ["idUsuario", "nombreUsuario", "tipoConsulta"].forEach((field) => {
                 formik.setFieldValue(field, data[field]);
@@ -56,7 +58,7 @@ export default function Facturacion() {
         validationSchema: facturacionSchema,
         onSubmit: (values) => {
             setBackdrop(true);
-            const { idUsuario } = getSessionStorageData("datosBasicos");
+            const { idUsuario } = paciente.datosBasicos;
             const fact = [...facturacion, values];
             updateFacturacion(idUsuario, fact)
                 .then(res => {
@@ -65,7 +67,7 @@ export default function Facturacion() {
                     setFacturacion((prev) => {
                         return [...prev, values];
                     });
-                    saveSessionStorageData("facturacion", fact);
+                    setPacienteModule("facturacion", fact);
                 }).finally(() => setBackdrop(false));
         }
     });
