@@ -4,14 +4,9 @@ const MONGOUSER = process.env.MONGOUSER;
 const MONGOPASSWORD = process.env.MONGOPASSWORD;
 const MONGOHOST = process.env.MONGOHOST;
 
-(async () => {
-    try {
-        await mongoose.connect(`mongodb+srv://${MONGOUSER}:${MONGOPASSWORD}@${MONGOHOST}`, { useNewUrlParser: true, useUnifiedTopology: true });
-        console.log('Connected to MongoDB...');
-    } catch (error) {
-        console.log('Could not connect to MongoDB...', error);
-    }
-})();
+mongoose.connect(`mongodb+srv://${MONGOUSER}:${MONGOPASSWORD}@${MONGOHOST}`, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB...'))
+    .catch(err => console.error('Could not connect to MongoDB...', err));
 
 const conn = mongoose.connection.useDb('medicapp');
 
