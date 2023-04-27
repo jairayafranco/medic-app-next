@@ -1,0 +1,12 @@
+[
+  {
+    "_id": {
+      "$oid": "637c30564c8ba9a10a272f4b"
+    },
+    "username": "Testing",
+    "user": "test",
+    "cc": "12345",
+    "admin": false,
+    "password": "$2b$10$KSTd6FiHFXrUBqEqKwgkteezXo/8tuuT4OAI6HTCNj5VQsVStc2SC"
+  }
+]

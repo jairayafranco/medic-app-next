@@ -35,7 +35,7 @@ FIREBASE_APP_ID=""
 
 ***La variable `storageBucket` de Firebase se agrega directamente en el objeto firebaseConfig.**
 
-# Inicio de la aplicación
+## Inicio de la aplicación
 
 Una vez instaladas las dependencias y agregas las variables de entorno, podra iniciar la aplicación con el siguiente comando:
 
@@ -54,3 +54,9 @@ Una vez que haya iniciado el servidor de desarrollo, podrá acceder a la aplicac
 ```arduino
 http://localhost:3000/
 ```
+
+## Usuario
+
+En la raiz del proyecto se encuentra el archivo `users.json` el cual debe subirse a la base de datos ya que es la coleccion de MongoDB que contiene el usuario prueba:
+
+`Usuario: Test - Contraseña: 12345`
