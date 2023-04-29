@@ -11,8 +11,6 @@ export const getPesoMinimo = (talla) => Number(((talla / 100) * (talla / 100) * 
 export const getPesoMaximo = (talla) => Number(((talla / 100) * (talla / 100) * 24.9).toFixed(1)) || "";
 
 export const interpretacionIMC = (imc) => {
-    if (!imc) return "";
-
     const interpretacion = {
         "Desnutricion": [0, 17],
         "Peso bajo": [17, 18.5],
@@ -28,12 +26,10 @@ export const interpretacionIMC = (imc) => {
         return imc >= min && imc < max;
     })
 
-    return result;
+    return result || "";
 }
 
 export const funcionRenalEstadio = (tfg) => {
-    if (!tfg) return "";
-
     const values = {
         "1": [90, Infinity],
         "2": [60, 90],
@@ -48,12 +44,10 @@ export const funcionRenalEstadio = (tfg) => {
         return tfg >= min && tfg < max;
     })
 
-    return estadio;
+    return estadio || "";
 }
 
 export const funcionRenalClasificacion = (estadio) => {
-    if (!estadio) return "";
-
     const clasificacion = {
         "1": "DAÑO RENAL CON TFGE NORMAL O ELEVADA",
         "2": "DAÑO RENAL CON DISMINUCIÓN LEVE DE LA TFG",
@@ -63,5 +57,5 @@ export const funcionRenalClasificacion = (estadio) => {
         "5": "FALLA RENAL"
     }
 
-    return clasificacion[estadio];
+    return clasificacion[estadio] || "";
 } 

@@ -239,7 +239,6 @@ export const funcionRenalFields = [
             { name: 'Clasificacion (KDIGO)', property: 'clasificacion', unit: '', readOnly: true, size: 'small', shrink: true, variant: 'filled' },
         ]
     },
-
 ];
 
 export const examenFisicoFields = [

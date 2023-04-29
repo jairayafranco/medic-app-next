@@ -165,16 +165,12 @@ export const handleFRInputValues = (formik, campo) => {
  */
 export const formatInitialValues = (inputs) => {
     return inputs.reduce((acc, curr) => {
-        if (curr.fields) {
-            curr.fields.forEach(field => {
-                acc[field.property] = "";
-            });
-        } else {
-            acc[curr.property] = "";
-        }
+        curr.fields
+            ? curr.fields.forEach(field => acc[field.property] = "")
+            : acc[curr.property] = "";
         return acc;
     }, {});
-}
+};
 
 
 /**
@@ -220,6 +216,7 @@ export const getFormattedDate = () => {
     }).format(new Date());
 }
 
+
 /**
  * @description Function to avoid close the app when the patient is selected
  */
@@ -227,15 +224,10 @@ export const avoidCloseApp = () => {
     const { paciente } = usePacienteStore();
 
     const confirmCloseHandler = (e) => {
-        // Cancelar el evento de cierre o recarga
         e.preventDefault();
         // Chrome requiere que se devuelva un valor en esta función
         e.returnValue = "";
     };
 
-    if (!_.isEmpty(paciente)) {
-        window.onbeforeunload = confirmCloseHandler;
-    } else {
-        window.onbeforeunload = null;
-    }
+    window.onbeforeunload = !_.isEmpty(paciente) ? confirmCloseHandler : null;
 };
