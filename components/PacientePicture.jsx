@@ -81,7 +81,7 @@ export default function PacientePicture() {
         <Box className={styles.userImgContainer}>
             <Avatar
                 alt={paciente?.nombreUsuario}
-                src={image ? image : paciente?.foto}
+                src={image || paciente?.foto}
                 sx={{ width: 170, height: 170 }}
             />
             <ButtonGroup orientation='horizontal' variant="contained" size="small">
