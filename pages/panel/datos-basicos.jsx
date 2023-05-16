@@ -200,7 +200,7 @@ export default function DatosBasicos() {
                             buttonTitle="Eliminar"
                             title="Eliminar Paciente"
                             content="¿Esta seguro que desea eliminar este paciente?"
-                            buttonAction={() => pacienteMethods("delete", paciente?.idUsuario)}
+                            buttonAction={() => pacienteMethods("delete", paciente.datosBasicos?.idUsuario)}
                             buttonColor="error"
                             disabled={availablePacienteData()}
                         />

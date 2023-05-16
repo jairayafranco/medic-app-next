@@ -30,7 +30,7 @@ export default async function pacienteHandler(req, res) {
         if (!data) return handleException({ code: 400, status: false, message: 'Datos requeridos', type: 'warning' });
 
         db.findOne({ "datosBasicos.idUsuario": data.idUsuario }).then((paciente) => {
-            if (paciente.estado === "INACTIVO") return handleException({ code: 400, status: false, message: 'El paciente ya existe y esta inactivo', type: 'warning' });
+            if (paciente?.estado === "INACTIVO") return handleException({ code: 400, status: false, message: 'El paciente ya existe y esta inactivo', type: 'warning' });
             if (paciente) return handleException({ code: 400, status: false, message: 'El paciente ya existe', type: 'warning' });
             db.insertOne({ datosBasicos: data, estado: "ACTIVO" })
                 .then(() => {
