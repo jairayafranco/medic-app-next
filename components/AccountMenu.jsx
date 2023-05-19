@@ -12,10 +12,13 @@ import Logout from '@mui/icons-material/Logout';
 import UserAvatar from './UserAvatar';
 import { useRouter } from 'next/router';
 import { getUserProfile, logout } from '../services/axiosApi';
+import usePacienteStore from '../store/usePacienteStore';
+import { lodash as _ } from '../lib/lodash';
 
 export default function AccountMenu() {
     const [userName, setUserName] = useState('');
     const router = useRouter();
+    const { setPaciente } = usePacienteStore();
 
     useEffect(() => {
         getUserProfile().then(res => {
@@ -101,6 +104,7 @@ export default function AccountMenu() {
                 </MenuItem>
 
                 <MenuItem onClick={() => {
+                    setPaciente({});
                     logout().then(res => {
                         if (!res.status) {
                             console.log(res);
