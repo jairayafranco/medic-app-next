@@ -9,7 +9,9 @@ export default function signosVitalesHistory(req, res) {
 
         const newHistoryRegister = {
             "id": Date.now(),
-            "fecha": new Date().toLocaleString(),
+            "fecha": new Date().toLocaleString({
+                timeZone: "America/Bogota",
+            }),
             ...data
         };
 
