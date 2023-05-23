@@ -84,6 +84,7 @@ export default async function pacienteHandler(req, res) {
         db.findOneAndUpdate({ "datosBasicos.idUsuario": Number(id) }, { $set: { estado: "INACTIVO" } })
             .then((paciente) => {
                 if (!paciente.value) return handleException({ code: 404, status: false, message: 'Paciente no encontrado', type: 'warning' });
+                dbSV.deleteMany({ idUsuario: Number(id) });
                 saveAuditData({ action: 'ELIMINAR PACIENTE', req, data: id });
                 return res.status(200).json({ status: true, message: 'Paciente eliminado correctamente', type: 'success' });
             }).catch(() => {
