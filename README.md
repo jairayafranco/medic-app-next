@@ -1,5 +1,11 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+# MedicApp
+
+![](assets/images/cap1.png)
+
+![](assets/images/cap2.png)
+
 ## Instalación de dependencias
 
 Para instalar las dependencias del proyecto, siga estos pasos:
